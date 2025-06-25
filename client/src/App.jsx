@@ -9,15 +9,17 @@ import AuthLogin from './pages/auth/login'
 import AuthRegister from './pages/auth/register'
 import { Routes,Route } from 'react-router-dom'
 import ShoppingLayout from './components/shopping-view/layout'
-import ShoppingHeader from './components/shopping-view/header'
 import NotFound from './pages/Not-found'
+import ShopppingCheckout from './pages/shoping-view/checkout'
+import ShoppingAccount from './pages/shoping-view/account'
+import ShoppingListing from './pages/shoping-view/listing'
+import ShopppingHome from './pages/shoping-view/home'
 
 function App() {
   return (
     <>
       <div className="flex flex-col overflow-hidden bg-white">
         {/* commmon components */}
-        <h1>header</h1>
         <Routes>
          
             <Route path="/auth" element={<AuthLayout/>}>   
@@ -32,9 +34,13 @@ function App() {
                 <Route path="products" element={<AdminProducts />} />          
             </Route>
        
-            <Route path="/shopping" element={<ShoppingLayout/>}>   
-                <Route path="header" element={<ShoppingHeader />} />
+            <Route path="/shop" element={<ShoppingLayout/>}>   
+                <Route path="home" element={<ShopppingHome />} />
+                <Route path="checkout" element={<ShopppingCheckout />} />
+                <Route path="account" element={<ShoppingAccount />} />
+                <Route path="listing" element={<ShoppingListing />} />
             </Route>
+
                 <Route path="*" element={<NotFound />} />
            
          </Routes>
