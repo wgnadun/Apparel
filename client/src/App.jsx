@@ -8,8 +8,8 @@ import AdminProducts from './pages/admin-view/products'
 import AuthLogin from './pages/auth/login'
 import AuthRegister from './pages/auth/register'
 import { Routes,Route } from 'react-router-dom'
-import ShoppingLayout from './pages/shoping-view/layout'
-import ShoppingHeader from './pages/shoping-view/header'
+import ShoppingLayout from './components/shopping-view/layout'
+import ShoppingHeader from './components/shopping-view/header'
 import NotFound from './pages/Not-found'
 
 function App() {
