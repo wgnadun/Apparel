@@ -1,8 +1,8 @@
-function ShopppingHome() {
+function ShoppingHome() {
     return(
         <div>shopping view home</div>
     );
     
 }
 
-export default ShopppingHome;
+export default ShoppingHome;

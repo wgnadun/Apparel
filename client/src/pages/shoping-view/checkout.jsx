@@ -1,8 +1,8 @@
-function ShopppingCheckout() {
+function ShoppingCheckout() {
     return(
         <div>shopping Checkout</div>
     );
     
 }
 
-export default ShopppingCheckout;
+export default ShoppingCheckout;
