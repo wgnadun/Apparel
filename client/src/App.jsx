@@ -16,17 +16,11 @@ import ShoppingAccount from './pages/shoping-view/account';
 import ShoppingListing from './pages/shoping-view/listing';
 import NotFound from './pages/Not-found';
 import UnauthPage from './pages/unauth-page';
+import { useSelector } from 'react-redux';
 
 
 function App() {
-  const isAuthenticated = false;
-  const user = {
-
-    name:'nadun',
-    role:'user'
-
-  };
-
+ const {user,isAuthenticated} = useSelector(state=> state.auth)
   return (
     <>
       <div className="flex flex-col overflow-hidden bg-white">
