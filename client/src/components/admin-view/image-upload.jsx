@@ -68,7 +68,7 @@ function ProductImageUpload({
                 onDrop={handleDrop} 
                 className={`${isEditMode ? "opacity-60" : ""
                             } border-2 border-dashed rounded-lg p-4`}
-        >
+                >
           <Input 
                 id="image-upload" 
                 type="file" 

@@ -5,7 +5,7 @@ import CommonForm from "@/components/common/form";
 import { addProductFormElements } from "@/config";
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
+import { addNewProduct, fetchAllProducts, editProduct, deleteProduct } from "@/store/admin/products-slice";
 import { toast } from "sonner";
 import AdminProductTile from "@/components/admin-view/product-tile";
 
@@ -33,28 +33,57 @@ function AdminProducts() {
   const {productList} = useSelector(state => state.adminProducts);
   const dispatch = useDispatch();
 
-  function onSubmit(event) {
+ function onSubmit(event) {
     event.preventDefault();
-    dispatch(addNewProduct({
-      ...formData,
-      image:uploadImageUrl
-    })).then((data)=> 
-      
-      {
-        console.log(data);
-        console.log(uploadImageUrl);
-        if(data?.payload?.success) {
-          setOpenCreateProductsDialog(false);
-          dispatch(fetchAllProducts());
-          setFormData(initialFormData);
-          setImageFile(null);
-          setUploadImageUrl('');
-          toast(
-            'Product added successfully!',
-        )
-      }
 
-    })
+    currentEditedId !== null
+      ? dispatch(
+          editProduct({
+            id: currentEditedId,
+            formData,
+          })
+        ).then((data) => {
+          console.log(data, "edit");
+
+          if (data?.payload?.success) {
+            dispatch(fetchAllProducts());
+            setFormData(initialFormData);
+            setOpenCreateProductsDialog(false);
+            setCurrentEditedId(null);
+          }
+        })
+      : dispatch(
+          addNewProduct({
+            ...formData,
+            image: uploadImageUrl,
+          })
+        ).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllProducts());
+            setOpenCreateProductsDialog(false);
+            setImageFile(null);
+            setFormData(initialFormData);
+            toast(
+              "Product add successfully",
+            );
+          }
+        });
+  }
+//delete product
+   function handleDelete(getCurrentProductId) {
+    dispatch(deleteProduct(getCurrentProductId)).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchAllProducts());
+      }
+    });
+  }
+
+  //hide add until all fields are filled
+    function isFormValid() {
+    return Object.keys(formData)
+      .filter((currentKey) => currentKey !== "averageReview")
+      .map((key) => formData[key] !== "")
+      .every((item) => item);
   }
 
   useEffect(()=>{
@@ -78,6 +107,7 @@ function AdminProducts() {
                   setCurrentEditedId={setCurrentEditedId} 
                   key={productItem._id} 
                   product={productItem} 
+                  handleDelete={handleDelete}
                   />
                 ) : null
         }
@@ -116,6 +146,7 @@ function AdminProducts() {
                 currentEditedId !== null ? "Update Product" : "Add Product"
               } 
               formControls={addProductFormElements}
+              isBtnDisabled={!isFormValid()}
           />
 
           </div>
