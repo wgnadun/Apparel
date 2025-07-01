@@ -61,6 +61,8 @@ function AdminProducts() {
     dispatch(fetchAllProducts())
   },[dispatch])
 
+  console.log(productList,uploadImageUrl,"productList");
+
   return ( 
     <Fragment>
       <div className="mb-5 flex justify-end">
@@ -80,11 +82,20 @@ function AdminProducts() {
                 ) : null
         }
       </div>
-      <Sheet open={openCreateProductsDialog} onOpenChange={() => { setOpenCreateProductsDialog(false) }}>
+      <Sheet 
+          open={openCreateProductsDialog} 
+          onOpenChange={() => { 
+            setOpenCreateProductsDialog(false);
+            setCurrentEditedId(null);
+            setFormData(initialFormData);
+          }}
+      >
         <SheetContent side="right" className="overflow-auto m-5">
           <SheetHeader>
 
-            <SheetTitle>Add new</SheetTitle>
+            <SheetTitle>{
+              currentEditedId !== null ? "Edit Product" : "Add New Product"
+            }</SheetTitle>
           </SheetHeader>
           <ProductImageUpload 
                 imageFile={imageFile} 
@@ -101,7 +112,9 @@ function AdminProducts() {
               onSubmit={onSubmit}
               formData={formData} 
               setFormData={setFormData} 
-              buttonText='Add' 
+              buttonText={
+                currentEditedId !== null ? "Update Product" : "Add Product"
+              } 
               formControls={addProductFormElements}
           />
 
