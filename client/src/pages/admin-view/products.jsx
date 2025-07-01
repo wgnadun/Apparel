@@ -6,8 +6,8 @@ import { addProductFormElements } from "@/config";
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
-import { data } from "react-router-dom";
 import { toast } from "sonner";
+import AdminProductTile from "@/components/admin-view/product-tile";
 
 const initialFormData = {
   image: null,
@@ -57,12 +57,18 @@ function AdminProducts() {
     dispatch(fetchAllProducts())
   },[dispatch])
 
-  return (
+  return ( 
     <Fragment>
       <div className="mb-5 flex justify-end">
         <Button onClick={() => setOpenCreateProductsDialog(true)}>Add new Product</Button>
       </div>
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 "></div>
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 ">
+        {
+          productList && productList.length > 0 ? 
+          productList.map(productItem =>
+             <AdminProductTile product={productItem} />) : null
+        }
+      </div>
       <Sheet open={openCreateProductsDialog} onOpenChange={() => { setOpenCreateProductsDialog(false) }}>
         <SheetContent side="right" className="overflow-auto m-5">
           <SheetHeader>
