@@ -17,7 +17,7 @@ const initialFormData = {
   brand: "",
   price: "",
   salePrice: "",
-  totalPrice: ""
+  totalStock: ""
 }
 
 
@@ -28,6 +28,8 @@ function AdminProducts() {
   const [imageFile ,setImageFile] = useState(null);
   const [uploadImageUrl, setUploadImageUrl] = useState('');
   const [imageLoadingState,setImageLoadingState] = useState(false)
+  const [currentEditedId,setCurrentEditedId] = useState(null);
+
   const {productList} = useSelector(state => state.adminProducts);
   const dispatch = useDispatch();
 
@@ -35,16 +37,18 @@ function AdminProducts() {
     event.preventDefault();
     dispatch(addNewProduct({
       ...formData,
-      image: uploadImageUrl
+      image:uploadImageUrl
     })).then((data)=> 
       
       {
         console.log(data);
+        console.log(uploadImageUrl);
         if(data?.payload?.success) {
           setOpenCreateProductsDialog(false);
           dispatch(fetchAllProducts());
           setFormData(initialFormData);
           setImageFile(null);
+          setUploadImageUrl('');
           toast(
             'Product added successfully!',
         )
@@ -66,7 +70,14 @@ function AdminProducts() {
         {
           productList && productList.length > 0 ? 
           productList.map(productItem =>
-             <AdminProductTile product={productItem} />) : null
+             <AdminProductTile 
+                  setFormData={setFormData}
+                  setOpenCreateProductsDialog={setOpenCreateProductsDialog} 
+                  setCurrentEditedId={setCurrentEditedId} 
+                  key={productItem._id} 
+                  product={productItem} 
+                  />
+                ) : null
         }
       </div>
       <Sheet open={openCreateProductsDialog} onOpenChange={() => { setOpenCreateProductsDialog(false) }}>
@@ -82,6 +93,7 @@ function AdminProducts() {
                 setUploadImageUrl={setUploadImageUrl} 
                 setImageLoadingState ={setImageLoadingState}
                 imageLoadingState={imageLoadingState}
+                isEditMode={currentEditedId !==null}
           />
 
           <div className="py-6 m-5">

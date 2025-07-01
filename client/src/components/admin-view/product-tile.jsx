@@ -13,7 +13,7 @@ function AdminProductTile({
       <div>
         <div className="relative">
           <img
-            src={product?.image}
+            src={product?.image || null}
             alt={product?.title}
             className="w-full h-[300px] object-cover rounded-t-lg"
           />
@@ -28,7 +28,7 @@ function AdminProductTile({
             >
               ${product?.price} 
             </span>
-            
+
             {product?.salePrice > 0 ? (
               <span className="text-lg font-bold">${product?.salePrice}</span>
             ) : null}
