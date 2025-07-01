@@ -5,7 +5,9 @@ import CommonForm from "@/components/common/form";
 import { addProductFormElements } from "@/config";
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProducts } from "@/store/admin/products-slice";
+import { addNewProduct, fetchAllProducts } from "@/store/admin/products-slice";
+import { data } from "react-router-dom";
+import { toast } from "sonner";
 
 const initialFormData = {
   image: null,
@@ -31,6 +33,24 @@ function AdminProducts() {
 
   function onSubmit(event) {
     event.preventDefault();
+    dispatch(addNewProduct({
+      ...formData,
+      image: uploadImageUrl
+    })).then((data)=> 
+      
+      {
+        console.log(data);
+        if(data?.payload?.success) {
+          setOpenCreateProductsDialog(false);
+          dispatch(fetchAllProducts());
+          setFormData(initialFormData);
+          setImageFile(null);
+          toast(
+            'Product added successfully!',
+        )
+      }
+
+    })
   }
 
   useEffect(()=>{
