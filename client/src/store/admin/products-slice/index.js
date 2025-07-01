@@ -1,16 +1,19 @@
 import axios from "axios";
 
-const { createSlice, createAsyncThunk } = require("@reduxjs/toolkit");
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
     isLoading : false,
-    productList : []
+    productList : [],
 }
 //add thunk
 export const addNewProduct = createAsyncThunk(
-    "/products/addnewproduct",async(FormData)=>{
-        const result = await axios.post("http://localhost:5000/api/admin/products/add-product", FormData,{
-            headers: {
+    "/products/addnewproduct",async(formData)=>{
+        const result = await axios.post(
+            "http://localhost:5000/api/admin/products/add-product",
+             formData,
+             {
+               headers: {
                 "Content-Type" : "application/json",
             },
         }
@@ -18,11 +21,12 @@ export const addNewProduct = createAsyncThunk(
     
     return result?.data;
     
-    });
+    }
+);
 
     //fetch all thunk
 export const fetchAllProducts = createAsyncThunk(
-    "/products/fetchallproducts",async()=>{
+    "/products/fetchAllProducts",async()=>{
         const result = await axios.get("http://localhost:5000/api/admin/products/fetch-all-products",
     );
     
@@ -31,8 +35,8 @@ export const fetchAllProducts = createAsyncThunk(
     });
 //edit thunk
 export const editProduct = createAsyncThunk(
-    "/products/editproduct",async({id,FormData})=>{
-        const result = await axios.put(`http://localhost:5000/api/admin/products/edit-product/${id}`, FormData,{
+    "/products/editproduct",async({id,formData})=>{
+        const result = await axios.put(`http://localhost:5000/api/admin/products/edit-product/${id}`, formData,{
             headers: {
                 "Content-Type" : "application/json",
             },
@@ -46,7 +50,7 @@ export const editProduct = createAsyncThunk(
 //delete thunk
 
 export const deleteProduct = createAsyncThunk(
-    "/products/delete",async({id})=>{
+    "/products/deleteProduct",async(id)=>{
         const result = await axios.delete(`http://localhost:5000/api/admin/products/delete-product/${id}`
     );
     
