@@ -3,19 +3,30 @@ const Product = require("../../models/Product");
 
 const handleImageUpload = async (req, res) => {
   try {
+    console.log('Image upload request received');
+    console.log('File details:', {
+      originalname: req.file?.originalname,
+      mimetype: req.file?.mimetype,
+      size: req.file?.size
+    });
+    
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     const url = "data:" + req.file.mimetype + ";base64," + b64;
+    
+    console.log('Calling Cloudinary upload...');
     const result = await imageUploadUtil(url);
 
+    console.log('Upload successful, returning result');
     res.json({
       success: true,
       result,
     });
   } catch (error) {
-    console.log(error);
+    console.error('Image upload error:', error);
     res.json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred during image upload",
+      error: error.message
     });
   }
 };
@@ -35,7 +46,13 @@ const addProduct = async (req, res) => {
       averageReview,
     } = req.body;
 
-    console.log(averageReview, "averageReview");
+    console.log('Adding new product with data:', {
+      title,
+      category,
+      brand,
+      price,
+      image: image ? 'Image URL provided' : 'No image URL'
+    });
 
     const newlyCreatedProduct = new Product({
       image,
@@ -50,15 +67,17 @@ const addProduct = async (req, res) => {
     });
 
     await newlyCreatedProduct.save();
+    console.log('Product saved successfully:', newlyCreatedProduct._id);
+    
     res.status(201).json({
       success: true,
       data: newlyCreatedProduct,
     });
   } catch (e) {
-    console.log(e);
+    console.error('Error adding product:', e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred",
     });
   }
 };
@@ -67,16 +86,28 @@ const addProduct = async (req, res) => {
 
 const fetchAllProducts = async (req, res) => {
   try {
+    console.log('Fetching all products...');
     const listOfProducts = await Product.find({});
+    console.log(`Found ${listOfProducts.length} products`);
+    
+    // Log first few products for debugging
+    if (listOfProducts.length > 0) {
+      console.log('Sample products:', listOfProducts.slice(0, 3).map(p => ({
+        id: p._id,
+        title: p.title,
+        image: p.image ? 'Has image' : 'No image'
+      })));
+    }
+    
     res.status(200).json({
       success: true,
       data: listOfProducts,
     });
   } catch (e) {
-    console.log(e);
+    console.error('Error fetching products:', e);
     res.status(500).json({
       success: false,
-      message: "Error occured",
+      message: "Error occurred",
     });
   }
 };
