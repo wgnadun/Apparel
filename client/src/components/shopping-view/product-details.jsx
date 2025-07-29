@@ -4,10 +4,50 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { toast } from "sonner";
+import { setProductDetails } from "@/store/shop/products-slice";
 
 function ProductDetailsDialog({open,setOpen,productDetails}){
+    const {user} = useSelector(state => state.auth);
+    const dispatch = useDispatch();
+
+    function handleAddtoCart() {
+        if (!user?.id) {
+            toast.error("Please login to add items to cart");
+            return;
+        }
+        
+        if (!productDetails?._id) {
+            toast.error("Product not found");
+            return;
+        }
+
+        dispatch(addToCart({
+            userId: user.id,
+            productId: productDetails._id,
+            quantity: 1
+        })).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(fetchCartItems(user.id));
+                toast.success("Item added to cart successfully!");
+            } else {
+                toast.error("Failed to add item to cart");
+            }
+        }).catch((error) => {
+            console.error("Add to cart error:", error);
+            toast.error("Failed to add item to cart");
+        });
+    }
+
+    function handleDialogClose() {
+        setOpen(false);
+        dispatch(setProductDetails());
+    }
+
     return (
-        <Dialog open={open} onOpenChange ={setOpen}>  
+        <Dialog open={open} onOpenChange ={handleDialogClose}>  
             <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[vw] lg:max-w-[70vw]">
                 <div className="relative overflow-hidden rounded-lg">
                     <img 
@@ -51,7 +91,13 @@ function ProductDetailsDialog({open,setOpen,productDetails}){
                                 <span className="text-muted-foreground">(4.5)</span>
                 </div>
                     <div className="mt-5 mb-5">
-                        <Button className="w-full">Add to cart</Button>
+                        <Button 
+                            className="w-full" 
+                            onClick={handleAddtoCart}
+                            disabled={!productDetails?._id}
+                        >
+                            Add to cart
+                        </Button>
                     </div>
                     <Separator/>
                     <div className="max-h-300px overflow-auto">

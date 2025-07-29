@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from './store/auth-slice';
 import { useEffect } from 'react';
 import { Skeleton } from './components/ui/skeleton';
-
+import { Toaster } from './components/ui/sonner';
 
 function App() {
  const {user,isAuthenticated,isLoading} = useSelector(state=> state.auth);
@@ -77,6 +77,7 @@ function App() {
         </Routes>
 
       </div>
+      <Toaster />
     </>
   )
 }

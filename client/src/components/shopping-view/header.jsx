@@ -23,8 +23,10 @@ function HeaderRightContent() {
         }
         
         useEffect(()=>{
-            dispatch(fetchCartItems(user?.id))
-        }, [dispatch]);
+            if (user?.id) {
+                dispatch(fetchCartItems(user.id))
+            }
+        }, [dispatch, user?.id]);
 
     return (
         <div className="flex lg:items-center lg:flex-row flex-col gap-4">
@@ -33,7 +35,7 @@ function HeaderRightContent() {
              <ShoppingCart className="h-6 w-6   "/>
              <span className="sr-only">user Cart icon</span>
            </Button>
-           <UserCartWrapper cartItems={cartItems && cartItems.items && cartItems.items.length > 0 ? cartItems.items : []} />
+           <UserCartWrapper cartItems={cartItems || []} />
            </Sheet>
 
             <DropdownMenu>

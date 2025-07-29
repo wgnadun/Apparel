@@ -37,9 +37,27 @@ const addToCart = async (req,res)=>{
         }
         
         await cart.save();
+        
+        await cart.populate({
+            path: 'items.productId',
+            select : "image title price salePrice"
+        })
+        
+        const populateCartItems = cart.items.map(item=>({
+            productId:item.productId._id ? item.productId._id : null,
+            image : item.productId ? item.productId.image: null,
+            title : item.productId ? item.productId.title : 'product not found !',
+            price : item.productId ? item.productId.price : null,
+            salePrice : item.productId ? item.productId.salePrice : null,
+            quantity : item.quantity,
+        }))
+        
         res.status(200).json({
             success:true,
-            data: cart,
+            data: {
+                ...cart._doc,
+                items : populateCartItems,
+            }
         })
 
     } catch (error) {
@@ -140,9 +158,9 @@ const UpdateCartItemQty = async (req,res)=>{
     await cart.populate({
         path : 'items.productId',
         select : "image title price salePrice"
-
     })
-        const populateCartItems = cart.map(item=>({
+    
+    const populateCartItems = cart.items.map(item=>({
         productId:item.productId._id ? item.productId._id : null,
         image : item.productId ? item.productId.image: null,
         title : item.productId ? item.productId.title : 'product not found !',
@@ -150,7 +168,8 @@ const UpdateCartItemQty = async (req,res)=>{
         salePrice : item.productId ? item.productId.salePrice : null,
         quantity : item.quantity,
     }));
-        res.status(200).json({
+    
+    res.status(200).json({
         success:true,
         data:{
             ...cart._doc,
@@ -194,12 +213,12 @@ const DeleteCartItem = async (req,res)=>{
     cart.items = cart.items.filter(item => item.productId._id.toString() !== productId);
     await cart.save();
 
-    await Cart.populate({
+    await cart.populate({
         path: 'items.productId',
         select : "image title price salePrice"
-      })
+    })
     
-       const populateCartItems = cart.map(item=>({
+    const populateCartItems = cart.items.map(item=>({
         productId:item.productId._id ? item.productId._id : null,
         image : item.productId ? item.productId.image: null,
         title : item.productId ? item.productId.title : 'product not found !',

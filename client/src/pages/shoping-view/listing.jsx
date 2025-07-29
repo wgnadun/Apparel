@@ -10,6 +10,7 @@ import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 
 function createSearchParamsHelper(filterParams) {
@@ -66,16 +67,32 @@ function ShoppingListing() {
      }
 
      function handleAddtoCart(getCurrentProductId) {
+        if (!user?.id) {
+            toast.error("Please login to add items to cart");
+            return;
+        }
+        
+        if (!getCurrentProductId) {
+            toast.error("Product not found");
+            return;
+        }
+
         console.log(getCurrentProductId);
         dispatch(addToCart({
-            userId:user?.id, 
-            productId:getCurrentProductId, 
-            quantity:1})
-        ).then(data=> {
-            if(data?.payload?.success){
-                dispatch(fetchCartItems(user?.id));
+            userId: user.id, 
+            productId: getCurrentProductId, 
+            quantity: 1
+        })).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(fetchCartItems(user.id));
+                toast.success("Item added to cart successfully!");
+            } else {
+                toast.error("Failed to add item to cart");
             }
-        })
+        }).catch((error) => {
+            console.error("Add to cart error:", error);
+            toast.error("Failed to add item to cart");
+        });
      }
 
 
@@ -141,6 +158,11 @@ function ShoppingListing() {
                                 }
                 </div>
             </div>
+            <ProductDetailsDialog 
+                open={openDetailsDialog} 
+                setOpen={setOpenDetailsDialog} 
+                productDetails={productDetails}
+            />
         </div>
     );
     
