@@ -4,11 +4,12 @@ import ShoppingProductTile from "@/components/shopping-view/product-tile";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import { fetchAllFilteredProducts, fetchProductDetails } from "@/store/shop/products-slice";
 import { ArrowUpDownIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 
 function createSearchParamsHelper(filterParams) {
@@ -26,6 +27,8 @@ function createSearchParamsHelper(filterParams) {
 
 function ShoppingListing() {
 
+    const {user} =  useSelector(state => state.auth);
+    const { cartItems } = useSelector(state => state.shopCart);
     const dispatch = useDispatch();
     const {productList,productDetails} = useSelector(state=> state.shopProducts);
     const [filters,setfilters] = useState({});
@@ -63,6 +66,19 @@ function ShoppingListing() {
             dispatch(fetchProductDetails(getCurrentProductId))
      }
 
+     function handleAddtoCart(getCurrentProductId) {
+        console.log(getCurrentProductId);
+        dispatch(addToCart({
+            userId:user?.id, 
+            productId:getCurrentProductId, 
+            quantity:1})
+        ).then(data=> {
+            if(data?.payload?.success){
+                dispatch(fetchCartItems(user?.id));
+            }
+        })
+     }
+
 
     useEffect(()=>{
         setSort('price-lowtohigh');
@@ -84,8 +100,9 @@ function ShoppingListing() {
     useEffect(()=>{
         if(productDetails !==null) setOpenDetailsDialog(true)
     },[productDetails])
+
+    console.log(cartItems,"CartItems")
     
-    console.log(filters,"productList");
     return(
         <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
             <ProductFilter filters={filters} handleFilter={handleFilter}/>
@@ -121,7 +138,9 @@ function ShoppingListing() {
                                     productList.map(productItem => <ShoppingProductTile 
                                         handleGetProductDetails={handleGetProductDetails}
                                         key={productItem.id} 
-                                        product={productItem} />) :null
+                                        product={productItem}
+                                        handleAddtoCart={handleAddtoCart}
+                                        />) :null
                                 }
                 </div>
             </div>

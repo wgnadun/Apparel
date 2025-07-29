@@ -63,7 +63,7 @@ const fetchCartItems = async (req,res)=>{
       }
 
       const cart = await Cart.findOne({userId}).populate({
-        path: 'item.productId',
+        path: 'items.productId',
         select : "image title price salePrice"
       })
 
@@ -180,7 +180,7 @@ const DeleteCartItem = async (req,res)=>{
         }
 
         const cart = await Cart.findOne({userId}).populate({
-        path: 'item.productId',
+        path: 'items.productId',
         select : "image title price salePrice"
       })
 
@@ -195,7 +195,7 @@ const DeleteCartItem = async (req,res)=>{
     await cart.save();
 
     await Cart.populate({
-        path: 'item.productId',
+        path: 'items.productId',
         select : "image title price salePrice"
       })
     
