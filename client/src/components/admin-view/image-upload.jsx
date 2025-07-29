@@ -37,6 +37,7 @@ function ProductImageUpload({
       }
     }
 
+    console.log(imageFile);
     function handleRemoveImage() {
       setImageFile(null);
       if (inputRef.current) {
@@ -51,8 +52,9 @@ function ProductImageUpload({
       const response =  await axios.post('http://localhost:5000/api/admin/products/upload-image',data);
 
       if(response?.data?.success) {
-        setUploadImageUrl(response.data.url)};
+        setUploadImageUrl(response.data.result.url);
         setImageLoadingState(false);
+      }
     }
 
     useEffect(()=>{

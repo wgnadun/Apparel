@@ -59,6 +59,7 @@ function AdminProducts() {
           })
         ).then((data) => {
           if (data?.payload?.success) {
+            console.log(data)
             dispatch(fetchAllProducts());
             setOpenCreateProductsDialog(false);
             setImageFile(null);
