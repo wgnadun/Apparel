@@ -107,7 +107,7 @@ function ShoppingHome() {
                         {
                             brandsWithIcon.map((brandItem)=> 
 
-                            <Card  className="cursor-pointer hover:shadow-lg transition-shadow">
+                            <Card onClick={() => handleNavigateToListingPage(brandItem,'brand')} className="cursor-pointer hover:shadow-lg transition-shadow">
                                     <CardContent className="flex flex-col items-center justify-center p-6">
                                         <brandItem.icon className="w-12 h-12 text-primary mb-4" />
                                         <span className="text-lg font-semibold">{brandItem.label}</span>
