@@ -6,9 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllFilteredProducts } from '@/store/shop/products-slice';
+import { fetchAllFilteredProducts, fetchProductDetails } from '@/store/shop/products-slice';
 import ShoppingProductTile from '@/components/shopping-view/product-tile';
 import { useNavigate } from 'react-router-dom';
+import ProductDetailsDialog from '@/components/shopping-view/product-details';
+import { addToCart, fetchCartItems } from '@/store/shop/cart-slice';
+import { toast } from 'sonner';
  
 const categoriesWithIcons = 
             [
@@ -29,10 +32,18 @@ const categoriesWithIcons =
 function ShoppingHome() {
 
     const [currentSlide, setCurrentSlide] = useState(0);
-    const { productList } = useSelector((state) => state.shopProducts);
+    const { productList ,productDetails} = useSelector((state) => state.shopProducts);
+    const { user } = useSelector((state) => state.auth);
+    const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const slides =[bannerOne, bannerTwo, bannerThree];
+
+    
+
+    useEffect(()=>{
+        if(productDetails !==null) setOpenDetailsDialog(true);
+    },[productDetails]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -45,6 +56,40 @@ function ShoppingHome() {
     useEffect(() =>{
         dispatch(fetchAllFilteredProducts({ filterParams : {},sortParams :'price-lowtohigh'}));
     },[dispatch])
+
+function handleGetProductDetails(getCurrentProductId) {
+                dispatch(fetchProductDetails(getCurrentProductId))
+                console.log(getCurrentProductId)
+         }
+
+function handleAddtoCart(getCurrentProductId) {
+        if (!user?.id) {
+            toast.error("Please login to add items to cart");
+            return;
+        }
+        
+        if (!getCurrentProductId) {
+            toast.error("Product not found");
+            return;
+        }
+
+        console.log(getCurrentProductId);
+        dispatch(addToCart({
+            userId: user.id, 
+            productId: getCurrentProductId, 
+            quantity: 1
+        })).then((data) => {
+            if (data?.payload?.success) {
+                dispatch(fetchCartItems(user.id));
+                toast.success("Item added to cart successfully!");
+            } else {
+                toast.error("Failed to add item to cart");
+            }
+        }).catch((error) => {
+            console.error("Add to cart error:", error);
+            toast.error("Failed to add item to cart");
+        });
+     }
 
 
     function handleNavigateToListingPage(getCurrentItem, section) {
@@ -133,7 +178,12 @@ function ShoppingHome() {
                         {
                             productList && productList.length > 0 ? 
                             
-                           productList.map((productItem)=>(<ShoppingProductTile product={productItem}/>
+                           productList.map((productItem)=>(
+                           <ShoppingProductTile 
+                                handleGetProductDetails={handleGetProductDetails}
+                                product={productItem}
+                                handleAddtoCart={handleAddtoCart}
+                            />
                         ))
                       
                             : null  }
@@ -141,6 +191,12 @@ function ShoppingHome() {
                     </div>                  
                 </div>
             </section>
+              <ProductDetailsDialog 
+                open={openDetailsDialog} 
+                setOpen={setOpenDetailsDialog} 
+                productDetails={productDetails}
+                handleAddtoCart={handleAddtoCart}
+            />
         </div>
     );
     

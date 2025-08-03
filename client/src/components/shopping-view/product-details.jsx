@@ -48,14 +48,14 @@ function ProductDetailsDialog({open,setOpen,productDetails}){
 
     return (
         <Dialog open={open} onOpenChange ={handleDialogClose}>  
-            <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[vw] lg:max-w-[70vw]">
+            <DialogContent className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:p-12 max-w-[95vw] lg:max-w-[70vw] overflow-auto max-h-[90vh]">
                 <div className="relative overflow-hidden rounded-lg">
                     <img 
                     src={productDetails?.image} 
                     alt={productDetails?.title} 
                     width={600}
                     height={600}
-                    className = "aspect-square w-ful object-cover"
+                    className = "aspect-square w-full object-cover"
                     />
                     
                 </div>
@@ -81,7 +81,7 @@ function ProductDetailsDialog({open,setOpen,productDetails}){
                 </div>
                 <div>
                 <div className="flex items-center gap-2 mt-2">
-                     <div className="flex items-center gap-0 5">
+                     <div className="flex items-center gap-0.5">
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
@@ -100,7 +100,7 @@ function ProductDetailsDialog({open,setOpen,productDetails}){
                         </Button>
                     </div>
                     <Separator/>
-                    <div className="max-h-300px overflow-auto">
+                    <div className="max-h-[300px] overflow-auto">
                         <h2 className="text-xl font-bold mb-4">Reviews</h2>
                     <div className="grid gap-6">
                         <div className="flex gap-4">
@@ -113,7 +113,7 @@ function ProductDetailsDialog({open,setOpen,productDetails}){
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-bold" >Nadun dananjaya</h3>
                                 </div>
-                                <div className="flex items-center gap-0 5">
+                                <div className="flex items-center gap-0.5">
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
@@ -136,7 +136,7 @@ function ProductDetailsDialog({open,setOpen,productDetails}){
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-bold" >Nadun dananjaya</h3>
                                 </div>
-                                <div className="flex items-center gap-0 5">
+                                <div className="flex items-center gap-0.5">
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
@@ -159,7 +159,7 @@ function ProductDetailsDialog({open,setOpen,productDetails}){
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-bold" >Nadun dananjaya</h3>
                                 </div>
-                                <div className="flex items-center gap-0 5">
+                                <div className="flex items-center gap-0.5">
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
                                     <StarIcon className="w-5 h-5 fill-primary"/>
