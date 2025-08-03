@@ -54,6 +54,12 @@ function ShoppingHome() {
         }
 
         sessionStorage.setItem('filters',JSON.stringify(currentFilter));
+        
+        // Dispatch a custom event to notify the listing page about filter changes
+        window.dispatchEvent(new CustomEvent('filtersChanged', { 
+            detail: { filters: currentFilter } 
+        }));
+        
         navigate('/shop/listing');
     }
 

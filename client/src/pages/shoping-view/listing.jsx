@@ -98,8 +98,37 @@ function ShoppingListing() {
 
     useEffect(()=>{
         setSort('price-lowtohigh');
-        setfilters(JSON.parse(sessionStorage.getItem('filters')) || {});
+        
+        // Check for filters in sessionStorage first
+        const sessionFilters = JSON.parse(sessionStorage.getItem('filters')) || {};
+        
+        // Also check URL parameters as fallback
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlFilters = {};
+        
+        // Parse category from URL if present
+        if (urlParams.get('category')) {
+            urlFilters.category = urlParams.get('category').split(',');
+        }
+        
+        // Use sessionStorage filters if available, otherwise use URL filters
+        const initialFilters = Object.keys(sessionFilters).length > 0 ? sessionFilters : urlFilters;
+        setfilters(initialFilters);
     },[])
+
+    // Listen for filter changes from header navigation
+    useEffect(() => {
+        const handleFiltersChanged = (event) => {
+            const newFilters = event.detail.filters || {};
+            setfilters(newFilters);
+        };
+
+        window.addEventListener('filtersChanged', handleFiltersChanged);
+
+        return () => {
+            window.removeEventListener('filtersChanged', handleFiltersChanged);
+        };
+    }, []);
 
     useEffect(()=>{
         if(filters !== null && sort !== null)

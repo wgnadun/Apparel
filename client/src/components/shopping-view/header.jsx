@@ -1,5 +1,5 @@
 import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { logoutUser } from "@/store/auth-slice";
 import UserCartWrapper from "./cart-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
+import { Label } from "@radix-ui/react-label";
 
 function HeaderRightContent() {
         const {user} = useSelector(state => state.auth);
@@ -64,10 +65,36 @@ function HeaderRightContent() {
 }
 
 function MenuItems() {
+
+    const navigate = useNavigate();
+
+    function handleNavigate(getCurrentMenuItem){
+        const currentFilter = getCurrentMenuItem.id !== 'home'
+        ? { category: [getCurrentMenuItem.id] }
+        : null;
+
+    currentFilter
+        ? sessionStorage.setItem('filters', JSON.stringify(currentFilter))
+        : sessionStorage.removeItem('filters');
+
+    // Dispatch a custom event to notify the listing page about filter changes
+    window.dispatchEvent(new CustomEvent('filtersChanged', { 
+        detail: { filters: currentFilter } 
+    }));
+
+    navigate(getCurrentMenuItem.path);
+    }
     return(
         <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row"> 
             {
-                shoppingViewHeaderMenuItems.map(menuItem => <Link className="text-sm font-medium" key={menuItem.id} to={menuItem.path}>{menuItem.label}</Link>)
+                shoppingViewHeaderMenuItems.map(menuItem =>
+                     <Label
+                     className="text-sm font-medium cursor-pointer"
+                     onClick={() => {handleNavigate(menuItem)}}
+                     key={menuItem.id}
+                     > {menuItem.label}
+                     
+                     </Label>)
             }
         </nav>
     );
