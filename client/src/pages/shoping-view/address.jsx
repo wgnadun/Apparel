@@ -1,8 +1,9 @@
 import CommonForm from '@/components/common/form'
+import AddressCard from '@/components/shopping-view/address-card'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { addressFormControls } from '@/config'
-import { addNewAddress } from '@/store/shop/address-slice'
-import  { useState } from 'react'
+import { addNewAddress, deleteAddress, fetchAllAddresses } from '@/store/shop/address-slice'
+import  { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 const initialAddressFormData ={
@@ -18,23 +19,50 @@ function Address() {
     const [formData,setFormData] =  useState(initialAddressFormData)
     const dispatch = useDispatch();
     const {user} =useSelector((state)=>state.auth);
+    const {addressList} =useSelector((state)=>state.shopAddress);
    
  function handleManageAddress(event){
         event.preventDefault();   
         dispatch(addNewAddress({...formData,userId:user?.id})
     ).then((data)=>{
-        console.log(data)
+        if(data?.payload?.success){
+            dispatch(fetchAllAddresses(user?.id))
+            setFormData(initialAddressFormData);
+        }
     }) 
-    }
+}
 
-    function isFormValid() {
+function handleDeleteAddress(getCurrentAddress){
+  console.log(getCurrentAddress);
+  dispatch(deleteAddress({userId: user?.id, addressId: getCurrentAddress?._id})).then(data=>{
+      if(data?.payload?.success){
+        dispatch(fetchAllAddresses(user?.id))
+      }
+  })
+}
+
+function isFormValid() {
         return Object.keys(formData).map(key=> formData[key].trim() !=='').every(item=> item === true)
     }
 
+useEffect(()=>{
+        dispatch(fetchAllAddresses(user?.id))
+    },[dispatch])
+
+    console.log(addressList," addressList");
+
+
   return (
     <Card>
-        <div>
-            Address List
+        <div className="mb-5 p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {
+                addressList && addressList.length > 0 ?
+                addressList.map(singleAddressItem=> <AddressCard 
+                    addressInfo={singleAddressItem}
+                    handleDeleteAddress={handleDeleteAddress}
+                   
+                />) : null
+            }
         </div>
     <CardHeader>
         <CardTitle>Add new Address</CardTitle>
