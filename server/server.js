@@ -38,7 +38,7 @@ mongoose
      app.use('/api/admin/products',adminProductsRouter);
      app.use('/api/shop/products',shopProductsRouter);
      app.use('/api/shop/cart',shopCartRouter);
-     app.use('/app/shop/address',shopAddressRouter);
+     app.use('/api/shop/address',shopAddressRouter);
 
      app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
