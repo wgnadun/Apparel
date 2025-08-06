@@ -2,27 +2,40 @@ import React from 'react'
 import { DialogContent } from '../ui/dialog'
 import { Label } from '../ui/label'
 import { Separator } from '../ui/separator'
+import { Badge } from '../ui/badge'
 
-function ShoppingOrderDetailsView() {
+function ShoppingOrderDetailsView({orderDetails}) {
   return (
      <DialogContent className="sm:max-w-[600px]">
         <div className="grid gap-6">
             <div className="grid gap-2">
                 <div className="mt-6 flex items-center justify-between">
                     <p className="font-medium">Order ID</p>
-                    <Label>123456</Label>
+                    <Label>{orderDetails?._id}</Label>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                     <p className="font-medium">Order Date</p>
-                    <Label>2023-02-15</Label>
+                    <Label>{orderDetails?.orderDate.split('T')[0]}</Label>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                     <p className="font-medium">Order Price</p>
-                    <Label>$99.99</Label>
+                    <Label>${orderDetails?.totalAmount}</Label>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
                     <p className="font-medium">Order Status</p>
-                    <Label>Shipped</Label>
+                    <Label>
+                        <Badge
+                            className={`py-1 px-3 ${
+                            orderDetails?.orderStatus === "confirmed"
+                                ? "bg-green-700"
+                                : orderDetails?.orderStatus === "rejected"
+                                ? "bg-red-600"
+                                : "bg-black"
+                            }`}
+                        >
+                            {orderDetails?.orderStatus}
+                        </Badge>                        
+                    </Label>
                 </div>
             </div>
             <Separator/>
