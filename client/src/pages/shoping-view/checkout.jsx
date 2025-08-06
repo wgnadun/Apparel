@@ -10,7 +10,9 @@ function ShoppingCheckout() {
 
 const {cartItems} = useSelector((state)=>state.shopCart);
 const {user} = useSelector((state)=>state.auth);
+const {approvalURL} = useSelector((state)=>state.shopOrder);
 const[currentSelectedAddress,setCurrentSelectedAddress]= useState(null);
+const [isPaymentStart,setIsPaymentStart] = useState(false);
 const dispatch = useDispatch();
 
 console.log(currentSelectedAddress,' current Selected Address')
@@ -63,9 +65,17 @@ function handleInitiatePaypalPayment(){
 
    dispatch(createNewOrder(orderData)).then((data)=>{
     console.log(data,'nadun');
+    if(data?.payload?.success){
+        setIsPaymentStart(true);
+    }else{
+      setIsPaymentStart(false);
+    }
    })
 }
 
+if(approvalURL){
+  window.location.href = approvalURL;
+}
 
 
     return(
