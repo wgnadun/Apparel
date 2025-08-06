@@ -5,6 +5,7 @@ import UserCartItemsContent from '@/components/shopping-view/cart-items-content'
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { createNewOrder } from '@/store/shop/order-slice';
+import { toast } from 'sonner';
 
 function ShoppingCheckout() {
 
@@ -32,6 +33,28 @@ console.log(currentSelectedAddress,' current Selected Address')
       : 0;
 
 function handleInitiatePaypalPayment(){
+  
+  
+  if(cartItems.length === 0){
+       toast.error('Your cart is empty. Please add items to proceed checkout !',{
+         style:
+         {
+           background:'white',
+           color:'#8B0000'
+         }
+       });
+       return;
+  }
+  if(currentSelectedAddress === null){
+       toast.error('please select one address to proceed !',{
+         style:
+         {
+           background:'white',
+           color:'#8B0000'
+         }
+       });
+       return;
+  }
  const orderData = {
       userId: user?.id,
       cartId: cartItems?._id,
