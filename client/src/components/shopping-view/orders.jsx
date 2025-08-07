@@ -70,7 +70,7 @@ function ShoppingOrders() {
                         className={`py-1 px-3 ${
                           orderItem?.orderStatus === "confirmed"
                             ? "bg-green-700"
-                            : orderItem?.orderStatus === "rejected"
+                            : orderItem?.orderStatus === "Rejected"
                             ? "bg-red-600"
                             : "bg-black"
                         }`}

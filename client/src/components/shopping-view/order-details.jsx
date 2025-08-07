@@ -40,7 +40,7 @@ function ShoppingOrderDetailsView({orderDetails}) {
                             className={`py-1 px-3 ${
                             orderDetails?.orderStatus === "confirmed"
                                 ? "bg-green-700"
-                                : orderDetails?.orderStatus === "rejected"
+                                : orderDetails?.orderStatus === "Rejected"
                                 ? "bg-red-600"
                                 : "bg-black"
                             }`}

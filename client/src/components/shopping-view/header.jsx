@@ -1,5 +1,5 @@
 import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams} from "react-router-dom";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -69,22 +69,27 @@ function HeaderRightContent() {
 function MenuItems() {
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const [serchParams,setSearchParams] = useSearchParams()
 
     function handleNavigate(getCurrentMenuItem){
-        const currentFilter = getCurrentMenuItem.id !== 'home'
+        const currentFilter = getCurrentMenuItem.id !== 'home' && getCurrentMenuItem.id !=='products'
         ? { category: [getCurrentMenuItem.id] }
         : null;
 
     currentFilter
         ? sessionStorage.setItem('filters', JSON.stringify(currentFilter))
         : sessionStorage.removeItem('filters');
+    location.pathname.includes('listing') && currentFilter !== null ?
+    setSearchParams(new URLSearchParams(`?category = ${getCurrentMenuItem.id}`)) :
+    
+    navigate(getCurrentMenuItem.path);
 
     // Dispatch a custom event to notify the listing page about filter changes
     window.dispatchEvent(new CustomEvent('filtersChanged', { 
         detail: { filters: currentFilter } 
     }));
 
-    navigate(getCurrentMenuItem.path);
     }
     return(
         <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row"> 
