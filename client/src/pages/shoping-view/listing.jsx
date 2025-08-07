@@ -29,6 +29,7 @@ function createSearchParamsHelper(filterParams) {
 function ShoppingListing() {
 
     const {user} =  useSelector(state => state.auth);
+    const {cartItems} =  useSelector(state => state.shopCart);
     const dispatch = useDispatch();
     const {productList,productDetails} = useSelector(state=> state.shopProducts);
     const [filters,setfilters] = useState({});
@@ -66,7 +67,27 @@ function ShoppingListing() {
             dispatch(fetchProductDetails(getCurrentProductId))
      }
 
-     function handleAddtoCart(getCurrentProductId) {
+     function handleAddtoCart(getCurrentProductId,getTotalStock) {
+        let getCartItems = cartItems.items || [];
+
+        if(getCartItems.length){
+          
+            const indexOfCurrentItem = getCartItems.findIndex(item=> item.productId === getCurrentProductId);
+        
+        if(indexOfCurrentItem > -1){
+                const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+                if(getQuantity + 1 > getTotalStock){
+                    toast.error(`only ${getQuantity} can be added for this Items`,{
+                        style : {
+                            background : 'white',
+                            color : 'red'
+                        }
+                    })
+                return;
+                }
+            }
+        }
+
         if (!user?.id) {
             toast.error("Please login to add items to cart");
             return;
@@ -145,6 +166,8 @@ function ShoppingListing() {
     useEffect(()=>{
         if(productDetails !==null) setOpenDetailsDialog(true)
     },[productDetails])
+
+    console.log(productList,'product list');
     
     return(
         <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
