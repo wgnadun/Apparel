@@ -23,6 +23,7 @@ import { Skeleton } from './components/ui/skeleton';
 import { Toaster } from './components/ui/sonner';
 import PaypalReturnPage from './pages/shoping-view/paypal-return';
 import PaymentSuccessPage from './pages/shoping-view/payment-success';
+import SearchProducts from './pages/shoping-view/search';
 
 function App() {
  const {user,isAuthenticated,isLoading} = useSelector(state=> state.auth);
@@ -73,6 +74,7 @@ function App() {
             <Route path="listing" element={<ShoppingListing />} />
             <Route path="paypal-return" element={<PaypalReturnPage/>}/>
             <Route path="payment-success" element={<PaymentSuccessPage/>}/>
+            <Route path="search" element={<SearchProducts/>}/>
           </Route>
 
           <Route path="/unauth-page" element={<UnauthPage />} />

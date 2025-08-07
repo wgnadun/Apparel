@@ -15,6 +15,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const { cartItems } = useSelector((state) => state.shopCart);
 
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
+    
     let getCartItems = cartItems.items || [];
 
     if (getCartItems.length) {
@@ -23,8 +24,10 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       );
 
       if (indexOfCurrentItem > -1) {
+       
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
+
           toast.error(`only ${getQuantity} can be added for this Items`, {
             style: {
               background: "white",
@@ -36,26 +39,17 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       }
     }
 
-    if (!user?.id) {
-      toast.error("Please login to add items to cart");
-      return;
-    }
-
-    if (!productDetails?._id) {
-      toast.error("Product not found");
-      return;
-    }
 
     dispatch(
       addToCart({
-        userId: user.id,
+        userId: user?.id,
         productId: getCurrentProductId,
         quantity: 1,
       })
     )
       .then((data) => {
         if (data?.payload?.success) {
-          dispatch(fetchCartItems(user.id));
+          dispatch(fetchCartItems(user?.id));
           toast.success("Item added to cart successfully!");
         } else {
           toast.error("Failed to add item to cart");

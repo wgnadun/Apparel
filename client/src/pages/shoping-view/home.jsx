@@ -38,6 +38,7 @@ function ShoppingHome() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const slides =[bannerOne, bannerTwo, bannerThree];
+    const { cartItems } = useSelector((state) => state.shopCart);
 
     
 
@@ -62,20 +63,34 @@ function handleGetProductDetails(getCurrentProductId) {
                 console.log(getCurrentProductId)
          }
 
-function handleAddtoCart(getCurrentProductId) {
-        if (!user?.id) {
-            toast.error("Please login to add items to cart");
-            return;
-        }
-        
-        if (!getCurrentProductId) {
-            toast.error("Product not found");
-            return;
-        }
+function handleAddtoCart(getCurrentProductId,getTotalStock) {
+       
+            let getCartItems = cartItems.items || [];
 
-        console.log(getCurrentProductId);
-        dispatch(addToCart({
-            userId: user.id, 
+            if (getCartItems.length) {
+            const indexOfCurrentItem = getCartItems.findIndex(
+                (item) => item.productId === getCurrentProductId
+            );
+
+            if (indexOfCurrentItem > -1) {
+            
+                const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+                if (getQuantity + 1 > getTotalStock) {
+
+                toast.error(`only ${getQuantity} can be added for this Items`, {
+                    style: {
+                    background: "white",
+                    color: "red",
+                    },
+                });
+                return;
+                }
+            }
+            }
+
+        dispatch(
+            addToCart({
+            userId: user?.id, 
             productId: getCurrentProductId, 
             quantity: 1
         })).then((data) => {
