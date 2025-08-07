@@ -5,6 +5,18 @@ function CheckAuth({isAuthenticated, user, children}) {
 
     const location = useLocation(); // get the current location of  the page
 
+    if(location.pathname ==='/'){
+        if(!isAuthenticated){
+          return <Navigate to='/auth/login' />;
+
+        }else{
+        if (user?.role === 'admin') {
+            return <Navigate to="/admin/dashboard" />
+        } else {
+            return <Navigate to="/shop/home" />
+        }
+        }
+    }
 
     if (!isAuthenticated &&
         !(
