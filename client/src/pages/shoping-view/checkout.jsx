@@ -124,7 +124,9 @@ if(approvalURL){
                 </div> 
                 <div className="mt-4 w-full">
                     <Button onClick={handleInitiatePaypalPayment} className="w-full">
-                         Pay with Payapal
+                         {
+                          isPaymentStart ? 'Proccessing payment' : 'Checkout with Paypal'
+                         }
                     </Button>
             </div>     
           </div>
