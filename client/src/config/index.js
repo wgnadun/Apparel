@@ -77,6 +77,8 @@ export const addProductFormElements = [
       { id: "levi", label: "Levi's" },
       { id: "zara", label: "Zara" },
       { id: "h&m", label: "H&M" },
+      { id: "coofandy", label: "Coofandy" },
+      { id: "J.VER", label: "J.VER" },
     ],
   },
   {
@@ -160,6 +162,8 @@ export const brandOptionsMap = {
   levi: "Levi",
   zara: "Zara",
   "h&m": "H&M",
+  coofandy: "Coofandy",
+ "  J.VER ":"J.VER"
 };
 
 export const filterOptions = {
@@ -177,6 +181,8 @@ export const filterOptions = {
     { id: "levi", label: "Levi's" },
     { id: "zara", label: "Zara" },
     { id: "h&m", label: "H&M" },
+    { id: "coofandy", label: "Coofandy" },
+    { id: "J.VER", label: "J.VER" },
   ],
 };
 

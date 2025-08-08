@@ -117,21 +117,31 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
-        <div className="relative overflow-hidden rounded-lg">
-          <img
-            src={productDetails?.image}
-            alt={productDetails?.title}
-            width={600}
-            height={600}
-            className="aspect-square w-full object-cover"
-          />
-        </div>
+       <div className="group relative overflow-hidden rounded-lg place-items-center m-20">
+  <img
+    src={productDetails?.image}
+    alt={productDetails?.title}
+    width={600}
+    height={600}
+    className="h-[600px] w-auto object-contain transition-transform duration-500 ease-out scale-110 group-hover:scale-100"
+  />
+</div>
+
         <div className="">
           <div>
             <h1 className="text-3xl font-extrabold">{productDetails?.title}</h1>
-            <p className="text-muted-foreground text-2xl mb-5 mt-4">
-              {productDetails?.description}
-            </p>
+            <div className="text-muted-foreground text-sm mb-5 mt-4">
+   <ul className="list-disc list-outside pl-5 text-left text-muted-foreground text-sm mb-5 mt-4">
+  {productDetails?.description
+    ?.split("\n")
+    .map((line, i) => (
+      <li key={i}>{line}</li>
+    ))}
+</ul>
+
+
+            </div>
+
           </div>
           <div className="flex items-center justify-between">
             <p
