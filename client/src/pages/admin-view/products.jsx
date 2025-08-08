@@ -26,7 +26,7 @@ function AdminProducts() {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
   const [imageFile ,setImageFile] = useState(null);
-  const [uploadImageUrl, setUploadImageUrl] = useState('');
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('');
   const [imageLoadingState,setImageLoadingState] = useState(false)
   const [currentEditedId,setCurrentEditedId] = useState(null);
 
@@ -55,7 +55,7 @@ function AdminProducts() {
       : dispatch(
           addNewProduct({
             ...formData,
-            image: uploadImageUrl,
+            image: uploadedImageUrl,
           })
         ).then((data) => {
           if (data?.payload?.success) {
@@ -91,7 +91,7 @@ function AdminProducts() {
     dispatch(fetchAllProducts())
   },[dispatch])
 
-  console.log(productList,uploadImageUrl,"productList");
+  console.log(productList,uploadedImageUrl,"productList");
 
   return ( 
     <Fragment>
@@ -131,8 +131,8 @@ function AdminProducts() {
           <ProductImageUpload 
                 imageFile={imageFile} 
                 setImageFile={setImageFile} 
-                uploadImageUrl={uploadImageUrl} 
-                setUploadImageUrl={setUploadImageUrl} 
+                uploadedImageUrl={uploadedImageUrl} 
+                setUploadedImageUrl={setUploadedImageUrl} 
                 setImageLoadingState ={setImageLoadingState}
                 imageLoadingState={imageLoadingState}
                 isEditMode={currentEditedId !==null}

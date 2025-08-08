@@ -41,6 +41,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
           setOpenCartSheet(false);
         }}
         className="w-full mt-6"
+        
       >
         Checkout
       </Button>

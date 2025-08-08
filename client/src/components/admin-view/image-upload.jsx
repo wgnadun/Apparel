@@ -9,11 +9,12 @@ import { Skeleton } from "../ui/skeleton";
 function ProductImageUpload({
    imageFile, 
    setImageFile, 
-   uploadImageUrl, 
+   uploadedImageUrl, 
    imageLoadingState,
-   setUploadImageUrl,
+   setUploadedImageUrl,
    setImageLoadingState ,
-    isEditMode 
+   isEditMode,
+   isCustomStyle = false, 
 
   }) {
 
@@ -52,7 +53,7 @@ function ProductImageUpload({
       const response =  await axios.post('http://localhost:5000/api/admin/products/upload-image',data);
 
       if(response?.data?.success) {
-        setUploadImageUrl(response.data.result.url);
+        setUploadedImageUrl(response.data.result.url);
         setImageLoadingState(false);
       }
     }
@@ -62,7 +63,7 @@ function ProductImageUpload({
     },[imageFile]);
 
     return(
-      <div className="max-w-md mx-auto mt-4">
+      <div className={`w-full ${isCustomStyle ? '':'mx-auto mt-4 '}`}>
         <label className="text-lg font-semibold mb-5 block ">Upload Image</label>
 
         <div 
