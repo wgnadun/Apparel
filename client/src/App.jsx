@@ -70,6 +70,16 @@ function App() {
             <Route path="products" element={<AdminProducts />} />
           </Route>
 
+{/* //shop public routes */}
+
+          <Route path="/shop" element={<ShoppingLayout />  } >
+            <Route path="home" element={<ShoppingHome />} />
+            <Route path="listing" element={<ShoppingListing />} />
+            <Route path="search" element={<SearchProducts/>}/>
+          </Route>
+
+{/* //shop auth routes */}
+
           <Route path="/shop" element={<CheckAuth isAuthenticated={isAuthenticated} user={user}>
             <ShoppingLayout />
           </CheckAuth>

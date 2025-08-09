@@ -110,16 +110,26 @@ if(approvalURL){
                 <Address 
                 selectedId = {currentSelectedAddress}
                 setCurrentSelectedAddress={setCurrentSelectedAddress} />
-                <div className='flex flex-col gap-4'>
-                     {cartItems && cartItems.items && cartItems.items.length > 0
-                        ? cartItems.items.map((item) => (
+              
+              <div className='flex flex-col gap-4 '>
+                   
+              <div className="mt-8 space-y-4 max-h-150 overflow-y-auto px-4">
+                    {cartItems && cartItems?.items?.length > 0
+                      ? cartItems.items.map((item, index) => (
+                          <div
+                            key={index}
+                            className="transition-all duration-300 hover:shadow-md hover:scale-[1.02] rounded-lg p-2"
+                          >
                             <UserCartItemsContent cartItem={item} />
-                          ))
-                        : null}
+                          </div>
+                        ))
+                      : null}
+                </div>
+
                 <div className="mt-8 space-y-4">
                       <div className="flex justify-between">
                         <span className="font-bold">Total</span>
-                        <span className="font-bold">${totalCartAmount}</span>
+                        <span className="font-bold">${totalCartAmount.toFixed(2)}</span>
                       </div>
                 </div> 
                 <div className="mt-4 w-full">

@@ -26,7 +26,7 @@ import { Label } from "@radix-ui/react-label";
 import { Separator } from "../ui/separator";
 
 function HeaderRightContent() {
-  const { user } = useSelector((state) => state.auth);
+  const { user,isAuthenticated } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const [OpenCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
@@ -62,7 +62,8 @@ function HeaderRightContent() {
         />
       </Sheet>
 
-      <DropdownMenu>
+   {isAuthenticated ? (
+<DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg to-black">
             <AvatarFallback className="bg-black text-white font-extrabold">
@@ -84,6 +85,10 @@ function HeaderRightContent() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+   ): (<Button onClick={() => navigate("//login")} variant="default">
+          Log In
+        </Button>)}
+      
     </div>
   );
 }

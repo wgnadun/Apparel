@@ -31,12 +31,12 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
         </p>
       </SheetHeader>
 
-     <div className="mt-8 space-y-4 max-h-150 overflow-y-auto pr-2">
+     <div className="mt-8 space-y-4 max-h-150 overflow-y-auto px-4">
         {cartItems && cartItems?.items?.length > 0
           ? cartItems.items.map((item, index) => (
               <div
                 key={index}
-                className="transition-all duration-300 hover:shadow-md hover:scale-[1.02] rounded-lg"
+                className="transition-all duration-300 hover:shadow-md hover:scale-[1.02] rounded-lg p-2"
               >
                 <UserCartItemsContent cartItem={item} />
               </div>
@@ -48,19 +48,23 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
       <div className="mt-8 space-y-4">
         <div className="flex justify-between">
           <span className="font-bold">Total Amount :</span>
-          <span className="font-bold">${totalCartAmount}</span>
+          <span className="font-bold">${totalCartAmount.toFixed(2)}</span>
         </div>
       </div>
-      <Button
-        onClick={() => {
-          navigate("/shop/checkout");
-          setOpenCartSheet(false);
-        }}
-        className="w-full mt-6"
-        
-      >
-        Checkout
-      </Button>
+    
+      {cartItems?.items?.length > 0 &&(
+            <Button
+              onClick={() => {
+                navigate("/shop/checkout");
+                setOpenCartSheet(false);
+              }}
+              className="w-full mt-6"
+              
+            >
+              Checkout
+            </Button>
+      )}
+
     </SheetContent>
   );
 }

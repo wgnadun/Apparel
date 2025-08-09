@@ -22,36 +22,26 @@ function AddressCard({
           : "border-black"
       }`}
     >
-      <CardContent className="grid p-4 gap-4">
-                  <div className="space-y-2 max-w-md">
-              <div className="flex">
-                <span className="w-28 font-medium">Address</span>
-                <span className="mr-1">:</span>
-                <span>{addressInfo?.address}</span>
-              </div>
-              <div className="flex">
-                <span className="w-28 font-medium">City</span>
-                <span className="mr-1">:</span>
-                <span>{addressInfo?.city}</span>
-              </div>
-              <div className="flex">
-                <span className="w-28 font-medium">Postal code</span>
-                <span className="mr-1">:</span>
-                <span>{addressInfo?.pincode}</span>
-              </div>
-              <div className="flex">
-                <span className="w-28 font-medium">Phone</span>
-                <span className="mr-1">:</span>
-                <span>{addressInfo?.phone}</span>
-              </div>
-              <div className="flex">
-                <span className="w-28 font-medium">Notes</span>
-                <span className="mr-1">:</span>
-                <span>{addressInfo?.notes}</span>
-              </div>
+        <CardContent className="p-4">
+            <div className="space-y-3 max-w-md w-full overflow-x-hidden">
+              {[
+                { label: "Address", value: addressInfo?.address },
+                { label: "City", value: addressInfo?.city },
+                { label: "Postal code", value: addressInfo?.pincode },
+                { label: "Phone", value: addressInfo?.phone },
+                { label: "Notes", value: addressInfo?.notes },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex flex-col sm:flex-row sm:items-start">
+                  <span className="w-full sm:w-28 font-medium flex-shrink-0 mb-1 sm:mb-0">
+                    {label}:
+                  </span>
+                  <span className="break-words flex-grow w-full">{value}</span>
+                </div>
+              ))}
             </div>
 
-      </CardContent>
+        </CardContent>
+
       <CardFooter className="p-3 flex justify-between">
         <Button onClick={() => handleEditAddress(addressInfo)}>Edit</Button>
         <Button onClick={() => handleDeleteAddress(addressInfo)}>Delete</Button>
