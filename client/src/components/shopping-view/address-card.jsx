@@ -23,11 +23,34 @@ function AddressCard({
       }`}
     >
       <CardContent className="grid p-4 gap-4">
-        <Label>Address: {addressInfo?.address}</Label>
-        <Label>City: {addressInfo?.city}</Label>
-        <Label>pincode: {addressInfo?.pincode}</Label>
-        <Label>Phone: {addressInfo?.phone}</Label>
-        <Label>Notes: {addressInfo?.notes}</Label>
+                  <div className="space-y-2 max-w-md">
+              <div className="flex">
+                <span className="w-28 font-medium">Address</span>
+                <span className="mr-1">:</span>
+                <span>{addressInfo?.address}</span>
+              </div>
+              <div className="flex">
+                <span className="w-28 font-medium">City</span>
+                <span className="mr-1">:</span>
+                <span>{addressInfo?.city}</span>
+              </div>
+              <div className="flex">
+                <span className="w-28 font-medium">Postal code</span>
+                <span className="mr-1">:</span>
+                <span>{addressInfo?.pincode}</span>
+              </div>
+              <div className="flex">
+                <span className="w-28 font-medium">Phone</span>
+                <span className="mr-1">:</span>
+                <span>{addressInfo?.phone}</span>
+              </div>
+              <div className="flex">
+                <span className="w-28 font-medium">Notes</span>
+                <span className="mr-1">:</span>
+                <span>{addressInfo?.notes}</span>
+              </div>
+            </div>
+
       </CardContent>
       <CardFooter className="p-3 flex justify-between">
         <Button onClick={() => handleEditAddress(addressInfo)}>Edit</Button>

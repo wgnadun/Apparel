@@ -23,6 +23,7 @@ import UserCartWrapper from "./cart-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
 import { Label } from "@radix-ui/react-label";
+import { Separator } from "../ui/separator";
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
@@ -144,19 +145,25 @@ function ShoppingHeader() {
           <span className="font-bold">FashionHub</span>
         </Link>
 
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon" className="lg:hidden">
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle header menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-full max-w-xs">
-            <SheetTitle className="sr-only">Main menu</SheetTitle>
-            <MenuItems />
-            <HeaderRightContent />
-          </SheetContent>
-        </Sheet>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="lg:hidden">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle header menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="left"
+              className="w-full max-w-xs p-6 flex flex-col gap-6
+                        sm:max-w-sm md:max-w-md"
+            >
+              <SheetTitle className="sr-only">Main menu</SheetTitle>
+              <MenuItems />
+              <Separator className="my-4" />
+              <HeaderRightContent />
+            </SheetContent>
+          </Sheet>
+
         <div className="hidden lg:block">
           <MenuItems />
         </div>
