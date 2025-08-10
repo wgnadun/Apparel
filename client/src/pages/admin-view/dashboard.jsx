@@ -1,114 +1,44 @@
-import ProductImageUpload from "@/components/admin-view/image-upload";
-import { Button } from "@/components/ui/button";
-import {
-  addFeatureImage,
-  getFeatureImages,
-  deleteFeatureImages
-} from "@/store/common/feature-slice";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
+
+import { TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs } from '@radix-ui/react-tabs'
+import React from 'react'
+import AdminDashboardBanner from './dashboardBanner'
+import AdminDashboardStats from './dashboardStats'
 
 function AdminDashboard() {
-  const [imageFile, setImageFile] = useState(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const [imageLoadingState, setImageLoadingState] = useState(false);
-  const dispatch = useDispatch();
-  const { featureImageList } = useSelector((state) => state.commonFeature);
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    dispatch(getFeatureImages());
-  }, [dispatch]);
-
-  function handleUploadFeatureImage() {
-    dispatch(addFeatureImage(uploadedImageUrl)).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(getFeatureImages());
-        setImageFile(null);
-        setUploadedImageUrl("");
-      }
-    });
-  }
-
-  const total = featureImageList?.length || 0;
-  const currentImage = featureImageList ? featureImageList[currentIndex] : null;
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? total - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === total - 1 ? 0 : prev + 1));
-  };
-
-  
-
-  if (!featureImageList || total === 0) {
-    return null; // or a placeholder message
-  }
-  function handleDelete() {
-      dispatch(deleteFeatureImages(currentImage._id)).then((data) => {
-        if (data?.payload?.success) {
-          dispatch(getFeatureImages());
-        }
-      });
-    }
-
   return (
-    <>
-      <ProductImageUpload
-        imageFile={imageFile}
-        setImageFile={setImageFile}
-        uploadedImageUrl={uploadedImageUrl}
-        setUploadedImageUrl={setUploadedImageUrl}
-        setImageLoadingState={setImageLoadingState}
-        imageLoadingState={imageLoadingState}
-        isCustomStyle={true}
-      />
+<div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div className="flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+    <Tabs defaultValue="banner">
+      <TabsList className="border-b border-gray-300 mb-4 flex space-x-4">
+  <TabsTrigger
+    value="banner"
+    className="px-4 py-2 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-t-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  >
+    Banner Update
+  </TabsTrigger>
+  <TabsTrigger
+    value="stats"
+    className="px-4 py-2 text-base font-semibold text-gray-700 hover:bg-gray-100 rounded-t-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  >
+    Stats
+  </TabsTrigger>
+</TabsList>
 
-      <Button onClick={handleUploadFeatureImage} className="mt-5 w-full">
-        Upload
-      </Button>
 
-      <div className="mt-5 max-w-full relative">
-        <h1 className="font-bold text-2xl text-center p-5">
-          Update hero section banner
-        </h1>
+      <TabsContent value="banner" className="p-4 bg-gray-50 rounded-b-lg">
+        <AdminDashboardBanner />
+      </TabsContent>
 
-        <div className="relative">
-          <img
-            src={currentImage.image}
-            alt={`Slide ${currentIndex + 1}`}
-            className="w-full h-[600px] object-cover rounded-t-lg"
-          />
+      <TabsContent value="stats" className="p-4 bg-gray-50 rounded-b-lg">
+        <AdminDashboardStats />
+      </TabsContent>
+    </Tabs>
+  </div>
+</div>
 
-          {/* Delete Button */}
-         <Button 
-           className="absolute top-2 right-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 z-10"
-          onClick={() => handleDelete()}>Delete</Button>
-        </div>
-
-        {/* Navigation buttons */}
-        {total > 1 && (
-          <div className="flex justify-between mt-2">
-            <button
-              onClick={handlePrev}
-              className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
-            >
-              Prev
-            </button>
-            <button
-              onClick={handleNext}
-              className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
-            >
-              Next
-            </button>
-          </div>
-        )}
-      </div>
-    </>
-  );
+  )
 }
 
 export default AdminDashboard;

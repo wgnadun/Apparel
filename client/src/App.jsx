@@ -5,8 +5,6 @@ import AuthLayout from './components/auth/layout';
 import AuthLogin from './pages/auth/login';
 import AuthRegister from './pages/auth/register';
 import AdminLayout from './components/admin-view/layout';
-import AdminDashboard from './pages/admin-view/dashboard';
-import AdminFeatures from './pages/admin-view/features';
 import AdminOrders from './pages/admin-view/orders';
 import AdminProducts from './pages/admin-view/products';
 import ShoppingLayout from './components/shopping-view/layout';
@@ -24,6 +22,9 @@ import { Toaster } from './components/ui/sonner';
 import PaypalReturnPage from './pages/shoping-view/paypal-return';
 import PaymentSuccessPage from './pages/shoping-view/payment-success';
 import SearchProducts from './pages/shoping-view/search';
+import AdminDashboardBanner from './pages/admin-view/dashboardBanner';
+import AdminDashboardStats from './pages/admin-view/dashboardStats';
+import AdminDashboard from './pages/admin-view/dashboard';
 
 function App() {
  const {user,isAuthenticated,isLoading} = useSelector(state=> state.auth);
@@ -64,8 +65,10 @@ function App() {
           </CheckAuth>
           }
           >
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="features" element={<AdminFeatures />} />
+            <Route path="dashboard" element={<AdminDashboard />}/>
+                  <Route path="banner" element={<AdminDashboardBanner/>}/>
+                  <Route path="stats" element={<AdminDashboardStats/>}/>
+            
             <Route path="orders" element={<AdminOrders />} />
             <Route path="products" element={<AdminProducts />} />
           </Route>
