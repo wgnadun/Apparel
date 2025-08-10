@@ -1,4 +1,5 @@
 import CommonForm from "@/components/common/form";
+import ShoppingHeader from "@/components/shopping-view/header";
 import { loginFormControls } from "@/config";
 import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
@@ -35,7 +36,8 @@ function AuthLogin() {
     });
   }
   return (
-    <div className="mx-auto w-full max-w-md space-y-6">
+   <div>
+     <div className="mx-auto w-full max-w-md space-y-6">
       <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Sign in to your account
@@ -58,6 +60,7 @@ function AuthLogin() {
         onSubmit={onSubmit}
       />
     </div>
+   </div>
   );
 }
 

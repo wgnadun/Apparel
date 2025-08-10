@@ -1,20 +1,36 @@
 import { Outlet } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function AuthLayout() {
+  const images = [
+    "https://res.cloudinary.com/dxzsfmpzu/image/upload/v1754730694/young-children-spending-time-together_j3s3m0.jpg",
+    "https://res.cloudinary.com/dxzsfmpzu/image/upload/v1754730273/q_er3g5r.jpg",
+    "https://res.cloudinary.com/dxzsfmpzu/image/upload/v1754730985/portrait-sexy-handsome-fashion-male-model-man-dressed-elegant-suit-posing-street-blue-sky_1_svelks.jpg",
+    "https://res.cloudinary.com/dxzsfmpzu/image/upload/v1754732402/sexy-blond-woman-big-sunglasses-with-full-lips-posing-outdoor-red-jacket-stylish-silver-accessorises-perfect-figure_ysrpi2.jpg",
+  ];
+
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [images.length]);
+
   return (
     <div className="flex min-h-screen w-full">
-      {/* Left Section with Background Image */}
+
+      {/* Left Section with Slideshow */}
       <div
-        className="hidden lg:flex items-center justify-center w-1/2 px-12 relative"
+        className="hidden lg:flex items-center justify-center w-1/2 px-12 relative transition-all duration-1000 ease-in-out"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1521335629791-ce4aec67dd47?auto=format&fit=crop&w=1600&q=80')",
+          backgroundImage: `url('${images[index]}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
         {/* Dark overlay for better text visibility */}
-        <div className="absolute inset-0 bg-black bg-opacity-60"></div>
 
         {/* Content */}
         <div className="relative max-w-md space-y-6 text-center text-white">

@@ -4,38 +4,72 @@ import { Label } from '../ui/label'
 import { Separator } from '../ui/separator'
 import { Badge } from '../ui/badge'
 import { useSelector } from 'react-redux'
+import { Table, TableBody, TableCell, TableRow } from '../ui/table'
+import { Calendar, ClipboardCheck, CreditCard, DollarSign, Receipt, Truck } from 'lucide-react'
 
 function ShoppingOrderDetailsView({orderDetails}) {
  
  const {user} =  useSelector(state => state.auth)
 
   return (
-     <DialogContent className="sm:max-w-[600px]">
+     <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+    <div className="font-medium">Order Details</div>
+
         <div className="grid gap-6">
-            <div className="grid gap-2">
-                <div className="mt-6 flex items-center justify-between">
-                    <p className="font-medium">Order ID</p>
-                    <Label>{orderDetails?._id}</Label>
-                </div>
-                <div className="mt-2 flex items-center justify-between">
-                    <p className="font-medium">Order Date</p>
-                    <Label>{orderDetails?.orderDate.split('T')[0]}</Label>
-                </div>
-                <div className="mt-2 flex items-center justify-between">
-                    <p className="font-medium">Order Price</p>
-                    <Label>${orderDetails?.totalAmount}</Label>
-                </div>
-                <div className="mt-2 flex items-center justify-between">
-                    <p className="font-medium">Payment method</p>
-                    <Label>{orderDetails?.paymentMethod}</Label>
-                </div>
-                <div className="mt-2 flex items-center justify-between">
-                    <p className="font-medium">Payment Status</p>
-                    <Label>{orderDetails?.paymentStatus}</Label>
-                </div>
-                <div className="mt-2 flex items-center justify-between">
-                    <p className="font-medium">Order Status</p>
-                    <Label>
+           <div className="mt-6">
+                <Table className="border rounded-md">
+                    <TableBody>
+                    <TableRow>
+                        <TableCell className="font-medium flex items-center gap-2">
+                        <Receipt
+                         size={16} /> Order ID
+                        </TableCell>
+                        <TableCell>
+                        <Label>{orderDetails?._id}</Label>
+                        </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                        <TableCell className="font-medium flex items-center gap-2">
+                        <Calendar size={16} /> Order Date
+                        </TableCell>
+                        <TableCell>
+                        <Label>{orderDetails?.orderDate.split("T")[0]}</Label>
+                        </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                        <TableCell className="font-medium flex items-center gap-2">
+                        <DollarSign size={16} /> Order Price
+                        </TableCell>
+                        <TableCell>
+                        <Label>${orderDetails?.totalAmount}</Label>
+                        </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                        <TableCell className="font-medium flex items-center gap-2">
+                        <CreditCard size={16} /> Payment Method
+                        </TableCell>
+                        <TableCell>
+                        <Label>{orderDetails?.paymentMethod}</Label>
+                        </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                        <TableCell className="font-medium flex items-center gap-2">
+                        <ClipboardCheck size={16} /> Payment Status
+                        </TableCell>
+                        <TableCell>
+                        <Label>{orderDetails?.paymentStatus}</Label>
+                        </TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                        <TableCell className="font-medium flex items-center gap-2">
+                        <Truck size={16} /> Order Status
+                        </TableCell>
+                        <TableCell>
                         <Badge
                             className={`py-1 px-3 ${
                             orderDetails?.orderStatus === "confirmed"
@@ -46,29 +80,46 @@ function ShoppingOrderDetailsView({orderDetails}) {
                             }`}
                         >
                             {orderDetails?.orderStatus}
-                        </Badge>                        
-                    </Label>
+                        </Badge>
+                        </TableCell>
+                    </TableRow>
+                    </TableBody>
+                </Table>
                 </div>
-            </div>
             <Separator/>
-              <div className="grid gap-4">
-                    <div className="grid gap-2">
-                        <div className="font-medium">Order Details</div>
-                        <ul className="grid gap-3">
-                            {
-                                orderDetails?.cartItems && orderDetails?.cartItems.length > 0 ?
-                                orderDetails?.cartItems.map(item=>
-                            <li className="flex items-center justify-between">
-                                <span>{item.title}</span>
-                                <span>X{item.quantity}</span>
-                                <span>${item.price}</span> 
-                            </li>
-                                ) : null
-                            }
-                          
-                        </ul>
-                    </div>
-              </div>
+               <div className="grid gap-4">
+  <div className="grid gap-2">
+    <div className="overflow-x-auto">
+      <table className="min-w-[500px] w-full border border-gray-300 text-sm">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="border border-gray-300 p-2 text-left">Product</th>
+            <th className="border border-gray-300 p-2 text-center">Quantity</th>
+            <th className="border border-gray-300 p-2 text-right">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orderDetails?.cartItems?.length > 0 &&
+            orderDetails.cartItems.map((item, index) => (
+              <tr key={index}>
+                <td className="border border-gray-300 p-2 whitespace-normal break-words max-w-[200px]">
+                  {item.title}
+                </td>
+                <td className="border border-gray-300 p-2 text-center">
+                  {item.quantity}
+                </td>
+                <td className="border border-gray-300 p-2 text-right">
+                  ${item.price}
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
             <Separator/>
              <div className="grid gap-4">
                     <div className="grid gap-2">
