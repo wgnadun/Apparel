@@ -14,6 +14,7 @@ import {
   ArcElement
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
+import { BadgeDollarSignIcon, ChartCandlestick, CoinsIcon, ListOrderedIcon, Signal, SignalHigh, SparklesIcon } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -346,7 +347,7 @@ function AdminDashboardStats() {
         {/* Header */}
         <div className="mb-8 text-center lg:text-left">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 leading-tight">
-            📊 Admin Analytics Hub
+             Admin Analytics Hub
           </h1>
           <p className="text-gray-600 text-lg sm:text-xl max-w-2xl mx-auto lg:mx-0">
             Comprehensive insights and performance metrics for the last <span className="font-semibold text-purple-600">{days} days</span>
@@ -356,7 +357,7 @@ function AdminDashboardStats() {
         {/* Day filter buttons */}
         <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-8">
           <span className="text-gray-700 font-medium flex items-center mr-4">
-            📅 Time Period:
+             Time Period:
           </span>
           {[7, 30, 90].map(num => (
             <button
@@ -423,7 +424,7 @@ function AdminDashboardStats() {
         {/* Stats Summary Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-8">
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2">💰</div>
+            <div className="text-3xl mb-2"><CoinsIcon/></div>
             <div className="text-sm opacity-90">Total Revenue</div>
             <div className="text-2xl font-bold">
               ${stats.ordersByDate.reduce((sum, d) => sum + d.revenue, 0).toLocaleString()}
@@ -431,7 +432,7 @@ function AdminDashboardStats() {
           </div>
           
           <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2">📦</div>
+            <div className="text-3xl mb-2"><ListOrderedIcon/></div>
             <div className="text-sm opacity-90">Total Orders</div>
             <div className="text-2xl font-bold">
               {stats.ordersByDate.reduce((sum, d) => sum + d.orders, 0).toLocaleString()}
@@ -439,7 +440,7 @@ function AdminDashboardStats() {
           </div>
           
           <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2">🛍️</div>
+            <div className="text-3xl mb-2"><ChartCandlestick/></div>
             <div className="text-sm opacity-90">Products Sold</div>
             <div className="text-2xl font-bold">
               {stats.topProducts.reduce((sum, p) => sum + p.qtySold, 0).toLocaleString()}
@@ -447,7 +448,7 @@ function AdminDashboardStats() {
           </div>
           
           <div className="bg-gradient-to-br from-pink-500 to-pink-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2">📊</div>
+            <div className="text-3xl mb-2"><SignalHigh/></div>
             <div className="text-sm opacity-90">Avg Order Value</div>
             <div className="text-2xl font-bold">
               ${Math.round(stats.ordersByDate.reduce((sum, d) => sum + d.revenue, 0) / stats.ordersByDate.reduce((sum, d) => sum + d.orders, 0) || 0)}
