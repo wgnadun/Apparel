@@ -74,7 +74,7 @@ function AdminOrdersView() {
                         {orderItem?.orderStatus}
                       </Badge>
                     </TableCell>
-                    <TableCell>${orderItem?.totalAmount}</TableCell>
+                    <TableCell>${orderItem?.totalAmount.toFixed(2)}</TableCell>
                     <TableCell>
                       <Dialog
                         open={openDetailsDialog}

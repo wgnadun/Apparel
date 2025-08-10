@@ -45,7 +45,7 @@ function AdminOrderDetailsView({ orderDetails }) {
       {[
         { label: "Order ID", value: orderDetails?._id },
         { label: "Order Date", value: orderDetails?.orderDate.split("T")[0] },
-        { label: "Order Price", value: `$${orderDetails?.totalAmount}` },
+        { label: "Order Price", value: `$${orderDetails?.totalAmount.toFixed(2)}` },
         { label: "Payment Method", value: orderDetails?.paymentMethod },
         { label: "Payment Status", value: orderDetails?.paymentStatus },
       ].map((item, idx) => (
