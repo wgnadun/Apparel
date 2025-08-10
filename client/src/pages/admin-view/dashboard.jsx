@@ -1,69 +1,114 @@
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import { Button } from "@/components/ui/button";
-import { addFeatureImage, getFeatureImages } from "@/store/common/feature-slice";
+import {
+  addFeatureImage,
+  getFeatureImages,
+  deleteFeatureImages
+} from "@/store/common/feature-slice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 function AdminDashboard() {
-  
-  
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const [imageLoadingState, setImageLoadingState] = useState(false);
   const dispatch = useDispatch();
-  const {featureImageList} = useSelector(state => state.commonFeature)
+  const { featureImageList } = useSelector((state) => state.commonFeature);
 
-  console.log(uploadedImageUrl,"uploaded image url");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    dispatch(getFeatureImages());
+  }, [dispatch]);
 
   function handleUploadFeatureImage() {
-    dispatch(addFeatureImage(uploadedImageUrl)).then(data=>{
-        if(data?.payload?.success){
-                dispatch(getFeatureImages())
-                setImageFile(null);
-                setUploadedImageUrl("");
-
-        }
+    dispatch(addFeatureImage(uploadedImageUrl)).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(getFeatureImages());
+        setImageFile(null);
+        setUploadedImageUrl("");
+      }
     });
   }
 
-  useEffect(()=>{
-    dispatch(getFeatureImages())
-  },[dispatch]);
+  const total = featureImageList?.length || 0;
+  const currentImage = featureImageList ? featureImageList[currentIndex] : null;
 
-  console.log(featureImageList,"featureImageList");
- 
-  return( 
-      <>
-        
-          <ProductImageUpload
-                    imageFile={imageFile} 
-                    setImageFile={setImageFile} 
-                    uploadedImageUrl={uploadedImageUrl} 
-                    setUploadedImageUrl={setUploadedImageUrl} 
-                    setImageLoadingState ={setImageLoadingState}
-                    imageLoadingState={imageLoadingState}
-                    isCustomStyle ={true}
-                    // isEditMode={currentEditedId !==null}
-              />   
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? total - 1 : prev - 1));
+  };
 
-              <Button 
-              onClick={handleUploadFeatureImage}
-              className="mt-5 w-full">Upload</Button>
-               <div className="flex flex-col gap-4 mt-5">
-                    {featureImageList && featureImageList.length > 0
-                    ? featureImageList.map((featureImgItem) => (
-                        <div className="relative">
-                            <img
-                            src={featureImgItem.image}
-                            className="w-full h-[300px] object-cover rounded-t-lg"
-                            />
-                        </div>
-                        ))
-                    : null}
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === total - 1 ? 0 : prev + 1));
+  };
+
+  
+
+  if (!featureImageList || total === 0) {
+    return null; // or a placeholder message
+  }
+  function handleDelete() {
+      dispatch(deleteFeatureImages(currentImage._id)).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(getFeatureImages());
+        }
+      });
+    }
+
+  return (
+    <>
+      <ProductImageUpload
+        imageFile={imageFile}
+        setImageFile={setImageFile}
+        uploadedImageUrl={uploadedImageUrl}
+        setUploadedImageUrl={setUploadedImageUrl}
+        setImageLoadingState={setImageLoadingState}
+        imageLoadingState={imageLoadingState}
+        isCustomStyle={true}
+      />
+
+      <Button onClick={handleUploadFeatureImage} className="mt-5 w-full">
+        Upload
+      </Button>
+
+      <div className="mt-5 max-w-full relative">
+        <h1 className="font-bold text-2xl text-center p-5">
+          Update hero section banner
+        </h1>
+
+        <div className="relative">
+          <img
+            src={currentImage.image}
+            alt={`Slide ${currentIndex + 1}`}
+            className="w-full h-[600px] object-cover rounded-t-lg"
+          />
+
+          {/* Delete Button */}
+         <Button 
+           className="absolute top-2 right-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 z-10"
+          onClick={() => handleDelete()}>Delete</Button>
+        </div>
+
+        {/* Navigation buttons */}
+        {total > 1 && (
+          <div className="flex justify-between mt-2">
+            <button
+              onClick={handlePrev}
+              className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
+            >
+              Prev
+            </button>
+            <button
+              onClick={handleNext}
+              className="bg-gray-300 px-3 py-1 rounded hover:bg-gray-400"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
-      </>
-);
-    
+    </>
+  );
 }
 
 export default AdminDashboard;
