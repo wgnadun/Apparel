@@ -1,0 +1,3 @@
+#ignore the unwanted files for dockerize
+node_modules
+package-lock.json
