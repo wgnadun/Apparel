@@ -99,9 +99,13 @@ function ShoppingOrders() {
   // Filter and sort orders
   
   const filteredOrders = orderList?.filter(order => {
-    const matchesSearch = order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.orderStatus.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || order.orderStatus.toLowerCase() === statusFilter.toLowerCase();
+    const orderStatus = order.orderStatus || "";
+    const matchesSearch =
+      order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      orderStatus.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" ||
+      orderStatus.toLowerCase() === statusFilter.toLowerCase();
     return matchesSearch && matchesStatus;
   }) || [];
 
@@ -292,7 +296,9 @@ function ShoppingOrders() {
                         <TableCell className="text-center py-4">
                           <Badge className={`py-2 px-4 font-semibold rounded-full inline-flex items-center transition-all duration-200 ${getStatusColor(orderItem.orderStatus)}`}>
                             {getStatusIcon(orderItem.orderStatus)}
-                            {orderItem.orderStatus.charAt(0).toUpperCase() + orderItem.orderStatus.slice(1)}
+                            {(orderItem.orderStatus
+                              ? orderItem.orderStatus.charAt(0).toUpperCase() + orderItem.orderStatus.slice(1)
+                              : "Unknown")}
                           </Badge>
                         </TableCell>
                         
@@ -356,14 +362,24 @@ function ShoppingOrders() {
             
             <div className="bg-green-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="text-3xl font-bold">
-                {orderList.filter(o => o.orderStatus.toLowerCase() === 'confirmed' || o.orderStatus.toLowerCase() === 'delivered').length}
+                {orderList.filter(
+                  o =>
+                    o.orderStatus &&
+                    (o.orderStatus.toLowerCase() === 'confirmed' ||
+                     o.orderStatus.toLowerCase() === 'delivered')
+                ).length}
               </div>
               <div className="text-sm opacity-90 font-medium">Completed</div>
             </div>
             
             <div className="bg-yellow-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="text-3xl font-bold">
-                {orderList.filter(o => o.orderStatus.toLowerCase() === 'pending' || o.orderStatus.toLowerCase() === 'processing').length}
+                {orderList.filter(
+                  o =>
+                    o.orderStatus &&
+                    (o.orderStatus.toLowerCase() === 'pending' ||
+                     o.orderStatus.toLowerCase() === 'processing')
+                ).length}
               </div>
               <div className="text-sm opacity-90 font-medium">In Progress</div>
             </div>

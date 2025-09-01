@@ -35,7 +35,7 @@ function AuthLayout() {
         {/* Content */}
         <div className="relative max-w-md space-y-6 text-center text-white">
           <h1 className="text-5xl font-extrabold tracking-tight drop-shadow-lg">
-            Welcome to <span className="text-yellow-400">ECommerce</span> Store
+            Welcome to the<span className="text-yellow-400"> FashionHub</span>
           </h1>
           <p className="text-lg opacity-80">
             Discover premium apparel, designed for style and comfort.

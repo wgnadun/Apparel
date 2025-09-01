@@ -65,20 +65,24 @@ function App() {
           </CheckAuth>
           }
           >
-            <Route path="dashboard" element={<AdminDashboard />}/>
-                  <Route path="banner" element={<AdminDashboardBanner/>}/>
-                  <Route path="stats" element={<AdminDashboardStats/>}/>
+          <Route path="dashboard" element={<AdminDashboard />}/>
+
+            <Route path="banner" element={<AdminDashboardBanner/>}/>
+            <Route path="stats" element={<AdminDashboardStats/>}/>
             
             <Route path="orders" element={<AdminOrders />} />
             <Route path="products" element={<AdminProducts />} />
+
           </Route>
 
 {/* //shop public routes */}
 
           <Route path="/shop" element={<ShoppingLayout />  } >
+
             <Route path="home" element={<ShoppingHome />} />
             <Route path="listing" element={<ShoppingListing />} />
             <Route path="search" element={<SearchProducts/>}/>
+          
           </Route>
 
 {/* //shop auth routes */}
