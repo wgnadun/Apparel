@@ -73,12 +73,20 @@ function HeaderRightContent() {
         </DropdownMenuTrigger>
         <DropdownMenuContent sideright="right" className="w-56">
           <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
+          
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/shop/account")}>
             <UserCog className="mr-2 h-4 w-4" />
             Account
           </DropdownMenuItem>
+         
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => navigate("/shop/userprofile")}>
+            <UserCog className="mr-2 h-4 w-4" />
+            Profile
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator/>
           <DropdownMenuItem onClick={handleLogout}>
             <LogOut className="mr-2 h-4 w-4" />
             Logout

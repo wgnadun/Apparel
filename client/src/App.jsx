@@ -25,6 +25,7 @@ import SearchProducts from './pages/shoping-view/search';
 import AdminDashboardBanner from './pages/admin-view/dashboardBanner';
 import AdminDashboardStats from './pages/admin-view/dashboardStats';
 import AdminDashboard from './pages/admin-view/dashboard';
+import UserProfile from './pages/shoping-view/userprofile';
 
 function App() {
  const {user,isAuthenticated,isLoading} = useSelector(state=> state.auth);
@@ -95,6 +96,7 @@ function App() {
             <Route path="home" element={<ShoppingHome />} />
             <Route path="checkout" element={<ShoppingCheckout />} />
             <Route path="account" element={<ShoppingAccount />} />
+            <Route path="userprofile" element={<UserProfile />} />
             <Route path="listing" element={<ShoppingListing />} />
             <Route path="paypal-return" element={<PaypalReturnPage/>}/>
             <Route path="payment-success" element={<PaymentSuccessPage/>}/>
