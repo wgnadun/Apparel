@@ -34,8 +34,10 @@ function CheckAuth({ isAuthenticated, user, children }) {
     }
   }
 
-  // Protect checkout and account routes for shoppers
-  if (location.pathname.startsWith("/shop/checkout") || location.pathname.startsWith("/shop/account")) {
+  // Protect checkout, account, and profile routes for shoppers
+  if (location.pathname.startsWith("/shop/checkout") || 
+      location.pathname.startsWith("/shop/account") ||
+      location.pathname.startsWith("/shop/userprofile")) {
     if (!isAuthenticated) {
       // Save the page they tried to visit
       localStorage.setItem("redirectAfterLogin", location.pathname);

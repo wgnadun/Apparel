@@ -12,6 +12,7 @@ const shopAddressRouter = require('./routes/shop/address-routes');
 const shopOrderRouter = require('./routes/shop/order-routes');
 const shopSearchRouter = require('./routes/shop/search-routes');
 const shopReviewRouter = require('./routes/shop/review-routes');
+const shopUserRouter = require('./routes/shop/user-rotes');
 
 const commonFeatureRouter = require('./routes/common/feature-routes');
 
@@ -52,6 +53,7 @@ mongoose
      app.use('/api/shop/order',shopOrderRouter);
      app.use('/api/shop/search',shopSearchRouter);
      app.use('/api/shop/review',shopReviewRouter);
+     app.use('/api/shop/user',shopUserRouter);
 
      app.use('/api/common/feature',commonFeatureRouter);
 
