@@ -3,7 +3,7 @@ const User = require("../../models/User");
 const jwt = require("jsonwebtoken")
 //register
 const registerUser = async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { firstName, lastName, userName, email, password, phone, country } = req.body;
 
   try {
     const checkUser = await User.findOne({ email });
@@ -13,11 +13,22 @@ const registerUser = async (req, res) => {
         message: "User Already exists with the same email! Please try again",
       });
 
+    const checkUserName = await User.findOne({ userName });
+    if (checkUserName)
+      return res.json({
+        success: false,
+        message: "Username already exists! Please choose a different username",
+      });
+
     const hashPassword = await bcrypt.hash(password, 12); //hash password
     const newUser = new User({
+      firstName,
+      lastName,
       userName,
       email,
       password: hashPassword,
+      phone,
+      country,
     });
 
     await newUser.save(); //save user in DB

@@ -131,18 +131,9 @@ function UserProfile() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="text-slate-600 hover:text-slate-900"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
               <Separator orientation="vertical" className="h-6" />
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">Profile Management</h1>
+                <h1 className="text-3xl font-bold text-slate-900">Profile</h1>
                 <p className="text-slate-600 mt-1">
                   {showSettings ? 'Update your personal information' : 'View and manage your account'}
                 </p>
@@ -195,10 +186,11 @@ function UserProfile() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <ProfileForm 
-                      user={user} 
-                      onProfileUpdate={handleProfileUpdate}
-                    />
+                                         <ProfileForm 
+                       user={user} 
+                       onProfileUpdate={handleProfileUpdate}
+                       onBackToProfile={() => setShowSettings(false)}
+                     />
                   </CardContent>
                 </Card>
               </div>
@@ -226,15 +218,15 @@ function UserProfile() {
 
                   {/* User Info */}
                   <div className="flex-grow space-y-4">
-                    <div>
-                      <h2 className="text-2xl font-bold text-slate-900 mb-1">
-                        {user.userName || 'Unnamed User'}
-                      </h2>
-                      <div className="flex items-center space-x-2">
-                        <Mail className="w-4 h-4 text-slate-500" />
-                        <span className="text-slate-600">{user.email}</span>
+                                                               <div>
+                        <h2 className="text-2xl font-bold text-slate-900 mb-1">
+                          {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.userName || 'Unnamed User'}
+                        </h2>
+                        <div className="flex items-center space-x-2">
+                          <User className="w-4 h-4 text-slate-500" />
+                          <span className="text-slate-600">{user.userName}</span>
+                        </div>
                       </div>
-                    </div>
                     
                     <div className="flex flex-wrap items-center gap-4">
                       <Badge variant="outline" className={`${getRoleColor(user.role)} font-medium`}>
@@ -253,19 +245,36 @@ function UserProfile() {
               <Card className="shadow-sm border-slate-200">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center space-x-2 text-slate-800">
-                    <Phone className="w-5 h-5" />
                     <span>Contact Information</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                      <Mail className="w-5 h-5 text-slate-500 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-slate-700">Email Address</p>
-                        <p className="text-slate-900 font-medium">{user.email}</p>
-                      </div>
-                    </div>
+                                 <CardContent className="space-y-6">
+                   <div className="space-y-4">
+                     <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
+                       <User className="w-5 h-5 text-slate-500 mt-0.5" />
+                       <div>
+                         <p className="text-sm font-medium text-slate-700">Full Name</p>
+                         <p className="text-slate-900 font-medium">
+                           {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'Not provided'}
+                         </p>
+                       </div>
+                     </div>
+                     
+                     <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
+                       <User className="w-5 h-5 text-slate-500 mt-0.5" />
+                       <div>
+                         <p className="text-sm font-medium text-slate-700">Username</p>
+                         <p className="text-slate-900 font-medium">{user.userName || 'Not provided'}</p>
+                       </div>
+                     </div>
+                     
+                     <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
+                       <Mail className="w-5 h-5 text-slate-500 mt-0.5" />
+                       <div>
+                         <p className="text-sm font-medium text-slate-700">Email Address</p>
+                         <p className="text-slate-900 font-medium">{user.email}</p>
+                       </div>
+                     </div>
                     
                     <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
                       <Phone className="w-5 h-5 text-slate-500 mt-0.5" />
@@ -330,14 +339,6 @@ function UserProfile() {
                         <Badge variant="outline" className={`${getRoleColor(user.role)} mt-1`}>
                           {user.role || 'User'}
                         </Badge>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                      <Calendar className="w-5 h-5 text-slate-500 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-slate-700">Account Created</p>
-                        <p className="text-slate-900 font-medium">{formatDate(user.createdAt)}</p>
                       </div>
                     </div>
                     

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
@@ -8,16 +8,38 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { COUNTRIES, findCountryByCodeOrName } from '../../utils/countries';
 import { toast } from 'sonner';
 import ReactCountryFlag from 'react-country-flag';
+import { ArrowLeft, Save } from 'lucide-react';
 
-const ProfileForm = ({ user, onProfileUpdate }) => {
+const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
   const initialCountry = useMemo(() => findCountryByCodeOrName(user?.country) || findCountryByCodeOrName('US'), [user]);
-  const [formData, setFormData] = useState({
+  
+  // Create initial form data
+  const getInitialFormData = () => ({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
     userName: user?.userName || '',
     email: user?.email || '',
     phone: user?.phone || '',
     country: initialCountry?.name || ''
   });
+
+  const [formData, setFormData] = useState(getInitialFormData());
+  const [initialData, setInitialData] = useState(getInitialFormData());
   const [isUpdating, setIsUpdating] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Update initial data when user changes
+  useEffect(() => {
+    const newInitialData = getInitialFormData();
+    setInitialData(newInitialData);
+    setFormData(newInitialData);
+  }, [user, initialCountry]);
+
+  // Check for changes
+  useEffect(() => {
+    const changed = Object.keys(formData).some(key => formData[key] !== initialData[key]);
+    setHasChanges(changed);
+  }, [formData, initialData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,6 +108,33 @@ const ProfileForm = ({ user, onProfileUpdate }) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                placeholder="Enter your first name"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder="Enter your last name"
+                required
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="userName">Username</Label>
             <Input
@@ -147,13 +196,43 @@ const ProfileForm = ({ user, onProfileUpdate }) => {
 
           <Separator />
 
-          <Button
-            type="submit"
-            disabled={isUpdating}
-            className="w-full"
-          >
-            {isUpdating ? 'Updating...' : 'Update Profile'}
-          </Button>
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBackToProfile}
+              className="flex-1"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Profile
+            </Button>
+            
+            <Button
+              type="submit"
+              disabled={isUpdating || !hasChanges}
+              className="flex-1"
+            >
+              {isUpdating ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Updating...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Update Profile
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Change Indicator */}
+          {!hasChanges && (
+            <p className="text-sm text-slate-500 text-center">
+              No changes detected. Make changes to enable the update button.
+            </p>
+          )}
         </form>
       </CardContent>
     </Card>

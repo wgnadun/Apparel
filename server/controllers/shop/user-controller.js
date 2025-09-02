@@ -143,9 +143,11 @@ const updateUserProfile = async (req, res) => {
   try {
     console.log('Updating user profile for user ID:', req.user.id);
     
-    const { userName, email, phone, country } = req.body;
+    const { firstName, lastName, userName, email, phone, country } = req.body;
     
     const updateData = {};
+    if (firstName) updateData.firstName = firstName;
+    if (lastName) updateData.lastName = lastName;
     if (userName) updateData.userName = userName;
     if (email) updateData.email = email;
     if (phone) updateData.phone = phone;
