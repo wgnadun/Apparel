@@ -1,7 +1,4 @@
 import { Airplay, BabyIcon, ChevronLeft, ChevronRight, CloudLightning, Heater, Images, Shirt, ShirtIcon, ShoppingBasket, UmbrellaIcon, WashingMachine, WatchIcon } from 'lucide-react';
-import  bannerOne from '../../assets/banner-1.webp';
-import  bannerTwo from '../../assets/banner-2.webp';
-import  bannerThree from '../../assets/banner-3.webp';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
