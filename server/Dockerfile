@@ -1,6 +1,6 @@
 #Dockerfile for the node server service
 #define base image
-FROM node:22-alpine
+FROM node:22
 
 #Globally install nodemon
 RUN npm install -g nodemon
