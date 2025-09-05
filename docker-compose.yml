@@ -1,6 +1,6 @@
 services:  
   mongo:
-    image: mongo-latest
+    image: mongo
     container_name: mongo_container
     volumes:
       - mongo_data:/data/db
@@ -32,6 +32,6 @@ services:
     volumes:
       - ./client:/app
       - /client/node_modules
-      
+
 volumes:
   mongo_data:
