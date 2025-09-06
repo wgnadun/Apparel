@@ -127,7 +127,21 @@ function ShoppingListing() {
 
   useEffect(() => {
     setSort("price-lowtohigh");
-    setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
+    
+    // Get filters from session storage or initialize empty
+    let initialFilters = JSON.parse(sessionStorage.getItem("filters")) || {};
+    
+    // If there's a category in URL params, use it to set the filter
+    if (categorySearchParam) {
+      initialFilters = {
+        ...initialFilters,
+        category: [categorySearchParam]
+      };
+      // Update session storage with the category filter
+      sessionStorage.setItem("filters", JSON.stringify(initialFilters));
+    }
+    
+    setFilters(initialFilters);
   }, [categorySearchParam]);
 
   useEffect(() => {
