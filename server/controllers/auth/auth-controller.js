@@ -1,11 +1,12 @@
 const bcrypt = require("bcryptjs");
 const User = require("../../models/User");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const axios = require("axios");
 
 // Auth0 user sync/create endpoint
 const syncAuth0User = async (req, res) => {
   try {
-    const { sub: auth0Id, email, given_name: firstName, family_name: lastName, nickname: userName } = req.auth.payload;
+    const { sub: auth0Id } = req.auth.payload;
     
     console.log('Auth0 payload:', req.auth.payload);
     
@@ -16,26 +17,95 @@ const syncAuth0User = async (req, res) => {
         message: "Auth0 ID is required"
       });
     }
+
+    // Get access token from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        message: "Access token is required"
+      });
+    }
+    
+    const accessToken = authHeader.substring(7); // Remove 'Bearer ' prefix
+    
+    // Fetch user profile from Auth0 userinfo endpoint
+    let userProfile;
+    try {
+      const userinfoResponse = await axios.get(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      userProfile = userinfoResponse.data;
+      console.log('Auth0 userinfo response:', userProfile);
+    } catch (userinfoError) {
+      console.error('Error fetching userinfo:', userinfoError.response?.data || userinfoError.message);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to fetch user profile from Auth0"
+      });
+    }
+
+    // Extract user information from userinfo response
+    const email = userProfile.email;
+    const firstName = userProfile.given_name || userProfile.name?.split(" ")[0] || 'User';
+    const lastName = userProfile.family_name || userProfile.name?.split(" ")[1] || 'Name';
+    const userName = userProfile.nickname || userProfile.preferred_username;
+    
+    console.log('Extracted user data:', { email, firstName, lastName, userName });
+    
+    // Validate required fields
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required but not found in user profile"
+      });
+    }
+    
+    if (!firstName || !lastName) {
+      return res.status(400).json({
+        success: false,
+        message: "First name and last name are required but not found in user profile"
+      });
+    }
     
     // Check if user already exists by auth0Id
     let user = await User.findOne({ auth0Id });
+    console.log('Existing user found:', user ? 'Yes' : 'No');
     
     if (user) {
+      console.log('Updating existing user...');
       // Update existing user info if needed
       if (email) user.email = email;
       if (firstName) user.firstName = firstName;
       if (lastName) user.lastName = lastName;
       if (userName) user.userName = userName;
       await user.save();
+      console.log('User updated successfully');
     } else {
+      console.log('Creating new user...');
       // Check if user exists by email (for migration) - only if email exists
       if (email) {
         user = await User.findOne({ email });
+        console.log('User found by email:', user ? 'Yes' : 'No');
         
         if (user) {
+          console.log('Existing user data:', {
+            id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            auth0Id: user.auth0Id
+          });
           // Link existing user with Auth0
           user.auth0Id = auth0Id;
+          // Update user info from Auth0
+          user.firstName = firstName;
+          user.lastName = lastName;
+          if (userName) user.userName = userName;
           await user.save();
+          console.log('User linked with Auth0 successfully');
         }
       }
       
@@ -55,15 +125,24 @@ const syncAuth0User = async (req, res) => {
         }
         
         try {
+          console.log('Creating user with data:', {
+            auth0Id,
+            firstName,
+            lastName,
+            userName: safeUserName,
+            email,
+            role: 'user'
+          });
           user = new User({
             auth0Id,
-            firstName: firstName || 'User',
-            lastName: lastName || 'Name',
+            firstName: firstName,
+            lastName: lastName,
             userName: safeUserName,
-            email: safeEmail,
+            email: email, // Use the actual email, not safeEmail
             role: 'user'
           });
           await user.save();
+          console.log('User created successfully');
         } catch (error) {
           if (error.code === 11000) {
             // Handle duplicate key error - try to find existing user
@@ -80,10 +159,10 @@ const syncAuth0User = async (req, res) => {
               safeUserName = `user_${timestamp}`;
               user = new User({
                 auth0Id,
-                firstName: firstName || 'User',
-                lastName: lastName || 'Name',
+                firstName: firstName,
+                lastName: lastName,
                 userName: safeUserName,
-                email: safeEmail,
+                email: email, // Use the actual email, not safeEmail
                 role: 'user'
               });
               await user.save();
@@ -95,6 +174,7 @@ const syncAuth0User = async (req, res) => {
       }
     }
 
+    console.log('Sending success response for user:', user._id);
     res.json({
       success: true,
       message: "User synced successfully",
@@ -110,9 +190,15 @@ const syncAuth0User = async (req, res) => {
     });
   } catch (error) {
     console.error('Auth0 user sync error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     res.status(500).json({
       success: false,
-      message: "Error syncing user"
+      message: "Error syncing user",
+      error: error.message
     });
   }
 };
