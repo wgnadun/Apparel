@@ -56,7 +56,23 @@ router.get("/callback", async (req, res) => {
         });
 
         const { id_token } = tokenResponse.data;
-        const decoded = jwt.decode(id_token);
+        
+        // Validate id_token exists
+        if (!id_token) {
+            throw new Error("No ID token received from Auth0");
+        }
+        
+        // Decode JWT token with error handling
+        let decoded;
+        try {
+            decoded = jwt.decode(id_token);
+            if (!decoded) {
+                throw new Error("Failed to decode ID token");
+            }
+        } catch (decodeError) {
+            console.error("JWT decode error:", decodeError);
+            throw new Error("Invalid ID token format");
+        }
 
         console.log("User Info:");
         console.log("First Name:", decoded.given_name || decoded.name?.split(" ")[0]);
@@ -67,6 +83,14 @@ router.get("/callback", async (req, res) => {
         const lastName = decoded.family_name || decoded.name?.split(" ")[1] || "";
         const email = decoded.email;
         const auth0Id = decoded.sub; // Use Auth0 ID as username
+        
+        // Validate required fields from decoded token
+        if (!auth0Id) {
+            throw new Error("Auth0 ID not found in token");
+        }
+        if (!email) {
+            throw new Error("Email not found in token");
+        }
 
         let user = await User.findOne({ email: email });
         if (!user) {
