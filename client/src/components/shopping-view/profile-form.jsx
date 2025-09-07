@@ -13,6 +13,8 @@ import ReactCountryFlag from 'react-country-flag';
 import { ArrowLeft, Save } from 'lucide-react';
 import { auth0Config } from '../../config/auth0';
 import { updateUser } from '../../store/auth-slice';
+import { useFormValidation } from '../../hooks/useFormValidation';
+import { profileSchema, fieldHints } from '../../utils/validation';
 
 const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
   const initialCountry = useMemo(() => findCountryByCodeOrName(user?.country) || findCountryByCodeOrName('US'), [user]);
@@ -29,54 +31,51 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
     country: initialCountry?.name || ''
   });
 
-  const [formData, setFormData] = useState(getInitialFormData());
-  const [initialData, setInitialData] = useState(getInitialFormData());
   const [isUpdating, setIsUpdating] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
+  
+  // Use validation hook with safe initial data
+  const {
+    formData,
+    handleInputChange,
+    handleFieldBlur,
+    handleSubmit,
+    getFieldError,
+    hasFieldError,
+    isFormValid,
+    hasFormChanged,
+    resetForm
+  } = useFormValidation(profileSchema, {
+    firstName: '',
+    lastName: '',
+    userName: '',
+    email: '',
+    phone: '',
+    country: ''
+  });
 
-  // Update initial data when user changes
+  // Update form data when user changes
   useEffect(() => {
     const newInitialData = getInitialFormData();
-    setInitialData(newInitialData);
-    setFormData(newInitialData);
-  }, [user, initialCountry]);
-
-  // Check for changes
-  useEffect(() => {
-    const changed = Object.keys(formData).some(key => formData[key] !== initialData[key]);
-    setHasChanges(changed);
-  }, [formData, initialData]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+    resetForm(newInitialData);
+  }, [user, initialCountry, resetForm]);
 
   const handleCountryChange = (countryCode) => {
     const selected = COUNTRIES.find(c => c.code === countryCode);
     if (!selected) return;
 
-    setFormData(prev => {
-      const dial = selected.dialCode;
-      let nextPhone = prev.phone || '';
-      if (!nextPhone.startsWith(dial)) {
-        // Strip existing leading +digits if present, then prepend new dial code
-        nextPhone = nextPhone.replace(/^\+\d+\s?/, '');
-        nextPhone = `${dial}${nextPhone ? ' ' : ''}${nextPhone}`;
-      }
-      return {
-        ...prev,
-        country: selected.name,
-        phone: nextPhone,
-      };
-    });
+    const dial = selected.dialCode;
+    let nextPhone = formData.phone || '';
+    if (!nextPhone.startsWith(dial)) {
+      // Strip existing leading +digits if present, then prepend new dial code
+      nextPhone = nextPhone.replace(/^\+\d+\s?/, '');
+      nextPhone = `${dial}${nextPhone ? ' ' : ''}${nextPhone}`;
+    }
+    
+    handleInputChange('country', selected.name);
+    handleInputChange('phone', nextPhone);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit = async (data) => {
     setIsUpdating(true);
 
     try {
@@ -93,20 +92,20 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
           'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
-      const data = await response.json();
+      const responseData = await response.json();
 
-      if (data.success) {
-        toast.success(data.message);
+      if (responseData.success) {
+        toast.success(responseData.message);
         // Update Redux store with new user data
-        dispatch(updateUser(data.data));
+        dispatch(updateUser(responseData.data));
         if (onProfileUpdate) {
-          onProfileUpdate(data.data);
+          onProfileUpdate(responseData.data);
         }
       } else {
-        toast.error(data.message || 'Failed to update profile');
+        toast.error(responseData.message || 'Failed to update profile');
       }
     } catch (error) {
       console.error('Update error:', error);
@@ -119,71 +118,106 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Profile Information</CardTitle>
+        <CardTitle className="text-lg font-semibold">
+          Profile Information
+          {hasFormChanged && (
+            <span className="ml-2 text-sm text-blue-600 font-normal">(Changes made)</span>
+          )}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName" className={hasFieldError('firstName') ? "text-red-500" : ""}>
+                First Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="firstName"
                 name="firstName"
                 type="text"
                 value={formData.firstName}
-                onChange={handleInputChange}
-                placeholder="Enter your first name"
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                onBlur={() => handleFieldBlur('firstName')}
+                placeholder={fieldHints.firstName}
+                className={hasFieldError('firstName') ? "border-red-500 focus:border-red-500" : ""}
                 required
               />
+              {getFieldError('firstName') && (
+                <p className="text-sm text-red-500">{getFieldError('firstName')}</p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName" className={hasFieldError('lastName') ? "text-red-500" : ""}>
+                Last Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="lastName"
                 name="lastName"
                 type="text"
                 value={formData.lastName}
-                onChange={handleInputChange}
-                placeholder="Enter your last name"
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                onBlur={() => handleFieldBlur('lastName')}
+                placeholder={fieldHints.lastName}
+                className={hasFieldError('lastName') ? "border-red-500 focus:border-red-500" : ""}
                 required
               />
+              {getFieldError('lastName') && (
+                <p className="text-sm text-red-500">{getFieldError('lastName')}</p>
+              )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="userName">Username</Label>
+            <Label htmlFor="userName" className={hasFieldError('userName') ? "text-red-500" : ""}>
+              Username <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="userName"
               name="userName"
               type="text"
               value={formData.userName}
-              onChange={handleInputChange}
-              placeholder="Enter your username"
+              onChange={(e) => handleInputChange('userName', e.target.value)}
+              onBlur={() => handleFieldBlur('userName')}
+              placeholder={fieldHints.userName}
+              className={hasFieldError('userName') ? "border-red-500 focus:border-red-500" : ""}
               required
             />
+            {getFieldError('userName') && (
+              <p className="text-sm text-red-500">{getFieldError('userName')}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className={hasFieldError('email') ? "text-red-500" : ""}>
+              Email <span className="text-red-500">*</span>
+            </Label>
             <Input
               id="email"
               name="email"
               type="email"
               value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Enter your email"
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              onBlur={() => handleFieldBlur('email')}
+              placeholder={fieldHints.email}
+              className={hasFieldError('email') ? "border-red-500 focus:border-red-500" : ""}
               required
             />
+            {getFieldError('email') && (
+              <p className="text-sm text-red-500">{getFieldError('email')}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="country">Country</Label>
+            <Label htmlFor="country" className={hasFieldError('country') ? "text-red-500" : ""}>
+              Country <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={(findCountryByCodeOrName(formData.country)?.code) || ''}
               onValueChange={handleCountryChange}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select your country" />
+              <SelectTrigger className={`w-full ${hasFieldError('country') ? "border-red-500 focus:border-red-500" : ""}`}>
+                <SelectValue placeholder={fieldHints.country} />
               </SelectTrigger>
               <SelectContent>
                 {COUNTRIES.map((c) => (
@@ -195,18 +229,28 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
                 ))}
               </SelectContent>
             </Select>
+            {getFieldError('country') && (
+              <p className="text-sm text-red-500">{getFieldError('country')}</p>
+            )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone" className={hasFieldError('phone') ? "text-red-500" : ""}>
+              Phone Number
+            </Label>
             <Input
               id="phone"
               name="phone"
               type="tel"
               value={formData.phone}
-              onChange={handleInputChange}
-              placeholder="Enter your phone number"
+              onChange={(e) => handleInputChange('phone', e.target.value)}
+              onBlur={() => handleFieldBlur('phone')}
+              placeholder={fieldHints.phone}
+              className={hasFieldError('phone') ? "border-red-500 focus:border-red-500" : ""}
             />
+            {getFieldError('phone') && (
+              <p className="text-sm text-red-500">{getFieldError('phone')}</p>
+            )}
           </div>
 
           <Separator />
@@ -225,7 +269,7 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
             
             <Button
               type="submit"
-              disabled={isUpdating || !hasChanges}
+              disabled={isUpdating || !isFormValid}
               className="flex-1"
             >
               {isUpdating ? (
@@ -242,10 +286,10 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
             </Button>
           </div>
 
-          {/* Change Indicator */}
-          {!hasChanges && (
+          {/* Validation Indicator */}
+          {!isFormValid && (
             <p className="text-sm text-slate-500 text-center">
-              No changes detected. Make changes to enable the update button.
+              Please fill in all required fields correctly to enable the update button.
             </p>
           )}
         </form>

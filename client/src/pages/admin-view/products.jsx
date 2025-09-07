@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Fragment, useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import CommonForm from "@/components/common/form";
+import ValidatedForm from "@/components/common/validated-form";
 import { addProductFormElements } from "@/config";
 import ProductImageUpload from "@/components/admin-view/image-upload";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewProduct, fetchAllProducts, editProduct, deleteProduct } from "@/store/admin/products-slice";
 import { toast } from "sonner";
 import AdminProductTile from "@/components/admin-view/product-tile";
+import { productSchema } from "@/utils/validation";
 
 const initialFormData = {
   image: null,
@@ -33,9 +34,7 @@ function AdminProducts() {
   const {productList} = useSelector(state => state.adminProducts);
   const dispatch = useDispatch();
 
- function onSubmit(event) {
-    event.preventDefault();
-
+ function onSubmit(formData) {
     currentEditedId !== null
       ? dispatch(
           editProduct({
@@ -79,13 +78,7 @@ function AdminProducts() {
     });
   }
 
-  //hide add until all fields are filled
-    function isFormValid() {
-    return Object.keys(formData)
-      .filter((currentKey) => currentKey !== "averageReview")
-      .map((key) => formData[key] !== "")
-      .every((item) => item);
-  }
+// Remove the old isFormValid function as it's now handled by the validation hook
 
   useEffect(()=>{
     dispatch(fetchAllProducts())
@@ -139,15 +132,14 @@ function AdminProducts() {
           />
 
           <div className="py-6 m-5">
-          <CommonForm
+          <ValidatedForm
+              schema={productSchema}
               onSubmit={onSubmit}
-              formData={formData} 
-              setFormData={setFormData} 
+              initialData={formData}
               buttonText={
                 currentEditedId !== null ? "Update Product" : "Add Product"
               } 
               formControls={addProductFormElements}
-              isBtnDisabled={!isFormValid()}
           />
 
           </div>

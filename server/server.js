@@ -3,7 +3,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const authRouter =require('./routes/auth/auth-routes')
+
+// Import security middleware
+const { 
+    rateLimits, 
+    securityHeaders, 
+    mongoSanitization, 
+    xssProtection, 
+    inputSanitization, 
+    fileUploadSecurity
+} = require('./middleware/security');
+
+// Import routes
+const authRouter = require('./routes/auth/auth-routes');
 const auth0Router = require('./routes/auth0/auth0'); // Add Auth0 routes
 const adminProductsRouter = require('./routes/admin/products-routes');
 const adminOrderRouter = require('./routes/admin/order-routes');
@@ -27,22 +39,39 @@ mongoose
      const app = express('');
      const PORT = process.env.PORT || 5000;
 
+     // CORS must be applied before other middleware
      app.use(
         cors({
-            origin: 'http://localhost:5173',
-            methods : ['GET', 'POST', 'PUT', 'DELETE'],
+            origin: process.env.CLIENT_URL || 'http://localhost:5173',
+            methods : ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
             allowedHeaders : [
                 'Content-Type',
                 'Authorization',
                 'Cache-Control',
                 'Expires',
-                'Pragma'
+                'Pragma',
+                'X-Requested-With'
             ],
-            credentials: true
+            credentials: true,
+            preflightContinue: false,
+            optionsSuccessStatus: 200
         })
      );
 
-     app.use(express.json());
+     // Security middleware (order matters!)
+     app.use(securityHeaders);
+     app.use(mongoSanitization);
+     app.use(xssProtection);
+     app.use(inputSanitization);
+     
+     // Rate limiting
+     app.use('/api/auth', rateLimits.auth);
+     app.use('/api/auth0', rateLimits.auth);
+     app.use('/api/shop/search', rateLimits.search);
+     app.use(rateLimits.general);
+
+     app.use(express.json({ limit: '10mb' }));
+     app.use(express.urlencoded({ extended: true, limit: '10mb' }));
      app.use(cookieParser());
 
      app.use('/api/auth',authRouter);

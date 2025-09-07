@@ -2,13 +2,13 @@ const Address = require('../../models/address');
 
 const addAddress = async(req,res)=>{
     try {
+        const {userId, address, city, pincode, phone, notes} = req.body;
 
-        const {userId, address,city,pincode,phone,notes} = req.body;
-
-        if(!userId || !address || !city || !pincode || !phone || !notes){
+        // Additional validation (express-validator handles most of this)
+        if(!userId){
             return res.status(400).json({
                 success : false,
-                message : 'Invalid data provided !'
+                message : 'User ID is required'
             })
         }
 

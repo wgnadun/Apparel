@@ -1,4 +1,4 @@
-import CommonForm from '@/components/common/form'
+import ValidatedForm from '@/components/common/validated-form'
 import AddressCard from '@/components/shopping-view/address-card'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { addressFormControls } from '@/config'
@@ -6,6 +6,7 @@ import { addNewAddress, deleteAddress, editaAddress, fetchAllAddresses } from '@
 import  { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'sonner'
+import { addressSchema } from '@/utils/validation'
 
 const initialAddressFormData ={
     address:'',
@@ -24,11 +25,8 @@ function Address({setCurrentSelectedAddress, selectedId}) {
     const {addressList} =useSelector((state)=>state.shopAddress);
    
 
- function handleManageAddress(event){
-        event.preventDefault();  
-
+ function handleManageAddress(formData){
         if(addressList.length >= 3 && currentEditedId === null){
-            setFormData(initialAddressFormData)
             toast.error('You can only have up to 3 addresses',{
                 style: {
                     backgroundColor: 'white',
@@ -97,9 +95,7 @@ function handleEditAddress(getCurrentAddress){
     });
 }
 
-function isFormValid() {
-        return Object.keys(formData).map(key=> formData[key].trim() !=='').every(item=> item === true)
-    }
+// Remove the old isFormValid function as it's now handled by the validation hook
 
 useEffect(()=>{
         dispatch(fetchAllAddresses(user?.id))
@@ -128,14 +124,12 @@ useEffect(()=>{
         <CardTitle>{currentEditedId !== null ? 'Edit Address' : 'Add new Address'}</CardTitle>
     </CardHeader>
     <CardContent className="space-y-3">
-        <CommonForm 
+        <ValidatedForm 
+            schema={addressSchema}
             formControls={addressFormControls}
-            formData={formData} 
-            setFormData={setFormData} 
+            initialData={formData}
             buttonText={currentEditedId !== null ? 'Update Address' : 'Add Address'}
-            submitText="Add Address"
             onSubmit={handleManageAddress} 
-            isBtnDisabled={!isFormValid()}
         />
     </CardContent>
     </Card>

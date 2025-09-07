@@ -12,20 +12,31 @@ import StarRatingComponent from "../common/star-rating";
 import { useEffect, useState } from "react";
 import { addReview, getReview } from "@/store/shop/review-slice";
 import { toast } from "sonner";
+import { useFormValidation } from "../../hooks/useFormValidation";
+import { reviewSchema, fieldHints } from "../../utils/validation";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
-  const [reviewMsg, setReviewMsg] = useState("");
-  const [rating, setRating] = useState(0);
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const { reviews } = useSelector((state) => state.shopReview);
 
+  // Use validation hook for review form
+  const {
+    formData: reviewData,
+    handleInputChange,
+    handleFieldBlur,
+    handleSubmit,
+    getFieldError,
+    hasFieldError,
+    isFormValid,
+    resetForm
+  } = useFormValidation(reviewSchema, { reviewMessage: '', reviewValue: 0 });
+
 
   function handleRatingChange(getRating) {
     console.log(getRating, "getRating");
-
-    setRating(getRating);
+    handleInputChange('reviewValue', getRating);
   }
 
   function handleAddToCart(getCurrentProductId, getTotalStock) {
@@ -73,23 +84,21 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   function handleDialogClose() {
     setOpen(false);
     dispatch(setProductDetails());
-    setRating(0);
-    setReviewMsg("");
+    resetForm({ reviewMessage: '', reviewValue: 0 });
   }
 
-  function handleAddReview() {
+  function handleAddReview(data) {
     dispatch(
       addReview({
         productId: productDetails?._id,
         userId: user?.id,
         userName: user?.userName,
-        reviewMessage: reviewMsg,
-        reviewValue: rating,
+        reviewMessage: data.reviewMessage,
+        reviewValue: data.reviewValue,
       })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        setRating(0);
-        setReviewMsg("");
+    ).then((response) => {
+      if (response?.payload?.success) {
+        resetForm({ reviewMessage: '', reviewValue: 0 });
         dispatch(getReview(productDetails?._id));
       toast(`Review added successfully!`, {
               style: {
@@ -213,27 +222,35 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
                 <h1>No Reviews</h1>
               )}
             </div>
-            <div className="mt-10 flex-col flex gap-2">
+            <form onSubmit={handleSubmit(handleAddReview)} className="mt-10 flex-col flex gap-2">
               <Label>Write a review</Label>
               <div className="flex gap-1">
                 <StarRatingComponent
-                  rating={rating}
+                  rating={reviewData.reviewValue}
                   handleRatingChange={handleRatingChange}
                 />
               </div>
+              {getFieldError('reviewValue') && (
+                <p className="text-sm text-red-500">{getFieldError('reviewValue')}</p>
+              )}
               <Input
-                name="reviewMsg"
-                value={reviewMsg}
-                onChange={(event) => setReviewMsg(event.target.value)}
-                placeholder="Write a review..."
+                name="reviewMessage"
+                value={reviewData.reviewMessage}
+                onChange={(e) => handleInputChange('reviewMessage', e.target.value)}
+                onBlur={() => handleFieldBlur('reviewMessage')}
+                placeholder={fieldHints.reviewMessage}
+                className={hasFieldError('reviewMessage') ? "border-red-500 focus:border-red-500" : ""}
               />
+              {getFieldError('reviewMessage') && (
+                <p className="text-sm text-red-500">{getFieldError('reviewMessage')}</p>
+              )}
               <Button
-                onClick={handleAddReview}
-                disabled={reviewMsg.trim() === ""}
+                type="submit"
+                disabled={!isFormValid}
               >
                 Submit
               </Button>
-            </div>
+            </form>
           </div>
         </div>
       </DialogContent>
