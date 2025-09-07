@@ -42,17 +42,56 @@ const syncAuth0User = async (req, res) => {
       if (!user) {
         // Create new user with safe defaults
         const safeEmail = email || `${auth0Id}@auth0.local`;
-        const safeUserName = userName || (email ? email.split('@')[0] : `user_${auth0Id.substring(0, 8)}`);
         
-        user = new User({
-          auth0Id,
-          firstName: firstName || 'User',
-          lastName: lastName || 'Name',
-          userName: safeUserName,
-          email: safeEmail,
-          role: 'user'
-        });
-        await user.save();
+        // Generate a unique username
+        let safeUserName = userName || (email ? email.split('@')[0] : `user_${auth0Id.replace(/[^a-zA-Z0-9]/g, '').substring(0, 8)}`);
+        
+        // Check if username already exists and make it unique
+        let counter = 1;
+        let originalUserName = safeUserName;
+        while (await User.findOne({ userName: safeUserName })) {
+          safeUserName = `${originalUserName}${counter}`;
+          counter++;
+        }
+        
+        try {
+          user = new User({
+            auth0Id,
+            firstName: firstName || 'User',
+            lastName: lastName || 'Name',
+            userName: safeUserName,
+            email: safeEmail,
+            role: 'user'
+          });
+          await user.save();
+        } catch (error) {
+          if (error.code === 11000) {
+            // Handle duplicate key error - try to find existing user
+            user = await User.findOne({ 
+              $or: [
+                { auth0Id: auth0Id },
+                { email: safeEmail }
+              ]
+            });
+            
+            if (!user) {
+              // If still no user found, generate a completely unique username
+              const timestamp = Date.now();
+              safeUserName = `user_${timestamp}`;
+              user = new User({
+                auth0Id,
+                firstName: firstName || 'User',
+                lastName: lastName || 'Name',
+                userName: safeUserName,
+                email: safeEmail,
+                role: 'user'
+              });
+              await user.save();
+            }
+          } else {
+            throw error;
+          }
+        }
       }
     }
 

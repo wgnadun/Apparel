@@ -1,8 +1,10 @@
+require('dotenv').config(); // Load environment variables
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const authRouter =require('./routes/auth/auth-routes')
+const auth0Router = require('./routes/auth0/auth0'); // Add Auth0 routes
 const adminProductsRouter = require('./routes/admin/products-routes');
 const adminOrderRouter = require('./routes/admin/order-routes');
 
@@ -44,6 +46,7 @@ mongoose
      app.use(cookieParser());
 
      app.use('/api/auth',authRouter);
+     app.use('/api/auth0', auth0Router); // Add Auth0 routes
      app.use('/api/admin/products',adminProductsRouter);
      app.use('/api/admin/orders',adminOrderRouter);
 
