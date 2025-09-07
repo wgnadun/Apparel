@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useDispatch } from 'react-redux';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -8,12 +9,14 @@ import { Label } from '../ui/label';
 import { Separator } from '../ui/separator';
 import { toast } from 'sonner';
 import { auth0Config } from '../../config/auth0';
+import { updateUser } from '../../store/auth-slice';
 
 const ProfilePictureUpload = ({ user, onProfileUpdate }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const fileInputRef = useRef(null);
   const { getAccessTokenSilently } = useAuth0();
+  const dispatch = useDispatch();
 
   const handleFileSelect = async (event) => {
     const file = event.target.files[0];
@@ -60,6 +63,8 @@ const ProfilePictureUpload = ({ user, onProfileUpdate }) => {
 
       if (data.success) {
         toast.success(data.message);
+        // Update Redux store with new user data
+        dispatch(updateUser(data.data.user));
         if (onProfileUpdate) {
           onProfileUpdate(data.data.user);
         }
@@ -96,6 +101,8 @@ const ProfilePictureUpload = ({ user, onProfileUpdate }) => {
 
       if (data.success) {
         toast.success(data.message);
+        // Update Redux store with new user data
+        dispatch(updateUser(data.data));
         if (onProfileUpdate) {
           onProfileUpdate(data.data);
         }

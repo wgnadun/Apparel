@@ -65,7 +65,8 @@ const syncAuth0User = async (req, res) => {
         role: user.role,
         userName: user.userName,
         firstName: user.firstName,
-        lastName: user.lastName
+        lastName: user.lastName,
+        image: user.image
       }
     });
   } catch (error) {

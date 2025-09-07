@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useDispatch } from 'react-redux';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
@@ -11,10 +12,12 @@ import { toast } from 'sonner';
 import ReactCountryFlag from 'react-country-flag';
 import { ArrowLeft, Save } from 'lucide-react';
 import { auth0Config } from '../../config/auth0';
+import { updateUser } from '../../store/auth-slice';
 
 const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
   const initialCountry = useMemo(() => findCountryByCodeOrName(user?.country) || findCountryByCodeOrName('US'), [user]);
   const { getAccessTokenSilently } = useAuth0();
+  const dispatch = useDispatch();
   
   // Create initial form data
   const getInitialFormData = () => ({
@@ -97,6 +100,8 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
 
       if (data.success) {
         toast.success(data.message);
+        // Update Redux store with new user data
+        dispatch(updateUser(data.data));
         if (onProfileUpdate) {
           onProfileUpdate(data.data);
         }
