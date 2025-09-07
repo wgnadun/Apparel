@@ -1,12 +1,4 @@
 # 🛍️ Apparel - Secure MERN E-commerce Platform
-
-[![Security](https://img.shields.io/badge/Security-OWASP%20Top%2010%20Compliant-green.svg)](https://owasp.org/www-project-top-ten/)
-[![Authentication](https://img.shields.io/badge/Auth-JWT%20%2B%20Auth0-blue.svg)](https://auth0.com/)
-[![Stack](https://img.shields.io/badge/Stack-MERN-orange.svg)](https://www.mongodb.com/mern-stack)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-A production-ready e-commerce platform built with the MERN stack, featuring comprehensive security implementations, dual authentication systems, and modern web development practices.
-
 ## 🚀 Features
 
 ### 🔐 Security Features
@@ -75,8 +67,8 @@ Before running this project, make sure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/apparel-ecommerce.git
-cd apparel-ecommerce
+git clone https://github.com/wgnadun/Apparel.git
+cd Apparel
 ```
 
 ### 2. Install Dependencies
@@ -174,7 +166,7 @@ npm run lint         # Run ESLint
 ## 📁 Project Structure
 
 ```
-apparel-ecommerce/
+Apparel/
 ├── client/                 # React frontend
 │   ├── src/
 │   │   ├── components/     # Reusable components
@@ -192,11 +184,11 @@ apparel-ecommerce/
 ├── server/                 # Express backend
 │   ├── controllers/        # Route controllers
 │   ├── middleware/         # Custom middleware
-│   ├── models/            # Database models
-│   ├── routes/            # API routes
-│   ├── helpers/           # Helper functions
-│   └── server.js          # Server entry point
-├── docs/                  # Documentation
+│   ├── models/             # Database models
+│   ├── routes/             # API routes
+│   ├── helpers/            # Helper functions
+│   └── server.js           # Server entry point
+├── docs/                   # Documentation
 ├── SECURITY_IMPLEMENTATION_BLOG.md
 └── README.md
 ```
@@ -334,18 +326,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have any questions or need help:
 
-- 📧 Email: your-email@example.com
-- 💬 LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/your-profile)
-- 🐛 Issues: [GitHub Issues](https://github.com/your-username/apparel-ecommerce/issues)
+- 🐛 Issues: [GitHub Issues](https://github.com/wgnadun/Apparel/issues)
+- 🧑‍💻 Author: [Nadun Dananjaya](https://github.com/wgnadun)
 
 ## 🔗 Related Links
 
 - [Security Implementation Blog](SECURITY_IMPLEMENTATION_BLOG.md)
 - [Validation Implementation Guide](VALIDATION_IMPLEMENTATION.md)
 - [CSRF Implementation Details](CSRF_IMPLEMENTATION.md)
-
----
-
-⭐ **Star this repository** if you found it helpful!
-
-**Built with ❤️ using the MERN stack**
