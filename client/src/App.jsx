@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from './store/auth-slice';
 import { useEffect } from 'react';
 import { Skeleton } from './components/ui/skeleton';
+import CSRFTest from './components/debug/csrf-test';
 import { Toaster } from './components/ui/sonner';
 import PaypalReturnPage from './pages/shoping-view/paypal-return';
 import PaymentSuccessPage from './pages/shoping-view/payment-success';
@@ -83,6 +84,7 @@ function App() {
             <Route path="home" element={<ShoppingHome />} />
             <Route path="listing" element={<ShoppingListing />} />
             <Route path="search" element={<SearchProducts/>}/>
+            <Route path="csrf-test" element={<CSRFTest />} />
           
           </Route>
 

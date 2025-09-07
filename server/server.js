@@ -14,6 +14,9 @@ const {
     fileUploadSecurity
 } = require('./middleware/security');
 
+// Import CSRF middleware
+const { createCSRFMiddleware, generateCSRFToken } = require('./middleware/csrf');
+
 // Import routes
 const authRouter = require('./routes/auth/auth-routes');
 const auth0Router = require('./routes/auth0/auth0'); // Add Auth0 routes
@@ -50,7 +53,8 @@ mongoose
                 'Cache-Control',
                 'Expires',
                 'Pragma',
-                'X-Requested-With'
+                'X-Requested-With',
+                'X-CSRF-Token'
             ],
             credentials: true,
             preflightContinue: false,
@@ -73,6 +77,26 @@ mongoose
      app.use(express.json({ limit: '10mb' }));
      app.use(express.urlencoded({ extended: true, limit: '10mb' }));
      app.use(cookieParser());
+
+     // CSRF token endpoint for client-side requests (must be before CSRF middleware)
+     app.get('/api/csrf-token', generateCSRFToken);
+     
+     // Test endpoint to verify server is working
+     app.get('/api/test', (req, res) => {
+         res.json({ success: true, message: 'Server is working' });
+     });
+
+     // CSRF protection middleware
+     const csrfMiddleware = createCSRFMiddleware({
+         ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
+         ignorePaths: ['/api/auth0', '/api/csrf-token'], // Skip CSRF for Auth0 routes and CSRF token endpoint
+         cookieName: '_csrf',
+         headerName: 'x-csrf-token',
+         bodyName: '_csrf'
+     });
+     
+     // Apply CSRF protection to all routes
+     app.use(csrfMiddleware);
 
      app.use('/api/auth',authRouter);
      app.use('/api/auth0', auth0Router); // Add Auth0 routes
