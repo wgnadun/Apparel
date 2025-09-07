@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../../services/api';
 
 const initialState = {
     approvalURL: null,
@@ -12,8 +12,8 @@ const initialState = {
 export const capturePayment = createAsyncThunk(
   "/order/capturePayment",
   async ({paymentId,payerId,orderId}) => {
-    const response = await axios.post(
-      "http://localhost:5000/api/shop/order/capture",
+    const response = await api.post(
+      "/shop/order/capture",
       {
         paymentId,
         payerId,
