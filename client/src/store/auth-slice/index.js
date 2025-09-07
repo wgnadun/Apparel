@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createAuthenticatedApi } from "../../services/api";
 
 const initialState = {
   isAuthenticated: false,
@@ -74,6 +74,15 @@ export const checkAuth = createAsyncThunk(
   }
 );
 
+export const syncAuth0User = createAsyncThunk(
+  "/auth/auth0/sync",
+  async (getAccessTokenSilently) => {
+    const api = createAuthenticatedApi(getAccessTokenSilently);
+    const response = await api.post("/auth/auth0/sync");
+    return response.data;
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -124,6 +133,19 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      .addCase(syncAuth0User.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(syncAuth0User.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload.success ? action.payload.user : null;
+        state.isAuthenticated = action.payload.success;
+      })
+      .addCase(syncAuth0User.rejected, (state, action) => {
         state.isLoading = false;
         state.user = null;
         state.isAuthenticated = false;

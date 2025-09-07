@@ -1,4 +1,6 @@
 const express = require("express");
+const { checkJwt } = require("../../middleware/auth0");
+const { checkAdmin } = require("../../middleware/checkRole");
 
 const {
   getAllOrdersOfAllUsers,
@@ -8,8 +10,9 @@ const {
 
 const router = express.Router();
 
-router.get("/get", getAllOrdersOfAllUsers);
-router.get("/details/:id", getOrderDetailsForAdmin);
-router.put("/update/:id", updateOrderStatus);
+// All admin order routes require authentication and admin role
+router.get("/get", checkJwt, checkAdmin, getAllOrdersOfAllUsers);
+router.get("/details/:id", checkJwt, checkAdmin, getOrderDetailsForAdmin);
+router.put("/update/:id", checkJwt, checkAdmin, updateOrderStatus);
 
 module.exports = router;

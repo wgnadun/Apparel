@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
+  auth0Id: {
+    type: String,
+    required: false,
+    unique: true,
+    sparse: true, // Allows null values but ensures uniqueness when present
+  },
   firstName: {
     type: String,
     required: true,
@@ -21,7 +27,7 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: false, // Make optional for Auth0 users
   },
   phone: {
     type: String,

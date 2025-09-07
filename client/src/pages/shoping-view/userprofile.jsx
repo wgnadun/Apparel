@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
@@ -10,6 +11,7 @@ import ProfileForm from '../../components/shopping-view/profile-form';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import { COUNTRIES, findCountryByCodeOrName } from '../../utils/countries';
 import ReactCountryFlag from 'react-country-flag';
+import { createAuthenticatedApi } from '../../services/api';
 import { 
   User, 
   Mail, 
@@ -29,24 +31,22 @@ function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    if (isAuthenticated) {
+      fetchUserProfile();
+    } else {
+      setLoading(false);
+      navigate('/auth/login');
+    }
+  }, [isAuthenticated, navigate]);
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/shop/user/profile', {
-        credentials: 'include',
-      });
-
-      if (response.status === 401) {
-        toast.error('Please login to view your profile');
-        navigate('/login');
-        return;
-      }
-
-      const data = await response.json();
+      const api = createAuthenticatedApi(getAccessTokenSilently);
+      const response = await api.get('/shop/user/profile');
+      const data = response.data;
 
       if (data.success) {
         setUser(data.data);

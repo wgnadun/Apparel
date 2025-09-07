@@ -1,66 +1,58 @@
-import CommonForm from "@/components/common/form";
-import ShoppingHeader from "@/components/shopping-view/header";
-import { loginFormControls } from "@/config";
-import { loginUser } from "@/store/auth-slice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { data, Link } from "react-router-dom";
-import { toast } from "sonner";
-
-const initialState = {
-  email: "",
-  password: "",
-};
+import { useAuth0 } from '@auth0/auth0-react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 
 function AuthLogin() {
-  const [formData, setFormData] = useState(initialState);
-  const dispatch = useDispatch();
+  const { loginWithRedirect, isAuthenticated, isLoading, user } = useAuth0();
+  const navigate = useNavigate();
 
-  function onSubmit(event) {
-    event.preventDefault();
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate('/');
+    }
+  }, [isAuthenticated, user, navigate]);
 
-    dispatch(loginUser(formData)).then((data) => {
-      if (data?.payload?.success) {
-        toast(
-          data?.payload?.message,
-        );
-      } else {
-        toast(
-           data?.payload?.message,{
-              style:{
-              color: 'red'
-            }
-           }      
-        );
+  const handleLogin = () => {
+    loginWithRedirect({
+      authorizationParams: {
+        screen_hint: 'login'
       }
     });
-  }
-  return (
-   <div>
-     <div className="mx-auto w-full max-w-md space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Sign in to your account
-        </h1>
-        <p className="mt-2">
-          Don't have an account
-          <Link
-            className="font-medium ml-2 text-primary hover:underline"
-            to="/auth/register"
-          >
-            Register
-          </Link>
-        </p>
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
-      <CommonForm
-        formControls={loginFormControls}
-        buttonText={"Sign In"}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={onSubmit}
-      />
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-md space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-center text-3xl font-bold tracking-tight text-foreground">
+            Sign in to your account
+          </CardTitle>
+          <p className="text-center mt-2 text-muted-foreground">
+            Welcome back! Please sign in to continue.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <Button 
+            onClick={handleLogin}
+            className="w-full"
+            size="lg"
+          >
+            Sign In with Auth0
+          </Button>
+        </CardContent>
+      </Card>
     </div>
-   </div>
   );
 }
 

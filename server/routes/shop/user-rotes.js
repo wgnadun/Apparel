@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { upload } = require('../../helpers/cloudinary');
-const authMiddleware = require('../../middleware/auth/auth-middleware');
+const { checkJwt } = require('../../middleware/auth0');
 const {
   uploadProfilePicture,
   updateProfilePicture,
@@ -10,8 +10,8 @@ const {
   removeProfilePicture
 } = require('../../controllers/shop/user-controller');
 
-// All routes require authentication
-router.use(authMiddleware);
+// All routes require Auth0 authentication
+router.use(checkJwt);
 
 // Get user profile
 router.get('/profile', getUserProfile);

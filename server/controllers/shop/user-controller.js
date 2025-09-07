@@ -1,6 +1,11 @@
 const { imageUploadUtil } = require("../../helpers/cloudinary");
 const User = require("../../models/User");
 
+// Helper function to get user ID from Auth0 token
+const getUserIdFromAuth0 = (req) => {
+  return req.auth.payload.sub;
+};
+
 // Upload profile picture
 const uploadProfilePicture = async (req, res) => {
   try {
@@ -26,19 +31,23 @@ const uploadProfilePicture = async (req, res) => {
 
     console.log('Upload successful, updating user profile');
     
-    // Update user's profile picture
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { image: result.secure_url },
-      { new: true, select: '-password' }
-    );
-
-    if (!updatedUser) {
+    // Get user by Auth0 ID
+    const auth0Id = getUserIdFromAuth0(req);
+    const user = await User.findOne({ auth0Id });
+    
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found"
       });
     }
+
+    // Update user's profile picture
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { image: result.secure_url },
+      { new: true, select: '-password' }
+    );
 
     res.json({
       success: true,
@@ -113,9 +122,10 @@ const updateProfilePicture = async (req, res) => {
 // Get user profile
 const getUserProfile = async (req, res) => {
   try {
-    console.log('Getting user profile for user ID:', req.user.id);
+    const auth0Id = getUserIdFromAuth0(req);
+    console.log('Getting user profile for Auth0 ID:', auth0Id);
     
-    const user = await User.findById(req.user.id).select('-password');
+    const user = await User.findOne({ auth0Id }).select('-password');
     
     if (!user) {
       return res.status(404).json({

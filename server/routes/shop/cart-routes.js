@@ -1,4 +1,5 @@
 const express = require("express");
+// const { checkJwt } = require("../../middleware/auth0");
 
 const {
   addToCart,
@@ -9,6 +10,7 @@ const {
 
 const router = express.Router();
 
+// Temporarily removing Auth0 middleware for testing
 router.post("/add", addToCart);
 router.get("/get/:userId", fetchCartItems);
 router.put("/update-cart", UpdateCartItemQty);
