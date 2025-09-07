@@ -308,6 +308,33 @@ const validationRules = {
         handleValidationErrors
     ],
 
+    // Edit address validation
+    editAddress: [
+        param('userId')
+            .isMongoId()
+            .withMessage('Valid user ID is required'),
+        param('addressId')
+            .isMongoId()
+            .withMessage('Valid address ID is required'),
+        commonValidations.address.optional(),
+        commonValidations.city.optional(),
+        commonValidations.pincode.optional(),
+        commonValidations.phone.optional(),
+        commonValidations.notes.optional(),
+        handleValidationErrors
+    ],
+
+    // Delete address validation
+    deleteAddress: [
+        param('userId')
+            .isMongoId()
+            .withMessage('Valid user ID is required'),
+        param('addressId')
+            .isMongoId()
+            .withMessage('Valid address ID is required'),
+        handleValidationErrors
+    ],
+
     // Cart specific validations
     getCartByUserId: [
         param('userId')

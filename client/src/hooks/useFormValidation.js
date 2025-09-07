@@ -1,11 +1,20 @@
-import { useState, useCallback, useMemo } from 'react';
-import { validateForm, validateField, sanitizeInput } from '../utils/validation';
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { validateForm, validateField, sanitizeInput, sanitizeReviewInput } from '../utils/validation';
 
 export const useFormValidation = (schema, initialData = {}) => {
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [originalData, setOriginalData] = useState(initialData);
+
+  // Update form data when initialData changes
+  useEffect(() => {
+    console.log('useFormValidation: initialData changed', initialData);
+    setFormData(initialData);
+    setOriginalData(initialData);
+    setErrors({});
+    setTouched({});
+  }, [JSON.stringify(initialData)]);
 
   // Validate a single field
   const validateSingleField = useCallback((fieldName, value) => {
@@ -26,7 +35,8 @@ export const useFormValidation = (schema, initialData = {}) => {
 
   // Handle input change with validation
   const handleInputChange = useCallback((name, value) => {
-    const sanitizedValue = sanitizeInput(value);
+    // Use lenient sanitization for review messages to allow spaces
+    const sanitizedValue = name === 'reviewMessage' ? sanitizeReviewInput(value) : sanitizeInput(value);
     
     setFormData(prev => ({
       ...prev,

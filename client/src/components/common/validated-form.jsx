@@ -29,7 +29,8 @@ function ValidatedForm({
     handleSubmit,
     getFieldError,
     hasFieldError,
-    isFormValid
+    isFormValid,
+    resetForm
   } = useFormValidation(schema, initialData);
 
   function renderInputsByComponentType(getControlItem) {

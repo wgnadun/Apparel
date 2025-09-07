@@ -8,7 +8,7 @@ const router = express.Router();
 // Address routes with validation
 router.post('/add', validationRules.createAddress, addAddress);
 router.get('/fetch/:userId', validationRules.getCartByUserId, fetchAllAddress);
-router.put('/edit/:userId/:addressId', validationRules.createAddress, editAddress);
-router.delete('/delete/:userId/:addressId', validationRules.getById, deleteAddress);
+router.put('/edit/:userId/:addressId', validationRules.editAddress, editAddress);
+router.delete('/delete/:userId/:addressId', validationRules.deleteAddress, deleteAddress);
 
 module.exports = router;

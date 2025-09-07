@@ -44,20 +44,35 @@ function Address({setCurrentSelectedAddress, selectedId}) {
                 dispatch(fetchAllAddresses(user?.id))
                 setCurrentEditeddId(null);
                 setFormData(initialAddressFormData);
-                    toast.success('Address updated successfully', {
+                toast.success('Address updated successfully', {
                     style: {
                         backgroundColor: 'white',
                         color: 'black',
                     },
-});
+                });
+            } else {
+                toast.error('Failed to update address',{
+                    style: {
+                        backgroundColor: 'white',
+                        color: 'red',
+                    },
+                });
             }
-
+        }).catch((error) => {
+            console.error('Edit address error:', error);
+            toast.error('Failed to update address',{
+                style: {
+                    backgroundColor: 'white',
+                    color: 'red',
+                },
+            });
         })
     :dispatch(addNewAddress({...formData,userId:user?.id})
     
     ).then((data)=>{
         if(data?.payload?.success){
             dispatch(fetchAllAddresses(user?.id))
+            console.log('Address: Clearing form data', initialAddressFormData);
             setFormData(initialAddressFormData);
             toast.success('Address added successfully',{
                 style: {
@@ -65,7 +80,22 @@ function Address({setCurrentSelectedAddress, selectedId}) {
                     color: 'green',
                 },
             });
+        } else {
+            toast.error('Failed to add address',{
+                style: {
+                    backgroundColor: 'white',
+                    color: 'red',
+                },
+            });
         }
+    }).catch((error) => {
+        console.error('Add address error:', error);
+        toast.error('Failed to add address',{
+            style: {
+                backgroundColor: 'white',
+                color: 'red',
+            },
+        });
     }) 
 }
 

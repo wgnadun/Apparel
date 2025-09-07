@@ -86,8 +86,10 @@ export const productSchema = z.object({
 // Review validation schema
 export const reviewSchema = z.object({
   reviewMessage: z.string()
-    .min(10, 'Review must be at least 10 characters')
-    .max(1000, 'Review must be less than 1000 characters'),
+    .max(1000, 'Review must be less than 1000 characters')
+    .trim()
+    .optional()
+    .or(z.literal('')),
   reviewValue: z.number()
     .int('Rating must be a whole number')
     .min(1, 'Rating must be at least 1 star')
@@ -164,7 +166,7 @@ export const fieldHints = {
   
   // Review form hints
   reviewValue: "Rate the product from 1 to 5 stars",
-  reviewMessage: "Share your experience with this product"
+  reviewMessage: "Write your review or notes about this product (optional)"
 };
 
 // Input sanitization function
@@ -181,6 +183,18 @@ export const sanitizeInput = (input) => {
     .replace(/"/g, '&quot;') // Escape quotes
     .replace(/'/g, '&#x27;') // Escape apostrophes
     .replace(/\//g, '&#x2F;'); // Escape forward slashes
+};
+
+// Lenient sanitization for review messages (allows spaces and normal punctuation)
+export const sanitizeReviewInput = (input) => {
+  if (typeof input !== 'string') return input;
+  
+  return input
+    .replace(/[<>]/g, '') // Remove potential HTML tags
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .replace(/script/gi, ''); // Remove script tags
+    // Note: No .trim() to preserve spaces, no HTML escaping for normal text
 };
 
 // Validation helper functions
