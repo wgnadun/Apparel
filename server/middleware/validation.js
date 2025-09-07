@@ -83,44 +83,37 @@ const commonValidations = {
         .isInt({ min: 0, max: 999999 })
         .withMessage('Stock must be a valid integer between 0 and 999999'),
 
-    // Address validation
-    addressLine1: body('addressLine1')
+    // Address validation (matching client-side form fields)
+    address: body('address')
         .isLength({ min: 5, max: 200 })
-        .withMessage('Address line 1 must be between 5 and 200 characters')
-        .trim(),
-
-    addressLine2: body('addressLine2')
-        .optional()
-        .isLength({ max: 200 })
-        .withMessage('Address line 2 must not exceed 200 characters')
+        .withMessage('Address must be between 5 and 200 characters')
         .trim(),
 
     city: body('city')
         .isLength({ min: 2, max: 100 })
         .withMessage('City must be between 2 and 100 characters')
-        .matches(/^[a-zA-Z\s]+$/)
-        .withMessage('City can only contain letters and spaces')
+        .matches(/^[a-zA-Z\s'-]+$/)
+        .withMessage('City can only contain letters, spaces, hyphens, and apostrophes')
         .trim(),
 
-    state: body('state')
-        .isLength({ min: 2, max: 100 })
-        .withMessage('State must be between 2 and 100 characters')
-        .matches(/^[a-zA-Z\s]+$/)
-        .withMessage('State can only contain letters and spaces')
+    pincode: body('pincode')
+        .isLength({ min: 4, max: 10 })
+        .withMessage('Pincode must be between 4 and 10 characters')
+        .matches(/^[0-9]+$/)
+        .withMessage('Pincode can only contain numbers')
         .trim(),
 
-    postalCode: body('postalCode')
-        .isLength({ min: 3, max: 20 })
-        .withMessage('Postal code must be between 3 and 20 characters')
-        .matches(/^[a-zA-Z0-9\s-]+$/)
-        .withMessage('Postal code contains invalid characters')
+    phone: body('phone')
+        .isLength({ min: 10, max: 15 })
+        .withMessage('Phone number must be between 10 and 15 characters')
+        .matches(/^[\+]?[1-9][\d]{0,15}$/)
+        .withMessage('Please enter a valid phone number')
         .trim(),
 
-    country: body('country')
-        .isLength({ min: 2, max: 100 })
-        .withMessage('Country must be between 2 and 100 characters')
-        .matches(/^[a-zA-Z\s]+$/)
-        .withMessage('Country can only contain letters and spaces')
+    notes: body('notes')
+        .optional()
+        .isLength({ max: 500 })
+        .withMessage('Notes must not exceed 500 characters')
         .trim(),
 
     // Review validation
@@ -246,16 +239,14 @@ const validationRules = {
 
     // Address validations
     createAddress: [
-        commonValidations.addressLine1,
-        commonValidations.addressLine2,
+        commonValidations.address,
         commonValidations.city,
-        commonValidations.state,
-        commonValidations.postalCode,
-        commonValidations.country,
-        body('isDefault')
-            .optional()
-            .isBoolean()
-            .withMessage('isDefault must be a boolean value'),
+        commonValidations.pincode,
+        commonValidations.phone,
+        commonValidations.notes,
+        body('userId')
+            .notEmpty()
+            .withMessage('User ID is required'),
         handleValidationErrors
     ],
 

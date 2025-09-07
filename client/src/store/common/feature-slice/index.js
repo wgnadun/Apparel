@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../../services/api";
 
 const initialState = {
   isLoading: false,
@@ -13,8 +13,8 @@ const initialState = {
 export const getFeatureImages = createAsyncThunk(
   "feature/getFeatureImages",
   async () => {
-    const response = await axios.get(
-      `http://localhost:5000/api/common/feature/get`
+    const response = await api.get(
+      `/common/feature/get`
     );
     return response.data;
   }
@@ -23,8 +23,8 @@ export const getFeatureImages = createAsyncThunk(
 export const addFeatureImage = createAsyncThunk(
   "feature/addFeatureImage",
   async (image) => {
-    const response = await axios.post(
-      `http://localhost:5000/api/common/feature/add`,
+    const response = await api.post(
+      `/common/feature/add`,
       { image }
     );
     return response.data;
@@ -34,8 +34,8 @@ export const addFeatureImage = createAsyncThunk(
 export const deleteFeatureImages = createAsyncThunk(
   "feature/deleteFeatureImage",
   async (id) => {
-    const response = await axios.delete(
-      `http://localhost:5000/api/common/feature/delete/${id}`
+    const response = await api.delete(
+      `/common/feature/delete/${id}`
     );
     return response.data;
   }
@@ -47,8 +47,8 @@ export const fetchAdminStats = createAsyncThunk(
   async (days = 30, { rejectWithValue }) => {
     try {
       // No token or admin check — open API call
-      const { data } = await axios.get(
-        `http://localhost:5000/api/common/feature/stats?days=${days}`
+      const { data } = await api.get(
+        `/common/feature/stats?days=${days}`
       );
       return data;
     } catch (err) {

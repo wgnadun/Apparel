@@ -1,6 +1,5 @@
-import axios from "axios";
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../../services/api";
 
 const initialState = {
     isLoading : false,
@@ -9,15 +8,10 @@ const initialState = {
 //add thunk
 export const addNewProduct = createAsyncThunk(
     "/products/addnewproduct",async(formData)=>{
-        const result = await axios.post(
-            "http://localhost:5000/api/admin/products/add-product",
-             formData,
-             {
-               headers: {
-                "Content-Type" : "application/json",
-            },
-        }
-    );
+        const result = await api.post(
+            "/admin/products/add-product",
+             formData
+        );
     
     return result?.data;
     
@@ -27,8 +21,7 @@ export const addNewProduct = createAsyncThunk(
     //fetch all thunk
 export const fetchAllProducts = createAsyncThunk(
     "/products/fetchAllProducts",async()=>{
-        const result = await axios.get("http://localhost:5000/api/admin/products/fetch-all-products",
-    );
+        const result = await api.get("/admin/products/fetch-all-products");
     
     return result?.data;
     
@@ -36,12 +29,7 @@ export const fetchAllProducts = createAsyncThunk(
 //edit thunk
 export const editProduct = createAsyncThunk(
     "/products/editproduct",async({id,formData})=>{
-        const result = await axios.put(`http://localhost:5000/api/admin/products/edit-product/${id}`, formData,{
-            headers: {
-                "Content-Type" : "application/json",
-            },
-        }
-    );
+        const result = await api.put(`/admin/products/edit-product/${id}`, formData);
     
     return result?.data;
     
@@ -51,8 +39,7 @@ export const editProduct = createAsyncThunk(
 
 export const deleteProduct = createAsyncThunk(
     "/products/deleteProduct",async(id)=>{
-        const result = await axios.delete(`http://localhost:5000/api/admin/products/delete-product/${id}`
-    );
+        const result = await api.delete(`/admin/products/delete-product/${id}`);
     
     return result?.data;
     
