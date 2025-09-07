@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -6,11 +7,13 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Separator } from '../ui/separator';
 import { toast } from 'sonner';
+import { auth0Config } from '../../config/auth0';
 
 const ProfilePictureUpload = ({ user, onProfileUpdate }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const fileInputRef = useRef(null);
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleFileSelect = async (event) => {
     const file = event.target.files[0];
@@ -35,6 +38,12 @@ const ProfilePictureUpload = ({ user, onProfileUpdate }) => {
     setIsUploading(true);
     
     try {
+      // Get Auth0 access token
+      const token = await getAccessTokenSilently({
+        audience: auth0Config.audience,
+        scope: auth0Config.scope
+      });
+
       const formData = new FormData();
       formData.append('image', file);
 
@@ -42,6 +51,9 @@ const ProfilePictureUpload = ({ user, onProfileUpdate }) => {
         method: user?.image ? 'PUT' : 'POST', // PUT for update, POST for new upload
         body: formData,
         credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       const data = await response.json();
@@ -66,9 +78,18 @@ const ProfilePictureUpload = ({ user, onProfileUpdate }) => {
     setIsRemoving(true);
     
     try {
+      // Get Auth0 access token
+      const token = await getAccessTokenSilently({
+        audience: auth0Config.audience,
+        scope: auth0Config.scope
+      });
+
       const response = await fetch('http://localhost:5000/api/shop/user/profile/picture', {
         method: 'DELETE',
         credentials: 'include',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       const data = await response.json();

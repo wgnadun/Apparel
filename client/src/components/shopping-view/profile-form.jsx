@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
@@ -9,9 +10,11 @@ import { COUNTRIES, findCountryByCodeOrName } from '../../utils/countries';
 import { toast } from 'sonner';
 import ReactCountryFlag from 'react-country-flag';
 import { ArrowLeft, Save } from 'lucide-react';
+import { auth0Config } from '../../config/auth0';
 
 const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
   const initialCountry = useMemo(() => findCountryByCodeOrName(user?.country) || findCountryByCodeOrName('US'), [user]);
+  const { getAccessTokenSilently } = useAuth0();
   
   // Create initial form data
   const getInitialFormData = () => ({
@@ -74,10 +77,17 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
     setIsUpdating(true);
 
     try {
+      // Get Auth0 access token
+      const token = await getAccessTokenSilently({
+        audience: auth0Config.audience,
+        scope: auth0Config.scope
+      });
+
       const response = await fetch('http://localhost:5000/api/shop/user/profile', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         credentials: 'include',
         body: JSON.stringify(formData),

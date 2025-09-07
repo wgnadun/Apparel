@@ -87,19 +87,23 @@ const updateProfilePicture = async (req, res) => {
 
     console.log('Upload successful, updating user profile picture');
     
-    // Update user's profile picture
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { image: result.secure_url },
-      { new: true, select: '-password' }
-    );
-
-    if (!updatedUser) {
+    // Get user by Auth0 ID
+    const auth0Id = getUserIdFromAuth0(req);
+    const user = await User.findOne({ auth0Id });
+    
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found"
       });
     }
+
+    // Update user's profile picture
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { image: result.secure_url },
+      { new: true, select: '-password' }
+    );
 
     res.json({
       success: true,
@@ -151,7 +155,8 @@ const getUserProfile = async (req, res) => {
 // Update user profile (excluding password and image)
 const updateUserProfile = async (req, res) => {
   try {
-    console.log('Updating user profile for user ID:', req.user.id);
+    const auth0Id = getUserIdFromAuth0(req);
+    console.log('Updating user profile for Auth0 ID:', auth0Id);
     
     const { firstName, lastName, userName, email, phone, country } = req.body;
     
@@ -163,18 +168,21 @@ const updateUserProfile = async (req, res) => {
     if (phone) updateData.phone = phone;
     if (country) updateData.country = country;
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      updateData,
-      { new: true, select: '-password' }
-    );
-
-    if (!updatedUser) {
+    // Get user by Auth0 ID first
+    const user = await User.findOne({ auth0Id });
+    
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found"
       });
     }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      updateData,
+      { new: true, select: '-password' }
+    );
 
     res.json({
       success: true,
@@ -194,20 +202,24 @@ const updateUserProfile = async (req, res) => {
 // Remove profile picture
 const removeProfilePicture = async (req, res) => {
   try {
-    console.log('Removing profile picture for user ID:', req.user.id);
+    const auth0Id = getUserIdFromAuth0(req);
+    console.log('Removing profile picture for Auth0 ID:', auth0Id);
     
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { image: null },
-      { new: true, select: '-password' }
-    );
-
-    if (!updatedUser) {
+    // Get user by Auth0 ID first
+    const user = await User.findOne({ auth0Id });
+    
+    if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found"
       });
     }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      user._id,
+      { image: null },
+      { new: true, select: '-password' }
+    );
 
     res.json({
       success: true,
