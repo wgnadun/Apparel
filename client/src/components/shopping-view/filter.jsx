@@ -23,11 +23,21 @@ function ProductFilter({filters,handleFilter}) {
                                                 className="flex font-medium items-center gap-2"
                                                 key={option.value || option.label}
                                             >
-                                                <Checkbox checked ={
-                                                    filters && Object.keys(filters).length > 0 &&
-                                                    filters[keyItem] && filters[keyItem].indexOf(option.id) > -1
-                                                }
-                                                onCheckedChange ={()=> handleFilter(keyItem,option.id)} />
+                                                <Checkbox 
+                                                    checked ={
+                                                        filters && Object.keys(filters).length > 0 &&
+                                                        filters[keyItem] && filters[keyItem].indexOf(option.id) > -1
+                                                    }
+                                                    onCheckedChange ={(checked) => {
+                                                        console.log('Checkbox changed:', { 
+                                                            keyItem, 
+                                                            optionId: option.id, 
+                                                            checked, 
+                                                            currentFilters: filters,
+                                                            filterSection: filters?.[keyItem]
+                                                        });
+                                                        handleFilter(keyItem, option.id);
+                                                    }} />
                                                 {option.label}
                                             </Label>
                                         ))

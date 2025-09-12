@@ -27,8 +27,8 @@ function createSearchParamsHelper(filterParams) {
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
       const paramValue = value.join(",");
-
-      queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
+      // Don't double-encode, just join with commas
+      queryParams.push(`${key}=${paramValue}`);
     }
   }
 
@@ -56,23 +56,35 @@ function ShoppingListing() {
   }
 
   function handleFilter(getSectionId, getCurrentOption) {
-    let cpyFilters = { ...filters };
+    console.log('handleFilter called:', { getSectionId, getCurrentOption, currentFilters: filters });
+    
+    // Create a deep copy of filters to avoid reference issues
+    let cpyFilters = JSON.parse(JSON.stringify(filters || {}));
     const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
 
     if (indexOfCurrentSection === -1) {
-      cpyFilters = {
-        ...cpyFilters,
-        [getSectionId]: [getCurrentOption],
-      };
+      console.log('Creating new filter section:', getSectionId);
+      cpyFilters[getSectionId] = [getCurrentOption];
     } else {
-      const indexOfCurrentOption =
-        cpyFilters[getSectionId].indexOf(getCurrentOption);
+      console.log('Updating existing filter section:', getSectionId, 'current options:', cpyFilters[getSectionId]);
+      
+      // Ensure the section exists and is an array
+      if (!Array.isArray(cpyFilters[getSectionId])) {
+        cpyFilters[getSectionId] = [];
+      }
+      
+      const indexOfCurrentOption = cpyFilters[getSectionId].indexOf(getCurrentOption);
 
-      if (indexOfCurrentOption === -1)
-        cpyFilters[getSectionId].push(getCurrentOption);
-      else cpyFilters[getSectionId].splice(indexOfCurrentOption, 1);
+      if (indexOfCurrentOption === -1) {
+        console.log('Adding option:', getCurrentOption);
+        cpyFilters[getSectionId] = [...cpyFilters[getSectionId], getCurrentOption];
+      } else {
+        console.log('Removing option:', getCurrentOption);
+        cpyFilters[getSectionId] = cpyFilters[getSectionId].filter(option => option !== getCurrentOption);
+      }
     }
 
+    console.log('Final filters after update:', cpyFilters);
     setFilters(cpyFilters);
     sessionStorage.setItem("filters", JSON.stringify(cpyFilters));
   }
@@ -126,32 +138,75 @@ function ShoppingListing() {
   }
 
   useEffect(() => {
+    console.log('Initializing filters, categorySearchParam:', categorySearchParam);
     setSort("price-lowtohigh");
     
     // Get filters from session storage or initialize empty
     let initialFilters = JSON.parse(sessionStorage.getItem("filters")) || {};
+    console.log('Initial filters from session storage:', initialFilters);
     
-    // If there's a category in URL params, use it to set the filter
+    // If there's a category in URL params, parse it properly
     if (categorySearchParam) {
+      console.log('Setting category filter from URL param:', categorySearchParam);
+      // Handle comma-separated categories from URL
+      const categories = categorySearchParam.split(',').map(cat => cat.trim());
       initialFilters = {
         ...initialFilters,
-        category: [categorySearchParam]
+        category: categories
       };
       // Update session storage with the category filter
       sessionStorage.setItem("filters", JSON.stringify(initialFilters));
     }
     
+    console.log('Final initial filters:', initialFilters);
     setFilters(initialFilters);
   }, [categorySearchParam]);
 
+  // Listen for filter changes from header navigation
   useEffect(() => {
+    const handleFiltersChanged = (event) => {
+      console.log('Received filtersChanged event:', event.detail);
+      const newFilters = event.detail.filters;
+      if (newFilters) {
+        setFilters(newFilters);
+        sessionStorage.setItem("filters", JSON.stringify(newFilters));
+      } else {
+        setFilters({});
+        sessionStorage.removeItem("filters");
+      }
+    };
+
+    window.addEventListener('filtersChanged', handleFiltersChanged);
+    
+    return () => {
+      window.removeEventListener('filtersChanged', handleFiltersChanged);
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('URL params effect triggered, filters:', filters);
     if (filters && Object.keys(filters).length > 0) {
       const createQueryString = createSearchParamsHelper(filters);
-      setSearchParams(new URLSearchParams(createQueryString));
+      console.log('Creating query string:', createQueryString);
+      
+      // Only update URL params if they're different to prevent circular updates
+      const currentParams = new URLSearchParams(createQueryString);
+      const existingParams = new URLSearchParams(window.location.search);
+      
+      if (currentParams.toString() !== existingParams.toString()) {
+        setSearchParams(currentParams);
+      }
+    } else {
+      console.log('No filters or empty filters, clearing URL params');
+      const existingParams = new URLSearchParams(window.location.search);
+      if (existingParams.toString() !== '') {
+        setSearchParams(new URLSearchParams());
+      }
     }
   }, [filters]);
 
   useEffect(() => {
+    console.log('Fetch products effect triggered, filters:', filters, 'sort:', sort);
     if (filters !== null && sort !== null)
       dispatch(
         fetchAllFilteredProducts({ filterParams: filters, sortParams: sort })

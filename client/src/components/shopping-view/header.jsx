@@ -126,11 +126,16 @@ function MenuItems() {
     currentFilter
       ? sessionStorage.setItem("filters", JSON.stringify(currentFilter))
       : sessionStorage.removeItem("filters");
-    location.pathname.includes("listing") && currentFilter !== null
-      ? setSearchParams(
-          new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
-        )
-      : navigate(getCurrentMenuItem.path);
+    
+    if (location.pathname.includes("listing")) {
+      if (currentFilter !== null) {
+        setSearchParams(new URLSearchParams(`?category=${getCurrentMenuItem.id}`));
+      } else {
+        setSearchParams(new URLSearchParams());
+      }
+    } else {
+      navigate(getCurrentMenuItem.path);
+    }
 
     // Dispatch a custom event to notify the listing page about filter changes
     window.dispatchEvent(
