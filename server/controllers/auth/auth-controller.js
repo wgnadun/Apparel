@@ -6,12 +6,25 @@ const axios = require("axios");
 // Auth0 user sync/create endpoint
 const syncAuth0User = async (req, res) => {
   try {
+    console.log('Sync Auth0 User - Request headers:', req.headers);
+    console.log('Sync Auth0 User - Auth object:', req.auth);
+    
+    // Check if req.auth exists and has payload
+    if (!req.auth || !req.auth.payload) {
+      console.error('Auth object or payload missing');
+      return res.status(401).json({
+        success: false,
+        message: "Authentication failed - invalid token"
+      });
+    }
+    
     const { sub: auth0Id } = req.auth.payload;
     
     console.log('Auth0 payload:', req.auth.payload);
     
     // Validate required fields
     if (!auth0Id) {
+      console.error('Auth0 ID missing from payload');
       return res.status(400).json({
         success: false,
         message: "Auth0 ID is required"
@@ -32,7 +45,11 @@ const syncAuth0User = async (req, res) => {
     // Fetch user profile from Auth0 userinfo endpoint
     let userProfile;
     try {
-      const userinfoResponse = await axios.get(`https://${process.env.AUTH0_DOMAIN}/userinfo`, {
+      console.log('Fetching userinfo from Auth0 domain:', process.env.AUTH0_DOMAIN);
+      const userinfoUrl = `https://${process.env.AUTH0_DOMAIN}/userinfo`;
+      console.log('Userinfo URL:', userinfoUrl);
+      
+      const userinfoResponse = await axios.get(userinfoUrl, {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
@@ -40,10 +57,19 @@ const syncAuth0User = async (req, res) => {
       userProfile = userinfoResponse.data;
       console.log('Auth0 userinfo response:', userProfile);
     } catch (userinfoError) {
-      console.error('Error fetching userinfo:', userinfoError.response?.data || userinfoError.message);
+      console.error('Error fetching userinfo:', {
+        message: userinfoError.message,
+        status: userinfoError.response?.status,
+        data: userinfoError.response?.data,
+        config: {
+          url: userinfoError.config?.url,
+          headers: userinfoError.config?.headers
+        }
+      });
       return res.status(500).json({
         success: false,
-        message: "Failed to fetch user profile from Auth0"
+        message: "Failed to fetch user profile from Auth0",
+        error: userinfoError.message
       });
     }
 

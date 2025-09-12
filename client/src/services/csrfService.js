@@ -45,7 +45,9 @@ class CSRFService {
       throw new Error('Failed to get CSRF token');
     } catch (error) {
       console.error('Error fetching CSRF token:', error);
-      throw error;
+      // Don't throw error for CSRF token fetch failures
+      // This allows the app to continue working even if CSRF fails
+      return null;
     }
   }
 

@@ -9,6 +9,7 @@ import { addNewProduct, fetchAllProducts, editProduct, deleteProduct } from "@/s
 import { toast } from "sonner";
 import AdminProductTile from "@/components/admin-view/product-tile";
 import { productSchema } from "@/utils/validation";
+import { useAuth0 } from '@auth0/auth0-react';
 
 const initialFormData = {
   image: null,
@@ -32,20 +33,25 @@ function AdminProducts() {
   const [currentEditedId,setCurrentEditedId] = useState(null);
 
   const {productList} = useSelector(state => state.adminProducts);
+  const { authType } = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  const { getAccessTokenSilently } = useAuth0();
 
  function onSubmit(formData) {
+    const authParams = { getAccessTokenSilently, authType };
+    
     currentEditedId !== null
       ? dispatch(
           editProduct({
             id: currentEditedId,
             formData,
+            ...authParams,
           })
         ).then((data) => {
           console.log(data, "edit");
 
           if (data?.payload?.success) {
-            dispatch(fetchAllProducts());
+            dispatch(fetchAllProducts(authParams));
             setFormData(initialFormData);
             setOpenCreateProductsDialog(false);
             setCurrentEditedId(null);
@@ -55,11 +61,12 @@ function AdminProducts() {
           addNewProduct({
             ...formData,
             image: uploadedImageUrl,
+            ...authParams,
           })
         ).then((data) => {
           if (data?.payload?.success) {
             console.log(data)
-            dispatch(fetchAllProducts());
+            dispatch(fetchAllProducts(authParams));
             setOpenCreateProductsDialog(false);
             setImageFile(null);
             setFormData(initialFormData);
@@ -71,9 +78,14 @@ function AdminProducts() {
   }
 //delete product
    function handleDelete(getCurrentProductId) {
-    dispatch(deleteProduct(getCurrentProductId)).then((data) => {
+    const authParams = { getAccessTokenSilently, authType };
+    
+    dispatch(deleteProduct({
+      id: getCurrentProductId,
+      ...authParams,
+    })).then((data) => {
       if (data?.payload?.success) {
-        dispatch(fetchAllProducts());
+        dispatch(fetchAllProducts(authParams));
       }
     });
   }
@@ -81,8 +93,9 @@ function AdminProducts() {
 // Remove the old isFormValid function as it's now handled by the validation hook
 
   useEffect(()=>{
-    dispatch(fetchAllProducts())
-  },[dispatch])
+    const authParams = { getAccessTokenSilently, authType };
+    dispatch(fetchAllProducts(authParams))
+  },[dispatch, getAccessTokenSilently, authType])
 
   console.log(productList,uploadedImageUrl,"productList");
 

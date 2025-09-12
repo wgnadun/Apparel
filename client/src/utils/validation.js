@@ -69,18 +69,31 @@ export const productSchema = z.object({
     .min(1, 'Please select a brand')
     .refine(val => ['nike', 'adidas', 'puma', 'levi', 'zara', 'h&m', 'coofandy', 'J.VER'].includes(val), 
       'Please select a valid brand'),
-  price: z.number()
-    .min(0.01, 'Price must be greater than 0')
-    .max(999999.99, 'Price must be less than $999,999.99'),
-  salePrice: z.number()
-    .min(0, 'Sale price must be 0 or greater')
-    .max(999999.99, 'Sale price must be less than $999,999.99')
-    .optional()
-    .or(z.literal(0)),
-  totalStock: z.number()
-    .int('Stock must be a whole number')
-    .min(0, 'Stock cannot be negative')
-    .max(99999, 'Stock must be less than 100,000')
+  price: z.union([
+    z.string().transform((val) => {
+      const num = parseFloat(val);
+      if (isNaN(num)) throw new Error('Price must be a valid number');
+      return num;
+    }).pipe(z.number().min(0.01, 'Price must be greater than 0').max(999999.99, 'Price must be less than $999,999.99')),
+    z.number().min(0.01, 'Price must be greater than 0').max(999999.99, 'Price must be less than $999,999.99')
+  ]),
+  salePrice: z.union([
+    z.string().transform((val) => {
+      if (val === '' || val === '0') return 0;
+      const num = parseFloat(val);
+      if (isNaN(num)) throw new Error('Sale price must be a valid number');
+      return num;
+    }).pipe(z.number().min(0, 'Sale price must be 0 or greater').max(999999.99, 'Sale price must be less than $999,999.99')),
+    z.number().min(0, 'Sale price must be 0 or greater').max(999999.99, 'Sale price must be less than $999,999.99')
+  ]).optional().default(0),
+  totalStock: z.union([
+    z.string().transform((val) => {
+      const num = parseInt(val);
+      if (isNaN(num)) throw new Error('Stock must be a valid number');
+      return num;
+    }).pipe(z.number().int('Stock must be a whole number').min(0, 'Stock cannot be negative').max(99999, 'Stock must be less than 100,000')),
+    z.number().int('Stock must be a whole number').min(0, 'Stock cannot be negative').max(99999, 'Stock must be less than 100,000')
+  ])
 });
 
 // Review validation schema

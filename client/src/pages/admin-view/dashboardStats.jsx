@@ -1,6 +1,7 @@
 import { fetchAdminStats } from '@/store/common/feature-slice';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import { useAuth0 } from '@auth0/auth0-react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -32,11 +33,14 @@ function AdminDashboardStats() {
   const dispatch = useDispatch();
   const { adminStats: stats, statsLoading: loading, statsError: error } =
     useSelector((state) => state.commonFeature);
+  const { authType } = useSelector(state => state.auth);
   const [days, setDays] = useState(30);
+  const { getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    dispatch(fetchAdminStats(days));
-  }, [dispatch, days]);
+    const authParams = { getAccessTokenSilently, authType };
+    dispatch(fetchAdminStats({ days, ...authParams }));
+  }, [dispatch, days, getAccessTokenSilently, authType]);
 
   console.log("📊 Stats data from store:", stats);
 

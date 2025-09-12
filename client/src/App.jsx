@@ -29,15 +29,18 @@ import AdminDashboard from './pages/admin-view/dashboard';
 import UserProfile from './pages/shoping-view/userprofile';
 
 function App() {
- const {user,isAuthenticated,isLoading} = useSelector(state=> state.auth);
+ const {user,isAuthenticated,isLoading,authType} = useSelector(state=> state.auth);
  const dispatch =  useDispatch();
    
  useEffect(()=>{
-    dispatch(checkAuth())
- },[dispatch])
+    // Only check JWT auth if not already authenticated via Auth0
+    if (authType !== 'auth0') {
+      dispatch(checkAuth())
+    }
+ },[dispatch, authType])
 
  if(isLoading) return <Skeleton className="h-[600px] w-[800px] bg-black" />
- console.log(location.pathname,isAuthenticated);
+ console.log('App - pathname:', location.pathname, 'isAuthenticated:', isAuthenticated, 'authType:', authType, 'user:', user);
 
   return (
     <>

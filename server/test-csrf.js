@@ -110,3 +110,4 @@ async function testCSRF() {
 
 // Run the test
 testCSRF();
+

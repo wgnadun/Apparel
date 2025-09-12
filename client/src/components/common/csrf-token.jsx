@@ -31,3 +31,4 @@ const CSRFToken = ({ name = '_csrf' }) => {
 };
 
 export default CSRFToken;
+

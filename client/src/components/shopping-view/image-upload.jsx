@@ -3,7 +3,7 @@ import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import axios from "axios";
+import api from "../../services/api";
 import { Skeleton } from "../ui/skeleton";
 
 function ProductImageUpload({
@@ -50,7 +50,7 @@ function ProductImageUpload({
       setImageLoadingState(true);
       const data =  new FormData();
       data.append('my_image_file', imageFile);
-      const response =  await axios.post('http://localhost:5000/api/admin/products/upload-image',data);
+      const response =  await api.post('/admin/products/upload-image',data);
 
       if(response?.data?.success) {
         setUploadedImageUrl(response.data.result.url);

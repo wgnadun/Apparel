@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../../services/api";
+import { createAuthenticatedApi } from "../../../services/api";
 
 const initialState = {
     isLoading : false,
@@ -7,8 +8,17 @@ const initialState = {
 }
 //add thunk
 export const addNewProduct = createAsyncThunk(
-    "/products/addnewproduct",async(formData)=>{
-        const result = await api.post(
+    "/products/addnewproduct",async({ formData, getAccessTokenSilently, authType })=>{
+        let apiInstance;
+        
+        // Use authenticated API for Auth0 users, regular API for JWT users
+        if (authType === 'auth0' && getAccessTokenSilently) {
+            apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+        } else {
+            apiInstance = api;
+        }
+        
+        const result = await apiInstance.post(
             "/admin/products/add-product",
              formData
         );
@@ -20,16 +30,34 @@ export const addNewProduct = createAsyncThunk(
 
     //fetch all thunk
 export const fetchAllProducts = createAsyncThunk(
-    "/products/fetchAllProducts",async()=>{
-        const result = await api.get("/admin/products/fetch-all-products");
+    "/products/fetchAllProducts",async({ getAccessTokenSilently, authType })=>{
+        let apiInstance;
+        
+        // Use authenticated API for Auth0 users, regular API for JWT users
+        if (authType === 'auth0' && getAccessTokenSilently) {
+            apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+        } else {
+            apiInstance = api;
+        }
+        
+        const result = await apiInstance.get("/admin/products/fetch-all-products");
     
     return result?.data;
     
     });
 //edit thunk
 export const editProduct = createAsyncThunk(
-    "/products/editproduct",async({id,formData})=>{
-        const result = await api.put(`/admin/products/edit-product/${id}`, formData);
+    "/products/editproduct",async({id, formData, getAccessTokenSilently, authType})=>{
+        let apiInstance;
+        
+        // Use authenticated API for Auth0 users, regular API for JWT users
+        if (authType === 'auth0' && getAccessTokenSilently) {
+            apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+        } else {
+            apiInstance = api;
+        }
+        
+        const result = await apiInstance.put(`/admin/products/edit-product/${id}`, formData);
     
     return result?.data;
     
@@ -38,8 +66,17 @@ export const editProduct = createAsyncThunk(
 //delete thunk
 
 export const deleteProduct = createAsyncThunk(
-    "/products/deleteProduct",async(id)=>{
-        const result = await api.delete(`/admin/products/delete-product/${id}`);
+    "/products/deleteProduct",async({id, getAccessTokenSilently, authType})=>{
+        let apiInstance;
+        
+        // Use authenticated API for Auth0 users, regular API for JWT users
+        if (authType === 'auth0' && getAccessTokenSilently) {
+            apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+        } else {
+            apiInstance = api;
+        }
+        
+        const result = await apiInstance.delete(`/admin/products/delete-product/${id}`);
     
     return result?.data;
     

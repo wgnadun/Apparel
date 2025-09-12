@@ -39,7 +39,13 @@ function AdminProductTile({
             onClick={() => {
               setOpenCreateProductsDialog(true);
               setCurrentEditedId(product?._id);
-              setFormData(product);
+              // Convert number fields to strings for form inputs
+              setFormData({
+                ...product,
+                price: product?.price?.toString() || '',
+                salePrice: product?.salePrice?.toString() || '',
+                totalStock: product?.totalStock?.toString() || ''
+              });
             }}
           >
             Edit

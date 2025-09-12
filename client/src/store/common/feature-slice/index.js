@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../../services/api";
+import { createAuthenticatedApi } from "../../../services/api";
 
 const initialState = {
   isLoading: false,
@@ -44,10 +45,18 @@ export const deleteFeatureImages = createAsyncThunk(
 // ===== ADMIN STATS =====
 export const fetchAdminStats = createAsyncThunk(
   "adminStats/fetchAdminStats",
-  async (days = 30, { rejectWithValue }) => {
+  async ({ days = 30, getAccessTokenSilently, authType }, { rejectWithValue }) => {
     try {
-      // No token or admin check — open API call
-      const { data } = await api.get(
+      let apiInstance;
+      
+      // Use authenticated API for Auth0 users, regular API for JWT users
+      if (authType === 'auth0' && getAccessTokenSilently) {
+          apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+      } else {
+          apiInstance = api;
+      }
+      
+      const { data } = await apiInstance.get(
         `/common/feature/stats?days=${days}`
       );
       return data;

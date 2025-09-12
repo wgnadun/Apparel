@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../../services/api";
+import { createAuthenticatedApi } from "../../../services/api";
 
 const initialState = {
   orderList: [],
@@ -8,8 +9,17 @@ const initialState = {
 
 export const getAllOrdersForAdmin = createAsyncThunk(
   "/order/getAllOrdersForAdmin",
-  async () => {
-    const response = await api.get(
+  async ({ getAccessTokenSilently, authType }) => {
+    let apiInstance;
+    
+    // Use authenticated API for Auth0 users, regular API for JWT users
+    if (authType === 'auth0' && getAccessTokenSilently) {
+        apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+    } else {
+        apiInstance = api;
+    }
+    
+    const response = await apiInstance.get(
       `/admin/orders/get`
     );
 
@@ -19,8 +29,17 @@ export const getAllOrdersForAdmin = createAsyncThunk(
 
 export const getOrderDetailsForAdmin = createAsyncThunk(
   "/order/getOrderDetailsForAdmin",
-  async (id) => {
-    const response = await api.get(
+  async ({ id, getAccessTokenSilently, authType }) => {
+    let apiInstance;
+    
+    // Use authenticated API for Auth0 users, regular API for JWT users
+    if (authType === 'auth0' && getAccessTokenSilently) {
+        apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+    } else {
+        apiInstance = api;
+    }
+    
+    const response = await apiInstance.get(
       `/admin/orders/details/${id}`
     );
 
@@ -30,8 +49,17 @@ export const getOrderDetailsForAdmin = createAsyncThunk(
 
 export const updateOrderStatus = createAsyncThunk(
   "/order/updateOrderStatus",
-  async ({ id, orderStatus }) => {
-    const response = await api.put(
+  async ({ id, orderStatus, getAccessTokenSilently, authType }) => {
+    let apiInstance;
+    
+    // Use authenticated API for Auth0 users, regular API for JWT users
+    if (authType === 'auth0' && getAccessTokenSilently) {
+        apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+    } else {
+        apiInstance = api;
+    }
+    
+    const response = await apiInstance.put(
       `/admin/orders/update/${id}`,
       {
         orderStatus,

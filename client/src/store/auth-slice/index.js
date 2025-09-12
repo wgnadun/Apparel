@@ -6,6 +6,7 @@ const initialState = {
   isAuthenticated: false,
   isLoading: true,
   user: null,
+  authType: null, // 'jwt' or 'auth0'
 };
 
 export const registerUser = createAsyncThunk(
@@ -46,18 +47,46 @@ export const logoutUser = createAsyncThunk(
 
 export const checkAuth = createAsyncThunk(
   "/auth/checkauth",
-  async () => {
-    const response = await api.get(
-      "/auth/check-auth",
-      {
-        headers: {
-          "Cache-Control":
-            "no-store, no-cache, must-revalidate, proxy-revalidate",
-        },
-      }
-    );
-
-    return response.data;
+  async (_, { getState }) => {
+    const state = getState();
+    
+    // If user is already authenticated via Auth0, don't check JWT
+    if (state.auth.authType === 'auth0' && state.auth.isAuthenticated) {
+      return {
+        success: true,
+        user: state.auth.user,
+        authType: 'auth0'
+      };
+    }
+    
+    // Only check JWT auth if not using Auth0
+    if (state.auth.authType === 'auth0') {
+      return {
+        success: false,
+        user: null,
+        authType: null
+      };
+    }
+    
+    try {
+      const response = await api.get(
+        "/auth/check-auth",
+        {
+          headers: {
+            "Cache-Control":
+              "no-store, no-cache, must-revalidate, proxy-revalidate",
+          },
+        }
+      );
+      return { ...response.data, authType: 'jwt' };
+    } catch (error) {
+      // If JWT check fails, return unauthenticated
+      return {
+        success: false,
+        user: null,
+        authType: null
+      };
+    }
   }
 );
 
@@ -76,11 +105,21 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action) => {
       state.user = action.payload;
+      state.isAuthenticated = true;
+      state.authType = 'auth0'; // Assume Auth0 when setting user directly
     },
     updateUser: (state, action) => {
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
       }
+    },
+    setAuthType: (state, action) => {
+      state.authType = action.payload;
+    },
+    clearAuth: (state) => {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.authType = null;
     },
   },
   extraReducers: (builder) => {
@@ -120,6 +159,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success;
+        state.authType = action.payload.authType || null;
       })
       .addCase(checkAuth.rejected, (state, action) => {
         state.isLoading = false;
@@ -138,6 +178,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.user = action.payload.success ? action.payload.user : null;
         state.isAuthenticated = action.payload.success;
+        state.authType = action.payload.success ? 'auth0' : null;
       })
       .addCase(syncAuth0User.rejected, (state, action) => {
         state.isLoading = false;
@@ -147,5 +188,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, updateUser } = authSlice.actions;
+export const { setUser, updateUser, setAuthType, clearAuth } = authSlice.actions;
 export default authSlice.reducer;

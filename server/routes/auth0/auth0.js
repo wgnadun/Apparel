@@ -74,38 +74,82 @@ router.get("/callback", async (req, res) => {
             throw new Error("Invalid ID token format");
         }
 
-        console.log("User Info:");
-        console.log("First Name:", decoded.given_name || decoded.name?.split(" ")[0]);
-        console.log("Last Name:", decoded.family_name || decoded.name?.split(" ")[1]);
-        console.log("Email:", decoded.email);
+        // Get userinfo from Auth0 to get complete profile data
+        let userProfile;
+        try {
+            const userinfoResponse = await axios.get(`https://${AUTH0_DOMAIN}/userinfo`, {
+                headers: {
+                    'Authorization': `Bearer ${tokenResponse.data.access_token}`
+                }
+            });
+            userProfile = userinfoResponse.data;
+            console.log('Auth0 userinfo response:', userProfile);
+        } catch (userinfoError) {
+            console.error('Error fetching userinfo:', userinfoError.response?.data || userinfoError.message);
+            // Fallback to decoded token data
+            userProfile = decoded;
+        }
 
-        const firstName = decoded.given_name || decoded.name?.split(" ")[0] || "User";
-        const lastName = decoded.family_name || decoded.name?.split(" ")[1] || "";
-        const email = decoded.email;
-        const auth0Id = decoded.sub; // Use Auth0 ID as username
+        // Extract user information from userinfo response
+        const email = userProfile.email;
+        const firstName = userProfile.given_name || userProfile.name?.split(" ")[0] || 'User';
+        const lastName = userProfile.family_name || userProfile.name?.split(" ")[1] || '';
+        const userName = userProfile.nickname || userProfile.preferred_username || userProfile.sub;
+        const auth0Id = userProfile.sub;
         
-        // Validate required fields from decoded token
+        console.log('Extracted user data:', {
+            email,
+            firstName,
+            lastName,
+            userName
+        });
+        
+        // Validate required fields
         if (!auth0Id) {
-            throw new Error("Auth0 ID not found in token");
+            throw new Error("Auth0 ID not found in userinfo");
         }
         if (!email) {
-            throw new Error("Email not found in token");
+            throw new Error("Email not found in userinfo");
         }
 
+        // Check database for existing user by email
         let user = await User.findOne({ email: email });
+        console.log('🔍 Database user found:', user ? 'Yes' : 'No');
+        
         if (!user) {
+            // Create new user with default 'user' role
+            console.log('👤 Creating new user with default role...');
             user = await User.create({
-                "firstName": firstName,
-                "lastName": lastName,
-                "email": email,
-                "userName": auth0Id // Use Auth0 ID as username
+                auth0Id: auth0Id,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                userName: userName,
+                role: 'user' // Default role for new users
             });
+            console.log('✅ New user created with role:', user.role);
+        } else {
+            // Update existing user's Auth0 ID if not set
+            if (!user.auth0Id) {
+                user.auth0Id = auth0Id;
+                await user.save();
+            }
+            console.log('👤 Existing user found:');
+            console.log('  - Name:', user.firstName, user.lastName);
+            console.log('  - Email:', user.email);
+            console.log('  - Role:', user.role);
+            console.log('  - Auth0Id:', user.auth0Id);
         }
+        
+        // Use the role from database (this is the key part!)
+        const userRole = user.role;
+        console.log('🎯 Final user role from database:', userRole);
+        console.log('🎯 Will redirect to:', userRole === 'admin' ? 'ADMIN DASHBOARD' : 'USER HOME PAGE');
         
         const token = jwt.sign(
             {
                 id: user._id,
-                role: user.role,
+                role: userRole,
                 email: user.email,
                 userName: user.userName,
                 firstName: user.firstName,
@@ -116,7 +160,7 @@ router.get("/callback", async (req, res) => {
         );
 
         const id = user._id;
-        const role = user.role;
+        const role = userRole; // Use role from database
         const email_ = user.email;
         const fName = user.firstName;
         const Lname = user.lastName;

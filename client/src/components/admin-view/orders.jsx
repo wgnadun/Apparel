@@ -18,19 +18,27 @@ import {
   resetOrderDetails,
 } from "@/store/admin/order-slice";
 import { Badge } from "../ui/badge";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function AdminOrdersView() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const { orderList, orderDetails } = useSelector((state) => state.adminOrder);
+  const { authType } = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  const { getAccessTokenSilently } = useAuth0();
 
   function handleFetchOrderDetails(getId) {
-    dispatch(getOrderDetailsForAdmin(getId));
+    const authParams = { getAccessTokenSilently, authType };
+    dispatch(getOrderDetailsForAdmin({
+      id: getId,
+      ...authParams,
+    }));
   }
 
   useEffect(() => {
-    dispatch(getAllOrdersForAdmin());
-  }, [dispatch]);
+    const authParams = { getAccessTokenSilently, authType };
+    dispatch(getAllOrdersForAdmin(authParams));
+  }, [dispatch, getAccessTokenSilently, authType]);
 
   console.log(orderDetails, "oder Details admin");
 

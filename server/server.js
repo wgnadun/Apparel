@@ -89,7 +89,12 @@ mongoose
      // CSRF protection middleware
      const csrfMiddleware = createCSRFMiddleware({
          ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
-         ignorePaths: ['/api/auth0', '/api/csrf-token'], // Skip CSRF for Auth0 routes and CSRF token endpoint
+         ignorePaths: [
+             '/api/auth0', 
+             '/api/csrf-token', 
+             '/api/auth/check-auth',
+             '/api/admin'  // Skip CSRF for all admin routes (they use Auth0 JWT)
+         ],
          cookieName: '_csrf',
          headerName: 'x-csrf-token',
          bodyName: '_csrf'

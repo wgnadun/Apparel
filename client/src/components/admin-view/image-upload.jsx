@@ -3,8 +3,11 @@ import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import axios from "axios";
+import api from "../../services/api";
+import { createAuthenticatedApi } from "../../services/api";
 import { Skeleton } from "../ui/skeleton";
+import { useAuth0 } from '@auth0/auth0-react';
+import { useSelector } from "react-redux";
 
 function ProductImageUpload({
    imageFile, 
@@ -19,6 +22,8 @@ function ProductImageUpload({
   }) {
 
     const inputRef = useRef(null);
+    const { authType } = useSelector(state => state.auth);
+    const { getAccessTokenSilently } = useAuth0();
 
     function handleImageFileChange(event) {
       const selectedFile = event.target.files?.[0];
@@ -50,7 +55,17 @@ function ProductImageUpload({
       setImageLoadingState(true);
       const data =  new FormData();
       data.append('my_image_file', imageFile);
-      const response =  await axios.post('http://localhost:5000/api/admin/products/upload-image',data);
+      
+      let apiInstance;
+      
+      // Use authenticated API for Auth0 users, regular API for JWT users
+      if (authType === 'auth0' && getAccessTokenSilently) {
+          apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+      } else {
+          apiInstance = api;
+      }
+      
+      const response =  await apiInstance.post('/admin/products/upload-image',data);
 
       if(response?.data?.success) {
         setUploadedImageUrl(response.data.result.url);
