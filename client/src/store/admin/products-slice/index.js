@@ -9,19 +9,27 @@ const initialState = {
 //add thunk
 export const addNewProduct = createAsyncThunk(
     "/products/addnewproduct",async({ formData, getAccessTokenSilently, authType })=>{
+        console.log('Redux thunk - addNewProduct called with:', { formData, authType });
+        
         let apiInstance;
         
         // Use authenticated API for Auth0 users, regular API for JWT users
         if (authType === 'auth0' && getAccessTokenSilently) {
+            console.log('Using authenticated API for Auth0 user');
             apiInstance = createAuthenticatedApi(getAccessTokenSilently);
         } else {
+            console.log('Using regular API for JWT user');
             apiInstance = api;
         }
+        
+        console.log('Making POST request to /admin/products/add-product with data:', formData);
         
         const result = await apiInstance.post(
             "/admin/products/add-product",
              formData
         );
+        
+        console.log('Redux thunk - addNewProduct response:', result?.data);
     
     return result?.data;
     

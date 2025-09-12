@@ -88,11 +88,15 @@ export const productSchema = z.object({
   ]).optional().default(0),
   totalStock: z.union([
     z.string().transform((val) => {
+      if (val === '' || val === null || val === undefined) {
+        throw new Error('Stock quantity is required');
+      }
       const num = parseInt(val);
       if (isNaN(num)) throw new Error('Stock must be a valid number');
+      if (num <= 0) throw new Error('Stock quantity must be greater than 0');
       return num;
-    }).pipe(z.number().int('Stock must be a whole number').min(0, 'Stock cannot be negative').max(99999, 'Stock must be less than 100,000')),
-    z.number().int('Stock must be a whole number').min(0, 'Stock cannot be negative').max(99999, 'Stock must be less than 100,000')
+    }).pipe(z.number().int('Stock must be a whole number').min(1, 'Stock quantity must be at least 1').max(99999, 'Stock must be less than 100,000')),
+    z.number().int('Stock must be a whole number').min(1, 'Stock quantity must be at least 1').max(99999, 'Stock must be less than 100,000')
   ])
 });
 
@@ -196,6 +200,18 @@ export const sanitizeInput = (input) => {
     .replace(/"/g, '&quot;') // Escape quotes
     .replace(/'/g, '&#x27;') // Escape apostrophes
     .replace(/\//g, '&#x2F;'); // Escape forward slashes
+};
+
+// Product-specific sanitization function (allows spaces and normal punctuation)
+export const sanitizeProductInput = (input) => {
+  if (typeof input !== 'string') return input;
+  
+  return input
+    .replace(/[<>]/g, '') // Remove potential HTML tags
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .replace(/script/gi, '') // Remove script tags
+    // Note: We don't escape &, ", ', / here to allow normal product names and descriptions
 };
 
 // Lenient sanitization for review messages (allows spaces and normal punctuation)

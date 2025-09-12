@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { validateForm, validateField, sanitizeInput, sanitizeReviewInput } from '../utils/validation';
+import { validateForm, validateField, sanitizeInput, sanitizeReviewInput, sanitizeProductInput } from '../utils/validation';
 
 export const useFormValidation = (schema, initialData = {}) => {
   const [formData, setFormData] = useState(initialData);
@@ -35,8 +35,17 @@ export const useFormValidation = (schema, initialData = {}) => {
 
   // Handle input change with validation
   const handleInputChange = useCallback((name, value) => {
-    // Use lenient sanitization for review messages to allow spaces
-    const sanitizedValue = name === 'reviewMessage' ? sanitizeReviewInput(value) : sanitizeInput(value);
+    // Use appropriate sanitization based on field type
+    let sanitizedValue;
+    if (name === 'reviewMessage') {
+      sanitizedValue = sanitizeReviewInput(value);
+    } else if (['title', 'description', 'category', 'brand'].includes(name)) {
+      // Product fields that should allow spaces and normal punctuation
+      sanitizedValue = sanitizeProductInput(value);
+    } else {
+      // Other fields use standard sanitization
+      sanitizedValue = sanitizeInput(value);
+    }
     
     setFormData(prev => ({
       ...prev,

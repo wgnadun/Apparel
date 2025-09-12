@@ -34,6 +34,10 @@ const handleImageUpload = async (req, res) => {
 //add a new product
 const addProduct = async (req, res) => {
   try {
+    console.log('=== ADD PRODUCT REQUEST ===');
+    console.log('Request body:', req.body);
+    console.log('Request headers:', req.headers);
+    
     const {
       image,
       title,
@@ -46,12 +50,27 @@ const addProduct = async (req, res) => {
       averageReview,
     } = req.body;
 
-    console.log('Adding new product with data:', {
+    console.log('Extracted fields:', {
+      image,
       title,
+      description,
       category,
       brand,
       price,
-      image: image ? 'Image URL provided' : 'No image URL'
+      salePrice,
+      totalStock,
+      averageReview,
+    });
+
+    console.log('Field types:', {
+      title: typeof title,
+      description: typeof description,
+      category: typeof category,
+      brand: typeof brand,
+      price: typeof price,
+      salePrice: typeof salePrice,
+      totalStock: typeof totalStock,
+      averageReview: typeof averageReview,
     });
 
     const newlyCreatedProduct = new Product({

@@ -97,17 +97,20 @@ export const addProductFormElements = [
     componentType: "input",
     type: "text",
     placeholder: "Enter product title",
+    required: true,
   },
   {
     label: "Description",
     name: "description",
     componentType: "textarea",
     placeholder: "Enter product description",
+    required: true,
   },
   {
     label: "Category",
     name: "category",
     componentType: "select",
+    required: true,
     options: [
       { id: "men", label: "Men" },
       { id: "women", label: "Women" },
@@ -120,6 +123,7 @@ export const addProductFormElements = [
     label: "Brand",
     name: "brand",
     componentType: "select",
+    required: true,
     options: [
       { id: "nike", label: "Nike" },
       { id: "adidas", label: "Adidas" },
@@ -137,6 +141,7 @@ export const addProductFormElements = [
     componentType: "input",
     type: "number",
     placeholder: "Enter product price",
+    required: true,
   },
   {
     label: "Sale Price",
@@ -144,6 +149,7 @@ export const addProductFormElements = [
     componentType: "input",
     type: "number",
     placeholder: "Enter sale price (optional)",
+    required: false,
   },
   {
     label: "Total Stock",
@@ -151,6 +157,7 @@ export const addProductFormElements = [
     componentType: "input",
     type: "number",
     placeholder: "Enter total stock",
+    required: true,
   },
 ];
 

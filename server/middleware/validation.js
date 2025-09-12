@@ -4,6 +4,10 @@ const { body, param, query, validationResult } = require('express-validator');
 const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        console.log('Validation errors for URL:', req.url);
+        console.log('Request body:', req.body);
+        console.log('Validation errors:', errors.array());
+        
         return res.status(400).json({
             success: false,
             message: "Validation failed",
@@ -76,12 +80,74 @@ const commonValidations = {
         .trim(),
 
     productPrice: body('price')
-        .isFloat({ min: 0.01, max: 999999.99 })
-        .withMessage('Price must be a valid number between 0.01 and 999999.99'),
+        .custom((value) => {
+            if (value === '' || value === null || value === undefined) {
+                throw new Error('Price is required');
+            }
+            const num = parseFloat(value);
+            if (isNaN(num) || num < 0.01 || num > 999999.99) {
+                throw new Error('Price must be a valid number between 0.01 and 999999.99');
+            }
+            return true;
+        }),
 
-    productStock: body('stock')
-        .isInt({ min: 0, max: 999999 })
-        .withMessage('Stock must be a valid integer between 0 and 999999'),
+    productStock: body('totalStock')
+        .custom((value) => {
+            if (value === '' || value === null || value === undefined) {
+                throw new Error('Stock quantity is required');
+            }
+            const num = parseInt(value);
+            if (isNaN(num)) {
+                throw new Error('Stock must be a valid number');
+            }
+            if (num <= 0) {
+                throw new Error('Stock quantity must be greater than 0');
+            }
+            if (num > 999999) {
+                throw new Error('Stock must be less than 1,000,000');
+            }
+            return true;
+        }),
+
+    productSalePrice: body('salePrice')
+        .optional()
+        .custom((value) => {
+            if (value === '' || value === null || value === undefined) {
+                return true; // Optional field
+            }
+            const num = parseFloat(value);
+            if (isNaN(num) || num < 0 || num > 999999.99) {
+                throw new Error('Sale price must be a valid number between 0 and 999999.99');
+            }
+            return true;
+        }),
+
+    productAverageReview: body('averageReview')
+        .optional()
+        .custom((value) => {
+            if (value === '' || value === null || value === undefined) {
+                return true; // Optional field
+            }
+            const num = parseFloat(value);
+            if (isNaN(num) || num < 0 || num > 5) {
+                throw new Error('Average review must be a valid number between 0 and 5');
+            }
+            return true;
+        }),
+
+    productImage: body('image')
+        .optional()
+        .custom((value) => {
+            if (value === '' || value === null || value === undefined) {
+                return true; // Optional field
+            }
+            // Check if it's a valid URL or Cloudinary URL
+            const urlPattern = /^https?:\/\/.+/;
+            if (!urlPattern.test(value)) {
+                throw new Error('Image must be a valid URL');
+            }
+            return true;
+        }),
 
     // Address validation (matching client-side form fields)
     address: body('address')
@@ -217,6 +283,9 @@ const validationRules = {
         commonValidations.productDescription,
         commonValidations.productPrice,
         commonValidations.productStock,
+        commonValidations.productSalePrice,
+        commonValidations.productAverageReview,
+        commonValidations.productImage,
         body('category')
             .isLength({ min: 2, max: 100 })
             .withMessage('Category must be between 2 and 100 characters')
@@ -234,6 +303,19 @@ const validationRules = {
         commonValidations.productDescription.optional(),
         commonValidations.productPrice.optional(),
         commonValidations.productStock.optional(),
+        commonValidations.productSalePrice,
+        commonValidations.productAverageReview,
+        commonValidations.productImage,
+        body('category')
+            .optional()
+            .isLength({ min: 2, max: 100 })
+            .withMessage('Category must be between 2 and 100 characters')
+            .trim(),
+        body('brand')
+            .optional()
+            .isLength({ min: 2, max: 100 })
+            .withMessage('Brand must be between 2 and 100 characters')
+            .trim(),
         handleValidationErrors
     ],
 

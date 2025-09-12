@@ -40,11 +40,21 @@ function AdminProducts() {
  function onSubmit(formData) {
     const authParams = { getAccessTokenSilently, authType };
     
+    console.log('Form data being submitted:', formData);
+    console.log('Uploaded image URL:', uploadedImageUrl);
+    
+    const productData = {
+      ...formData,
+      image: uploadedImageUrl,
+    };
+    
+    console.log('Final product data being sent to API:', productData);
+    
     currentEditedId !== null
       ? dispatch(
           editProduct({
             id: currentEditedId,
-            formData,
+            formData: productData,
             ...authParams,
           })
         ).then((data) => {
@@ -59,20 +69,17 @@ function AdminProducts() {
         })
       : dispatch(
           addNewProduct({
-            ...formData,
-            image: uploadedImageUrl,
+            formData: productData,
             ...authParams,
           })
         ).then((data) => {
+          console.log('Add product response:', data);
           if (data?.payload?.success) {
-            console.log(data)
             dispatch(fetchAllProducts(authParams));
             setOpenCreateProductsDialog(false);
             setImageFile(null);
             setFormData(initialFormData);
-            toast(
-              "Product add successfully",
-            );
+            toast("Product add successfully");
           }
         });
   }

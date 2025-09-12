@@ -135,20 +135,29 @@ function AdminDashboardStats() {
     }]
   };
 
+  // Helper function to truncate long product names
+  const truncateLabel = (label, maxLength = 20) => {
+    if (!label) return 'Unknown Product';
+    if (label.length <= maxLength) return label;
+    return label.substring(0, maxLength) + '...';
+  };
+
   const topProductsData = {
-    labels: stats.topProducts.map(p => p.title || p._id),
+    labels: stats.topProducts.map(p => truncateLabel(p.title || p._id)),
     datasets: [{
-      label: "Qty Sold",
+      label: "Quantity Sold",
       data: stats.topProducts.map(p => p.qtySold),
+      // Store full product data for tooltips
+      productData: stats.topProducts,
       backgroundColor: [
-        'rgba(168, 85, 247, 0.8)',  // Purple-500
-        'rgba(236, 72, 153, 0.8)',  // Pink-500
-        'rgba(59, 130, 246, 0.8)',  // Blue-500
-        'rgba(16, 185, 129, 0.8)',  // Emerald-500
-        'rgba(245, 158, 11, 0.8)',  // Amber-500
-        'rgba(239, 68, 68, 0.8)',   // Red-500
-        'rgba(20, 184, 166, 0.8)',  // Teal-500
-        'rgba(34, 197, 94, 0.8)',   // Green-500
+        'rgba(168, 85, 247, 0.9)',  // Purple-500
+        'rgba(236, 72, 153, 0.9)',  // Pink-500
+        'rgba(59, 130, 246, 0.9)',  // Blue-500
+        'rgba(16, 185, 129, 0.9)',  // Emerald-500
+        'rgba(245, 158, 11, 0.9)',  // Amber-500
+        'rgba(239, 68, 68, 0.9)',   // Red-500
+        'rgba(20, 184, 166, 0.9)',  // Teal-500
+        'rgba(34, 197, 94, 0.9)',   // Green-500
       ],
       borderColor: [
         'rgb(168, 85, 247)',
@@ -161,8 +170,18 @@ function AdminDashboardStats() {
         'rgb(34, 197, 94)',
       ],
       borderWidth: 2,
-      borderRadius: 8,
+      borderRadius: 12,
       borderSkipped: false,
+      hoverBackgroundColor: [
+        'rgba(168, 85, 247, 1)',  // Purple-500
+        'rgba(236, 72, 153, 1)',  // Pink-500
+        'rgba(59, 130, 246, 1)',  // Blue-500
+        'rgba(16, 185, 129, 1)',  // Emerald-500
+        'rgba(245, 158, 11, 1)',  // Amber-500
+        'rgba(239, 68, 68, 1)',   // Red-500
+        'rgba(20, 184, 166, 1)',  // Teal-500
+        'rgba(34, 197, 94, 1)',   // Green-500
+      ],
     }]
   };
 
@@ -300,48 +319,203 @@ function AdminDashboardStats() {
   const barChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    devicePixelRatio: 2, // Higher resolution for crisp text
     plugins: {
       legend: {
         position: 'top',
         labels: {
           font: {
-            size: 14,
-            weight: '600'
+            size: 16,
+            weight: '700',
+            family: "'Inter', 'Segoe UI', sans-serif"
           },
           usePointStyle: true,
-          padding: 20
+          padding: 25,
+          color: '#374151'
         }
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: 'rgba(255, 255, 255, 0.2)',
+        backgroundColor: 'rgba(15, 23, 42, 0.98)',
+        titleColor: '#f1f5f9',
+        bodyColor: '#e2e8f0',
+        borderColor: 'rgba(148, 163, 184, 0.4)',
         borderWidth: 1,
-        cornerRadius: 8,
+        cornerRadius: 16,
+        padding: 20,
+        titleFont: {
+          size: 16,
+          weight: '700'
+        },
+        bodyFont: {
+          size: 14,
+          weight: '500'
+        },
+        titleAlign: 'center',
+        bodyAlign: 'left',
+        displayColors: false,
+        caretSize: 8,
+        callbacks: {
+          title: function(context) {
+            const product = stats.topProducts[context[0].dataIndex];
+            const fullTitle = product?.title || product?._id || 'Unknown Product';
+            return `📦 ${fullTitle}`;
+          },
+          label: function(context) {
+            const product = stats.topProducts[context.dataIndex];
+            const value = context.raw;
+            
+            if (!product) {
+              return ['❌ Product data not available'];
+            }
+            
+            const lines = [
+              `🛍️ Quantity Sold: ${value.toLocaleString()}`,
+              `💰 Revenue: $${product.revenue?.toLocaleString() || '0'}`,
+              `📊 Rank: #${context.dataIndex + 1}`,
+              '', // Empty line for spacing
+            ];
+            
+            // Add additional product details if available
+            if (product.category) {
+              lines.push(`🏷️ Category: ${product.category.charAt(0).toUpperCase() + product.category.slice(1)}`);
+            }
+            
+            if (product.brand) {
+              lines.push(`🏢 Brand: ${product.brand.charAt(0).toUpperCase() + product.brand.slice(1)}`);
+            }
+            
+            if (product.price) {
+              lines.push(`💵 Price: $${product.price.toLocaleString()}`);
+            }
+            
+            if (product.salePrice && product.salePrice > 0) {
+              lines.push(`🔥 Sale Price: $${product.salePrice.toLocaleString()}`);
+            }
+            
+            if (product.totalStock !== undefined) {
+              lines.push(`📦 Stock: ${product.totalStock.toLocaleString()}`);
+            }
+            
+            // Add performance metrics
+            if (product.qtySold && product.revenue) {
+              const avgPrice = (product.revenue / product.qtySold).toFixed(2);
+              lines.push(`📈 Avg Price: $${avgPrice}`);
+            }
+            
+            return lines;
+          },
+          afterLabel: function(context) {
+            const product = stats.topProducts[context.dataIndex];
+            const additionalInfo = [];
+            
+            if (product?.description) {
+              const description = product.description.length > 120 
+                ? product.description.substring(0, 120) + '...' 
+                : product.description;
+              additionalInfo.push(`📝 ${description}`);
+            }
+            
+            if (product?.image) {
+              additionalInfo.push(`🖼️ Image: Available`);
+            }
+            
+            if (product?.createdAt) {
+              const date = new Date(product.createdAt).toLocaleDateString();
+              additionalInfo.push(`📅 Added: ${date}`);
+            }
+            
+            return additionalInfo;
+          },
+          footer: function(context) {
+            const product = stats.topProducts[context[0].dataIndex];
+            const footerLines = [];
+            
+            if (product?.averageReview !== undefined && product.averageReview > 0) {
+              const stars = '⭐'.repeat(Math.round(product.averageReview));
+              footerLines.push(`${stars} Rating: ${product.averageReview.toFixed(1)}/5.0`);
+            }
+            
+            // Add market share percentage
+            const totalSold = stats.topProducts.reduce((sum, p) => sum + p.qtySold, 0);
+            if (totalSold > 0) {
+              const marketShare = ((product.qtySold / totalSold) * 100).toFixed(1);
+              footerLines.push(`📊 Market Share: ${marketShare}%`);
+            }
+            
+            return footerLines;
+          }
+        }
       }
     },
     scales: {
       x: {
         grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
+          display: false,
         },
         ticks: {
           font: {
-            size: 12
-          }
+            size: 13,
+            weight: '600',
+            family: "'Inter', 'Segoe UI', sans-serif"
+          },
+          color: '#374151',
+          maxRotation: 45,
+          minRotation: 0,
+          padding: 10
+        },
+        title: {
+          display: true,
+          text: 'Products',
+          font: {
+            size: 14,
+            weight: '700',
+            family: "'Inter', 'Segoe UI', sans-serif"
+          },
+          color: '#374151',
+          padding: 20
         }
       },
       y: {
         grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
+          color: 'rgba(0, 0, 0, 0.08)',
+          lineWidth: 1
         },
         ticks: {
           font: {
-            size: 12
+            size: 13,
+            weight: '600',
+            family: "'Inter', 'Segoe UI', sans-serif"
+          },
+          color: '#374151',
+          padding: 12,
+          callback: function(value) {
+            return value.toLocaleString();
           }
+        },
+        title: {
+          display: true,
+          text: 'Quantity Sold',
+          font: {
+            size: 14,
+            weight: '700',
+            family: "'Inter', 'Segoe UI', sans-serif"
+          },
+          color: '#374151',
+          padding: 20
         }
       }
+    },
+    layout: {
+      padding: {
+        top: 20,
+        bottom: 20,
+        left: 20,
+        right: 20
+      }
+    },
+    animation: {
+      duration: 1000,
+      easing: 'easeInOutQuart'
     }
   };
 
@@ -414,14 +588,27 @@ function AdminDashboardStats() {
           </div>
 
           {/* Top Products Chart */}
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-shadow duration-300">
-            <div className="flex items-center mb-6">
-              <div className="w-3 h-8 bg-gradient-to-b from-purple-400 to-pink-600 rounded-full mr-3"></div>
-              <h3 className="text-xl font-bold text-gray-800">Top Products</h3>
+          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-shadow duration-300">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <div className="w-3 h-8 bg-gradient-to-b from-purple-400 to-pink-600 rounded-full mr-3"></div>
+                <h3 className="text-xl font-bold text-gray-800">Top Products</h3>
+              </div>
+              <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                {stats.topProducts.length} products
+              </div>
             </div>
-            <div className="h-64 sm:h-80">
+            <div className="h-72 sm:h-80 lg:h-96 relative">
               <Bar data={topProductsData} options={barChartOptions} />
             </div>
+            {stats.topProducts.length === 0 && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 rounded-lg">
+                <div className="text-center">
+                  <div className="text-4xl mb-2">📊</div>
+                  <p className="text-gray-500 font-medium">No product data available</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
