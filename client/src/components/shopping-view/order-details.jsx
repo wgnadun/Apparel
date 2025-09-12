@@ -1,5 +1,5 @@
 import React from 'react'
-import { DialogContent } from '../ui/dialog'
+import { DialogContent, DialogTitle } from '../ui/dialog'
 import { Label } from '../ui/label'
 import { Separator } from '../ui/separator'
 import { Badge } from '../ui/badge'
@@ -13,6 +13,7 @@ function ShoppingOrderDetailsView({orderDetails}) {
 
   return (
      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+    <DialogTitle className="sr-only">Order Details</DialogTitle>
     <div className="font-medium">Order Details</div>
 
         <div className="grid gap-6">

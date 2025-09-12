@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DialogContent } from "../ui/dialog";
+import { DialogContent, DialogTitle } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import CommonForm from "../common/form";
@@ -10,6 +10,7 @@ import {
   updateOrderStatus,
 } from "@/store/admin/order-slice";
 import { toast } from "sonner";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function AdminOrderDetailsView({ orderDetails }) {
   const initialFormData = {
@@ -17,7 +18,8 @@ function AdminOrderDetailsView({ orderDetails }) {
   };
 
   const [formData, setFromData] = useState(initialFormData);
-  const { user } = useSelector((state) => state.auth);
+  const { user, authType } = useSelector((state) => state.auth);
+  const { getAccessTokenSilently } = useAuth0();
 
   const dispatch = useDispatch();
 
@@ -25,12 +27,17 @@ function AdminOrderDetailsView({ orderDetails }) {
     event.preventDefault();
     const { status } = formData;
 
+    const authParams = { getAccessTokenSilently, authType };
+
     dispatch(
-      updateOrderStatus({ id: orderDetails?._id, orderStatus: status })
+      updateOrderStatus({ 
+        id: orderDetails?._id, 
+        orderStatus: status,
+        ...authParams
+      })
     ).then((data) => {
       if (data?.payload?.success) {
-        dispatch(getAllOrdersForAdmin(orderDetails?._id));
-        dispatch(getAllOrdersForAdmin());
+        dispatch(getAllOrdersForAdmin({ ...authParams }));
         setFromData(initialFormData);
         toast.success("Order Status Updated Successfully !");
       }
@@ -39,7 +46,8 @@ function AdminOrderDetailsView({ orderDetails }) {
 
   return (
   <DialogContent className="m:max-w-[600px] max-h-[80vh] overflow-y-auto">
-  <div className="grid gap-6">
+    <DialogTitle className="sr-only">Order Details</DialogTitle>
+    <div className="grid gap-6">
     {/* Order Info */}
     <div className="grid gap-2">
       {[

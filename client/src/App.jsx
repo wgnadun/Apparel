@@ -17,6 +17,7 @@ import UnauthPage from './pages/unauth-page';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkAuth } from './store/auth-slice';
 import { useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { Skeleton } from './components/ui/skeleton';
 import CSRFTest from './components/debug/csrf-test';
 import { Toaster } from './components/ui/sonner';
@@ -31,13 +32,31 @@ import UserProfile from './pages/shoping-view/userprofile';
 function App() {
  const {user,isAuthenticated,isLoading,authType} = useSelector(state=> state.auth);
  const dispatch =  useDispatch();
+ const { isLoading: auth0IsLoading, isAuthenticated: auth0IsAuthenticated } = useAuth0();
    
  useEffect(()=>{
-    // Only check JWT auth if not already authenticated via Auth0
-    if (authType !== 'auth0') {
-      dispatch(checkAuth())
+    console.log('App useEffect - authType:', authType, 'isAuthenticated:', isAuthenticated, 'auth0IsLoading:', auth0IsLoading, 'auth0IsAuthenticated:', auth0IsAuthenticated);
+    
+    // Wait for Auth0 to finish loading before making auth decisions
+    if (auth0IsLoading) {
+      console.log('Auth0 still loading, waiting...');
+      return;
     }
- },[dispatch, authType])
+    
+    // If Auth0 user is authenticated, don't check JWT
+    if (auth0IsAuthenticated) {
+      console.log('Auth0 user is authenticated, skipping JWT check');
+      return;
+    }
+    
+    // Only check JWT auth if not using Auth0 and Auth0 is not authenticated
+    if (authType !== 'auth0') {
+      console.log('Dispatching checkAuth() for JWT authentication');
+      dispatch(checkAuth())
+    } else {
+      console.log('Skipping checkAuth() because authType is auth0');
+    }
+ },[dispatch, authType, auth0IsLoading, auth0IsAuthenticated])
 
  if(isLoading) return <Skeleton className="h-[600px] w-[800px] bg-black" />
  console.log('App - pathname:', location.pathname, 'isAuthenticated:', isAuthenticated, 'authType:', authType, 'user:', user);

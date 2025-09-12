@@ -50,8 +50,15 @@ export const checkAuth = createAsyncThunk(
   async (_, { getState }) => {
     const state = getState();
     
+    console.log('checkAuth called - current state:', {
+      authType: state.auth.authType,
+      isAuthenticated: state.auth.isAuthenticated,
+      user: state.auth.user
+    });
+    
     // If user is already authenticated via Auth0, don't check JWT
     if (state.auth.authType === 'auth0' && state.auth.isAuthenticated) {
+      console.log('User already authenticated via Auth0, skipping JWT check');
       return {
         success: true,
         user: state.auth.user,
@@ -61,6 +68,7 @@ export const checkAuth = createAsyncThunk(
     
     // Only check JWT auth if not using Auth0
     if (state.auth.authType === 'auth0') {
+      console.log('Auth0 user but not authenticated yet, skipping JWT check');
       return {
         success: false,
         user: null,
@@ -68,6 +76,7 @@ export const checkAuth = createAsyncThunk(
       };
     }
     
+    console.log('Checking JWT authentication via /auth/check-auth');
     try {
       const response = await api.get(
         "/auth/check-auth",
@@ -78,8 +87,10 @@ export const checkAuth = createAsyncThunk(
           },
         }
       );
+      console.log('JWT check successful:', response.data);
       return { ...response.data, authType: 'jwt' };
     } catch (error) {
+      console.log('JWT check failed:', error.response?.status, error.response?.data);
       // If JWT check fails, return unauthenticated
       return {
         success: false,
