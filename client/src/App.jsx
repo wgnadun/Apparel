@@ -23,7 +23,7 @@ import CSRFTest from './components/debug/csrf-test';
 import { Toaster } from './components/ui/sonner';
 import PaypalReturnPage from './pages/shoping-view/paypal-return';
 import PaymentSuccessPage from './pages/shoping-view/payment-success';
-import SearchProducts from './pages/shoping-view/search';
+import SearchResults from './pages/shoping-view/search-results';
 import AdminDashboardBanner from './pages/admin-view/dashboardBanner';
 import AdminDashboardStats from './pages/admin-view/dashboardStats';
 import AdminDashboard from './pages/admin-view/dashboard';
@@ -105,7 +105,7 @@ function App() {
 
             <Route path="home" element={<ShoppingHome />} />
             <Route path="listing" element={<ShoppingListing />} />
-            <Route path="search" element={<SearchProducts/>}/>
+            <Route path="search-results" element={<SearchResults/>}/>
             <Route path="csrf-test" element={<CSRFTest />} />
           
           </Route>
@@ -124,7 +124,7 @@ function App() {
             <Route path="listing" element={<ShoppingListing />} />
             <Route path="paypal-return" element={<PaypalReturnPage/>}/>
             <Route path="payment-success" element={<PaymentSuccessPage/>}/>
-            <Route path="search" element={<SearchProducts/>}/>
+            <Route path="search-results" element={<SearchResults/>}/>
           </Route>
 
           <Route path="/unauth-page" element={<UnauthPage />} />

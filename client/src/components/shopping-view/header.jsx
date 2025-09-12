@@ -8,6 +8,7 @@ import {
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
+import SearchComponent from "./search-component";
 import { shoppingViewHeaderMenuItems } from "@/config";
 import {
   DropdownMenu,
@@ -118,8 +119,7 @@ function MenuItems() {
   function handleNavigate(getCurrentMenuItem) {
     const currentFilter =
       getCurrentMenuItem.id !== "home" &&
-      getCurrentMenuItem.id !== "products" &&
-      getCurrentMenuItem.id !== "search"
+      getCurrentMenuItem.id !== "products"
         ? { category: [getCurrentMenuItem.id] }
         : null;
 
@@ -172,7 +172,12 @@ function ShoppingHeader() {
           <span className="font-bold">FashionHub</span>
         </Link>
 
-          <Sheet>
+        {/* Search Component - Hidden on mobile, shown on desktop */}
+        <div className="hidden md:block flex-1 max-w-md mx-4">
+          <SearchComponent />
+        </div>
+
+        <Sheet>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" className="lg:hidden">
                 <Menu className="h-6 w-6" />
@@ -184,6 +189,11 @@ function ShoppingHeader() {
               className="w-full max-w-xs p-6 flex flex-col gap-6
                         sm:max-w-sm md:max-w-md"
             >
+              <SheetTitle className="sr-only">Main menu</SheetTitle>
+              {/* Search Component for Mobile */}
+              <div className="md:hidden">
+                <SearchComponent />
+              </div>
               <SheetTitle className="sr-only">Main menu</SheetTitle>
               <MenuItems />
               <Separator className="my-4" />

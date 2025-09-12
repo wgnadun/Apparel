@@ -12,7 +12,7 @@ function CheckAuth({ isAuthenticated, user, children }) {
   const publicPaths = [
     "/shop/home",
     "/shop/listing",
-    "/shop/search",
+    "/shop/search-results",
     "/",
   ];
 
