@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import AdminSideBar from "./sidebar";
 import AdminHeader from "./header";
+import Footer from "../common/footer";
 import { useState } from "react";
 
 function AdminLayout() {
@@ -16,6 +17,8 @@ function AdminLayout() {
         <main className="flex-1 flex-col flex bg-muted/40 p-4 md:p-6">
           <Outlet />
         </main>
+        {/* common footer */}
+        <Footer />
       </div>
     </div>
   );
