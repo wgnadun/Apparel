@@ -1,4 +1,6 @@
 const express = require("express");
+const { checkJwt } = require("../../middleware/auth0");
+const { checkAdmin } = require("../../middleware/checkRole");
 
 const {
   addFeatureImage,
@@ -9,9 +11,12 @@ const {
 
 const router = express.Router();
 
-router.post("/add", addFeatureImage);
+// Public routes (no authentication required)
 router.get("/get", getFeatureImages);
-router.delete("/delete/:id", deleteFeatureImages);
-router.get("/stats", getAdminStats);
+
+// Admin routes (require Auth0 JWT authentication and admin role)
+router.post("/add", checkJwt, checkAdmin, addFeatureImage);
+router.delete("/delete/:id", checkJwt, checkAdmin, deleteFeatureImages);
+router.get("/stats", checkJwt, checkAdmin, getAdminStats);
 
 module.exports = router;

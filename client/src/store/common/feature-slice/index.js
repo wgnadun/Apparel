@@ -23,8 +23,17 @@ export const getFeatureImages = createAsyncThunk(
 
 export const addFeatureImage = createAsyncThunk(
   "feature/addFeatureImage",
-  async (image) => {
-    const response = await api.post(
+  async ({ image, getAccessTokenSilently, authType }) => {
+    let apiInstance;
+    
+    // Use authenticated API for Auth0 users, regular API for JWT users
+    if (authType === 'auth0' && getAccessTokenSilently) {
+        apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+    } else {
+        apiInstance = api;
+    }
+    
+    const response = await apiInstance.post(
       `/common/feature/add`,
       { image }
     );
@@ -34,8 +43,17 @@ export const addFeatureImage = createAsyncThunk(
 
 export const deleteFeatureImages = createAsyncThunk(
   "feature/deleteFeatureImage",
-  async (id) => {
-    const response = await api.delete(
+  async ({ id, getAccessTokenSilently, authType }) => {
+    let apiInstance;
+    
+    // Use authenticated API for Auth0 users, regular API for JWT users
+    if (authType === 'auth0' && getAccessTokenSilently) {
+        apiInstance = createAuthenticatedApi(getAccessTokenSilently);
+    } else {
+        apiInstance = api;
+    }
+    
+    const response = await apiInstance.delete(
       `/common/feature/delete/${id}`
     );
     return response.data;

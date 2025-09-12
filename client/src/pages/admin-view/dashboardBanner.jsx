@@ -7,6 +7,7 @@ import {
 } from "@/store/common/feature-slice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useAuth0 } from '@auth0/auth0-react';
 
 function AdminDashboardBanner() {
   const [imageFile, setImageFile] = useState(null);
@@ -15,6 +16,8 @@ function AdminDashboardBanner() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const dispatch = useDispatch();
   const { featureImageList } = useSelector((state) => state.commonFeature);
+  const { authType } = useSelector(state => state.auth);
+  const { getAccessTokenSilently } = useAuth0();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -25,7 +28,8 @@ function AdminDashboardBanner() {
   function handleUploadFeatureImage() {
     if (!uploadedImageUrl) return;
     
-    dispatch(addFeatureImage(uploadedImageUrl)).then((data) => {
+    const authParams = { getAccessTokenSilently, authType };
+    dispatch(addFeatureImage({ image: uploadedImageUrl, ...authParams })).then((data) => {
       if (data?.payload?.success) {
         dispatch(getFeatureImages());
         setImageFile(null);
@@ -46,7 +50,15 @@ function AdminDashboardBanner() {
   };
 
   function handleDelete() {
-    dispatch(deleteFeatureImages(currentImage?.id)).then((data) => {
+    // Use _id field from MongoDB document
+    const imageId = currentImage?._id;
+    if (!imageId) {
+      console.error('No image ID found for deletion');
+      return;
+    }
+    
+    const authParams = { getAccessTokenSilently, authType };
+    dispatch(deleteFeatureImages({ id: imageId, ...authParams })).then((data) => {
       if (data?.payload?.success) {
         dispatch(getFeatureImages());
         setShowDeleteConfirm(false);
