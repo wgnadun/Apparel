@@ -21,7 +21,8 @@ function ValidatedForm({
   onSubmit,
   buttonText,
   isBtnDisabled = false,
-  className = ""
+  className = "",
+  hasImageUploaded = false
 }) {
   const {
     formData,
@@ -235,7 +236,7 @@ function ValidatedForm({
       </div>
       <div className="pt-3 border-t border-gray-200">
         <Button 
-          disabled={isBtnDisabled || !isFormValid} 
+          disabled={isBtnDisabled || !(isFormValid || hasImageUploaded)} 
           type="submit" 
           className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-lg"
         >

@@ -27,8 +27,15 @@ function ProductImageUpload({
 
     function handleImageFileChange(event) {
       const selectedFile = event.target.files?.[0];
-      if(selectedFile) setImageFile(selectedFile);
-     
+      console.log('File selected:', selectedFile);
+      if(selectedFile) {
+        console.log('File details:', {
+          name: selectedFile.name,
+          size: selectedFile.size,
+          type: selectedFile.type
+        });
+        setImageFile(selectedFile);
+      }
     }
 
     function handleDragOver(event) {
@@ -38,7 +45,13 @@ function ProductImageUpload({
     function handleDrop(event) {
       event.preventDefault();
       const droppedFile = event.dataTransfer.files?.[0];
+      console.log('File dropped:', droppedFile);
       if (droppedFile) {
+        console.log('Dropped file details:', {
+          name: droppedFile.name,
+          size: droppedFile.size,
+          type: droppedFile.type
+        });
         setImageFile(droppedFile);
       }
     }
@@ -65,16 +78,33 @@ function ProductImageUpload({
           apiInstance = api;
       }
       
-      const response =  await apiInstance.post('/admin/products/upload-image',data);
+      try {
+        const response =  await apiInstance.post('/admin/products/upload-image',data);
 
-      if(response?.data?.success) {
-        setUploadedImageUrl(response.data.result.url);
+        console.log('Image upload response:', response.data);
+
+        if(response?.data?.success) {
+          // Cloudinary returns the URL in result.secure_url
+          const imageUrl = response.data.result.secure_url || response.data.result.url;
+          console.log('Setting image URL:', imageUrl);
+          setUploadedImageUrl(imageUrl);
+          setImageLoadingState(false);
+        } else {
+          console.error('Image upload failed:', response.data);
+          setImageLoadingState(false);
+        }
+      } catch (error) {
+        console.error('Image upload error:', error);
         setImageLoadingState(false);
       }
     }
 
     useEffect(()=>{
-      if(imageFile!== null) uploadImageToCloudinary()
+      console.log('useEffect triggered, imageFile:', imageFile);
+      if(imageFile !== null) {
+        console.log('Starting image upload...');
+        uploadImageToCloudinary();
+      }
     },[imageFile]);
 
     return(
@@ -90,9 +120,7 @@ function ProductImageUpload({
         <div 
           onDragOver={handleDragOver} 
           onDrop={handleDrop} 
-          className={`relative group transition-all duration-300 ${
-            isEditMode ? "opacity-60" : "hover:border-gray-400 hover:bg-gray-50"
-          } border-2 border-dashed border-gray-300 rounded-lg p-4 bg-white`}
+          className="relative group transition-all duration-300 hover:border-gray-400 hover:bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-4 bg-white"
         >
           <Input 
             id="image-upload" 
@@ -100,16 +128,13 @@ function ProductImageUpload({
             className="hidden" 
             ref={inputRef} 
             onChange={handleImageFileChange}
-            disabled={isEditMode}
             accept="image/*"
           />
           
           {!imageFile ? (
             <Label 
               htmlFor="image-upload" 
-              className={`${
-                isEditMode ? "cursor-not-allowed" : "cursor-pointer group-hover:scale-105"
-              } flex flex-col items-center justify-center h-24 transition-transform duration-200`}
+              className="cursor-pointer group-hover:scale-105 flex flex-col items-center justify-center h-24 transition-transform duration-200"
             >
               <div className="relative">
                 <div className="w-10 h-10 bg-black rounded-lg flex items-center justify-center mb-2 shadow-sm group-hover:shadow-md transition-shadow duration-200">
@@ -137,14 +162,14 @@ function ProductImageUpload({
               <Skeleton className="h-1 w-24 mt-1" />
             </div>
           ) : (
-            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200 shadow-sm">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                   <CheckCircle className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-gray-900 truncate max-w-32">{imageFile.name}</p>
-                  <p className="text-xs text-gray-500">{(imageFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xs font-semibold text-green-900 truncate max-w-32">{imageFile.name}</p>
+                  <p className="text-xs text-green-600">{(imageFile.size / 1024 / 1024).toFixed(2)} MB • Ready to upload</p>
                 </div>
               </div>
               <Button 
