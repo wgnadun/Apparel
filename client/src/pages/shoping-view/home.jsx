@@ -310,7 +310,7 @@ function handleAddtoCart(getCurrentProductId,getTotalStock) {
 
             {/* Featured Products Section */}
             <section className='py-20 bg-gradient-to-b from-gray-50 to-white'>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-8xl mx-auto px-3 sm:px-4 lg:px-20">
                     <div className="text-center mb-16">
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                             Featured Products
@@ -320,7 +320,7 @@ function handleAddtoCart(getCurrentProductId,getTotalStock) {
                         </p>
                         <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 mx-auto"></div>
                     </div>    
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                         {
                             productList && productList.length > 0 ? 
                             productList.map((productItem)=>(
