@@ -37,9 +37,25 @@ function ShoppingHome() {
     const navigate = useNavigate();
     const { cartItems } = useSelector((state) => state.shopCart);
 
-      const {featureImageList} = useSelector(state => state.commonFeature)
-
+    const {featureImageList} = useSelector(state => state.commonFeature)
     
+    // Show More functionality
+    const [visibleProducts, setVisibleProducts] = useState(10); // Show 10 products initially
+    const productsPerPage = 10; // Load 10 more products each time
+
+    // Get visible products for display
+    const displayedProducts = productList?.slice(0, visibleProducts) || [];
+    const hasMoreProducts = productList && productList.length > visibleProducts;
+
+    // Show More handler
+    const handleShowMore = () => {
+        setVisibleProducts(prev => prev + productsPerPage);
+    };
+
+    // Reset visible products when productList changes
+    useEffect(() => {
+        setVisibleProducts(10);
+    }, [productList]);
 
     useEffect(()=>{
         if(productDetails !==null) setOpenDetailsDialog(true);
@@ -322,8 +338,8 @@ function handleAddtoCart(getCurrentProductId,getTotalStock) {
                     </div>    
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                         {
-                            productList && productList.length > 0 ? 
-                            productList.map((productItem)=>(
+                            displayedProducts && displayedProducts.length > 0 ? 
+                            displayedProducts.map((productItem)=>(
                                 <div key={productItem._id} className="group">
                                     <ShoppingProductTile 
                                         handleGetProductDetails={handleGetProductDetails}
@@ -338,7 +354,19 @@ function handleAddtoCart(getCurrentProductId,getTotalStock) {
                                 </div>
                             )
                         }
-                    </div>                  
+                    </div>
+                    
+                    {/* Show More Button */}
+                    {hasMoreProducts && (
+                        <div className="text-center mt-12">
+                            <Button 
+                                onClick={handleShowMore}
+                                className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+                            >
+                                Show More Products
+                            </Button>
+                        </div>
+                    )}                  
                 </div>
             </section>
 

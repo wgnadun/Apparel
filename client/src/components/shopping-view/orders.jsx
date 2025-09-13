@@ -44,17 +44,17 @@ function ShoppingOrders() {
     switch (status?.toLowerCase()) {
       case "confirmed":
       case "delivered":
-        return "bg-green-600 text-white hover:bg-green-700";
+        return "bg-black text-white hover:bg-gray-800";
       case "pending":
       case "processing":
-        return "bg-yellow-600 text-white hover:bg-yellow-700";
+        return "bg-gray-600 text-white hover:bg-gray-700";
       case "rejected":
       case "cancelled":
-        return "bg-red-600 text-white hover:bg-red-700";
+        return "bg-gray-400 text-white hover:bg-gray-500";
       case "shipped":
-        return "bg-blue-600 text-white hover:bg-blue-700";
+        return "bg-gray-800 text-white hover:bg-gray-900";
       default:
-        return "bg-gray-600 text-white hover:bg-gray-700";
+        return "bg-gray-500 text-white hover:bg-gray-600";
     }
   };
 
@@ -141,7 +141,7 @@ function ShoppingOrders() {
               <p className="text-gray-600 text-lg mb-6">
                 You haven't placed any orders yet. Start shopping to see your order history here.
               </p>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold">
+              <Button className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-semibold">
                 Start Shopping
               </Button>
             </CardContent>
@@ -153,7 +153,7 @@ function ShoppingOrders() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-full mx-auto px-4">
         {/* Header Section */}
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
@@ -165,13 +165,10 @@ function ShoppingOrders() {
         </div>
 
         <Card className="border-0 shadow-xl bg-white">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+          <CardHeader className="bg-black text-white rounded-t-lg">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between h-full py-5">
               <div>
-                <CardTitle className="text-2xl font-bold">Order History</CardTitle>
-                <p className="text-blue-100 mt-1">
-                  {orderList?.length || 0} total orders found
-                </p>
+                <CardTitle className="text-3xl font-bold">Order History</CardTitle>
               </div>
             </div>
           </CardHeader>
@@ -190,7 +187,7 @@ function ShoppingOrders() {
                     placeholder="Search by Order ID or Status..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
                   />
                 </div>
 
@@ -202,7 +199,7 @@ function ShoppingOrders() {
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
                   >
                     <option value="all">All Statuses</option>
                     {uniqueStatuses.map(status => (
@@ -219,7 +216,7 @@ function ShoppingOrders() {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
                   >
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
@@ -237,7 +234,7 @@ function ShoppingOrders() {
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm("")}
-                    className="text-sm text-blue-600 hover:text-blue-800 mt-2 sm:mt-0"
+                    className="text-sm text-black hover:text-gray-600 mt-2 sm:mt-0"
                   >
                     Clear Search
                   </button>
@@ -270,7 +267,7 @@ function ShoppingOrders() {
                 <TableBody>
                   {sortedOrders.length > 0 ? (
                     sortedOrders.map((orderItem, index) => (
-                      <TableRow key={orderItem._id} className="hover:bg-blue-50 transition-colors duration-200">
+                      <TableRow key={orderItem._id} className="hover:bg-gray-50 transition-colors duration-200">
                         <TableCell className="text-center py-4">
                           <div className="font-mono text-sm font-medium text-gray-800">
                             #{orderItem._id.slice(-8).toUpperCase()}
@@ -318,7 +315,7 @@ function ShoppingOrders() {
                           >
                             <Button
                               onClick={() => handleFetchOrderDetails(orderItem._id)}
-                              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105"
+                              className="bg-black hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105"
                             >
                               View Details
                             </Button>
@@ -353,14 +350,14 @@ function ShoppingOrders() {
         {/* Order Statistics */}
         {orderList && orderList.length > 0 && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-8">
-            <div className="bg-blue-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="bg-black p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="text-3xl font-bold">
                 {orderList.length}
               </div>
               <div className="text-sm opacity-90 font-medium">Total Orders</div>
             </div>
             
-            <div className="bg-green-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="bg-gray-800 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="text-3xl font-bold">
                 {orderList.filter(
                   o =>
@@ -372,7 +369,7 @@ function ShoppingOrders() {
               <div className="text-sm opacity-90 font-medium">Completed</div>
             </div>
             
-            <div className="bg-yellow-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="bg-gray-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="text-3xl font-bold">
                 {orderList.filter(
                   o =>
@@ -384,7 +381,7 @@ function ShoppingOrders() {
               <div className="text-sm opacity-90 font-medium">In Progress</div>
             </div>
             
-            <div className="bg-purple-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="bg-gray-900 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
               <div className="text-3xl font-bold">
                 ${orderList.reduce((sum, order) => sum + order.totalAmount, 0).toFixed(0)}
               </div>
