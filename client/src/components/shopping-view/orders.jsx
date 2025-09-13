@@ -19,6 +19,43 @@ import {
 } from "@/store/shop/order-slice";
 import { Badge } from "../ui/badge";
 
+// Add custom scrollbar styles
+const customScrollbarStyles = `
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #9CA3AF #F3F4F6;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #F3F4F6;
+    border-radius: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #9CA3AF;
+    border-radius: 4px;
+    border: 1px solid #F3F4F6;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #6B7280;
+  }
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = customScrollbarStyles;
+  if (!document.head.querySelector('style[data-custom-scrollbar-orders]')) {
+    styleSheet.setAttribute('data-custom-scrollbar-orders', 'true');
+    document.head.appendChild(styleSheet);
+  }
+}
+
 function ShoppingOrders() {
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -243,9 +280,9 @@ function ShoppingOrders() {
             </div>
 
             {/* Orders Table */}
-            <div className="overflow-x-auto">
+            <div className={`overflow-x-auto ${sortedOrders.length > 3 ? 'max-h-96 overflow-y-auto custom-scrollbar' : ''}`}>
               <Table>
-                <TableHeader>
+                <TableHeader className={`${sortedOrders.length > 3 ? 'sticky top-0 bg-gray-100 z-10' : ''}`}>
                   <TableRow className="bg-gray-100 hover:bg-gray-100">
                     <TableHead className="text-center font-semibold text-gray-900 py-4">
                       Order ID

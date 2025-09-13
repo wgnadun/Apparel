@@ -135,34 +135,44 @@ useEffect(()=>{
 
 
   return (
-    <Card>
-        <div className="mb-5 p-3 grid grid-cols-1 sm:grid-cols-2  gap-2">
-            {
-                addressList && addressList.length > 0 ?
-                addressList.map((singleAddressItem)=>
-                 <AddressCard 
-                
-                    selectedId={selectedId}
-                    addressInfo={singleAddressItem}
-                    handleDeleteAddress={handleDeleteAddress}
-                    handleEditAddress={handleEditAddress}
-                    setCurrentSelectedAddress={setCurrentSelectedAddress}
-                />) : null
-            }
+    <div className="space-y-6">
+        {/* Address Cards */}
+        {addressList && addressList.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {addressList.map((singleAddressItem) => (
+                    <AddressCard 
+                        key={singleAddressItem._id}
+                        selectedId={selectedId}
+                        addressInfo={singleAddressItem}
+                        handleDeleteAddress={handleDeleteAddress}
+                        handleEditAddress={handleEditAddress}
+                        setCurrentSelectedAddress={setCurrentSelectedAddress}
+                    />
+                ))}
+            </div>
+        )}
+
+        {/* Add/Edit Address Form */}
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-black">
+                    {currentEditedId !== null ? 'Edit Address' : 'Add New Address'}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                    {currentEditedId !== null ? 'Update your address information' : 'Enter your delivery address'}
+                </p>
+            </div>
+            <div className="p-6">
+                <ValidatedForm 
+                    schema={addressSchema}
+                    formControls={addressFormControls}
+                    initialData={formData}
+                    buttonText={currentEditedId !== null ? 'Update Address' : 'Add Address'}
+                    onSubmit={handleManageAddress} 
+                />
+            </div>
         </div>
-    <CardHeader>
-        <CardTitle>{currentEditedId !== null ? 'Edit Address' : 'Add new Address'}</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-3">
-        <ValidatedForm 
-            schema={addressSchema}
-            formControls={addressFormControls}
-            initialData={formData}
-            buttonText={currentEditedId !== null ? 'Update Address' : 'Add Address'}
-            onSubmit={handleManageAddress} 
-        />
-    </CardContent>
-    </Card>
+    </div>
   )
 }
 

@@ -7,20 +7,39 @@ import { useSelector } from 'react-redux'
 import { Table, TableBody, TableCell, TableRow } from '../ui/table'
 import { Calendar, ClipboardCheck, CreditCard, DollarSign, Receipt, Truck } from 'lucide-react'
 
+// Add custom styles for dialog overlay with blur effect
+const dialogOverlayStyles = `
+  [data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(50px) !important;
+    -webkit-backdrop-filter: blur(50px) !important;
+  }
+`;
+
+// Inject styles
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = dialogOverlayStyles;
+  if (!document.head.querySelector('style[data-dialog-overlay-remove]')) {
+    styleSheet.setAttribute('data-dialog-overlay-remove', 'true');
+    document.head.appendChild(styleSheet);
+  }
+}
+
 function ShoppingOrderDetailsView({orderDetails}) {
  
  const {user} =  useSelector(state => state.auth)
 
   return (
-     <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-hidden bg-white">
+     <DialogContent className="sm:max-w-[600px] max-h-[80vh] h-[80vh] overflow-hidden bg-white/100 backdrop-blur-md ">
     <DialogTitle className="sr-only">Order Details</DialogTitle>
     
     {/* Header */}
-    <div className="mb-6 pb-4 border-b border-gray-200">
-      <div className="flex items-center gap-3 mb-2">
-        <h2 className="text-2xl font-bold text-black">Order Details</h2>
+    <div className="mb-4 pb-3 border-b border-gray-200">
+      <div className="flex items-center gap-3 mb-1">
+        <h2 className="text-xl font-bold text-black">Order Details</h2>
         <Badge
-          className={`py-2 px-4 text-sm font-semibold rounded-full ${
+          className={`py-1 px-3 text-xs font-semibold rounded-full ${
             orderDetails?.orderStatus === "confirmed"
               ? "bg-black text-white"
               : orderDetails?.orderStatus === "Rejected"
@@ -31,39 +50,39 @@ function ShoppingOrderDetailsView({orderDetails}) {
           {orderDetails?.orderStatus}
         </Badge>
       </div>
-      <p className="text-gray-600">Order #{orderDetails?._id?.slice(-8)}</p>
+      <p className="text-gray-600 text-sm">Order #{orderDetails?._id?.slice(-8)}</p>
     </div>
 
     {/* Order Information */}
-    <div className="grid md:grid-cols-2 gap-6 mb-6">
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-black flex items-center gap-2">
-          <Receipt size={20} className="text-gray-600" />
+    <div className="grid md:grid-cols-2 gap-4 mb-4">
+      <div className="space-y-3">
+        <h3 className="text-base font-semibold text-black flex items-center gap-2">
+          <Receipt size={16} className="text-gray-600" />
           Order Information
         </h3>
-        <div className="space-y-3">
-          <div className="flex justify-between">
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
             <span className="text-gray-600">Order Date</span>
             <span className="font-medium text-black">{orderDetails?.orderDate.split("T")[0]}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between text-sm">
             <span className="text-gray-600">Payment Method</span>
             <span className="font-medium text-black">{orderDetails?.paymentMethod}</span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between text-sm">
             <span className="text-gray-600">Payment Status</span>
             <span className="font-medium text-black">{orderDetails?.paymentStatus}</span>
           </div>
         </div>
       </div>
 
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-black flex items-center gap-2">
-          <Truck size={20} className="text-gray-600" />
+      <div className="space-y-3">
+        <h3 className="text-base font-semibold text-black flex items-center gap-2">
+          <Truck size={16} className="text-gray-600" />
           Shipping Address
         </h3>
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="space-y-1 text-sm">
+        <div className="bg-gray-50 p-3 rounded-lg">
+          <div className="space-y-1 text-xs">
             <div className="font-semibold text-black">{user.userName}</div>
             <div className="text-gray-700">{orderDetails?.addressInfo?.address}</div>
             <div className="text-gray-700">{orderDetails?.addressInfo?.city}, {orderDetails?.addressInfo?.pincode}</div>
@@ -81,34 +100,34 @@ function ShoppingOrderDetailsView({orderDetails}) {
 
     {/* Order Items */}
     <div>
-      <h3 className="text-lg font-semibold text-black mb-4">Order Items</h3>
+      <h3 className="text-base font-semibold text-black mb-3">Order Items</h3>
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
-          <div className="min-w-[500px]">
-            <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-              <div className="grid grid-cols-3 gap-4 text-sm font-medium text-gray-700">
+          <div className="min-w-[400px]">
+            <div className="bg-gray-50 px-3 py-2 border-b border-gray-200">
+              <div className="grid grid-cols-3 gap-4 text-xs font-medium text-gray-700">
                 <div>Product</div>
-                <div className="text-center">Quantity</div>
+                <div className="text-center">Qty</div>
                 <div className="text-right">Price</div>
               </div>
             </div>
-            <div className="divide-y divide-gray-200">
+            <div className={`divide-y divide-gray-200 ${orderDetails?.cartItems?.length > 3 ? 'max-h-48 overflow-y-auto' : ''}`}>
               {orderDetails?.cartItems?.length > 0 &&
                 orderDetails.cartItems.map((item, index) => (
-                  <div key={index} className="px-4 py-3 hover:bg-gray-50">
+                  <div key={index} className="px-3 py-2 hover:bg-gray-50">
                     <div className="grid grid-cols-3 gap-4 items-center">
-                      <div className="font-medium text-black">{item.title}</div>
-                      <div className="text-center text-gray-700">{item.quantity}</div>
+                      <div className="font-medium text-black text-sm">{item.title}</div>
+                      <div className="text-center text-gray-700 text-sm">{item.quantity}</div>
                       <div className="text-right">
-                        <div className="font-semibold text-black">${item.price}</div>
+                        <div className="font-semibold text-black text-sm">${item.price}</div>
                         <div className="text-xs text-gray-500">${(item.price * item.quantity).toFixed(2)} total</div>
                       </div>
                     </div>
                   </div>
                 ))}
             </div>
-            <div className="bg-gray-100 px-4 py-3 border-t border-gray-200">
-              <div className="flex justify-between items-center font-bold text-lg">
+            <div className="bg-gray-100 px-3 py-2 border-t border-gray-200">
+              <div className="flex justify-between items-center font-bold text-base">
                 <span>Total Amount</span>
                 <span>${orderDetails?.totalAmount}</span>
               </div>

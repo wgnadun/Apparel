@@ -103,45 +103,96 @@ if(approvalURL){
 
     return(
         <div className="flex flex-col">
+            {/* Banner Image */}
             <div className="relative h-[300px] w-full overflow-hidden">
-                <img src={img} alt="Account" className="object-cover object-center w-full h-full" />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5 p-5">
-                <Address 
-                selectedId = {currentSelectedAddress}
-                setCurrentSelectedAddress={setCurrentSelectedAddress} />
-              
-              <div className='flex flex-col gap-4 '>
-                   
-              <div className="mt-8 space-y-4 max-h-150 overflow-y-auto px-4">
-                    {cartItems && cartItems?.items?.length > 0
-                      ? cartItems.items.map((item, index) => (
-                          <div
-                            key={index}
-                            className="transition-all duration-300 hover:shadow-md hover:scale-[1.02] rounded-lg p-2"
-                          >
-                            <UserCartItemsContent cartItem={item} />
-                          </div>
-                        ))
-                      : null}
+                <img src={img} alt="Checkout Banner" className="object-cover object-center w-full h-full" />
+                <div className="absolute inset-0 bg-opacity-40 flex items-center justify-center">
+                    <div className="text-center text-white">
+                        <h1 className="text-4xl font-bold mb-4">Checkout</h1>
+                        <p className="text-xl">Complete your order securely</p>
+                    </div>
                 </div>
+            </div>
 
-                <div className="mt-8 space-y-4">
-                      <div className="flex justify-between">
-                        <span className="font-bold">Total</span>
-                        <span className="font-bold">${totalCartAmount.toFixed(2)}</span>
-                      </div>
-                </div> 
-                <div className="mt-4 w-full">
-                    <Button onClick={handleInitiatePaypalPayment} className="w-full">
-                         {
-                          isPaymentStart ? 'Proccessing payment' : 'Checkout with Paypal'
-                         }
-                    </Button>
-            </div>     
-          </div>
-        </div>
-            
+            {/* Main Content */}
+            <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    {/* Address Section */}
+                    <div className="space-y-6">
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                            <div className="bg-black text-white px-6 py-4">
+                                <h2 className="text-xl font-semibold">Shipping Address</h2>
+                                <p className="text-gray-300 text-sm">Select or add a delivery address</p>
+                            </div>
+                            <div className="p-6">
+                                <Address 
+                                    selectedId={currentSelectedAddress}
+                                    setCurrentSelectedAddress={setCurrentSelectedAddress} 
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Order Summary Section */}
+                    <div className="space-y-6">
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                            <div className="bg-black text-white px-6 py-4">
+                                <h2 className="text-xl font-semibold">Order Summary</h2>
+                                <p className="text-gray-300 text-sm">Review your items and total</p>
+                            </div>
+                            
+                            <div className="p-6">
+                                {/* Cart Items */}
+                                <div className="space-y-4 max-h-96 overflow-y-auto">
+                                    {cartItems && cartItems?.items?.length > 0 ? (
+                                        cartItems.items.map((item, index) => (
+                                            <div
+                                                key={index}
+                                                className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-300"
+                                            >
+                                                <UserCartItemsContent cartItem={item} />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-8">
+                                            <p className="text-gray-500">No items in cart</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Total Section */}
+                                <div className="mt-6 pt-6 border-t border-gray-200">
+                                    <div className="bg-gray-50 rounded-lg p-4">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-lg font-semibold text-black">Total Amount</span>
+                                            <span className="text-2xl font-bold text-black">${totalCartAmount.toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Checkout Button */}
+                                <div className="mt-6">
+                                    <Button 
+                                        onClick={handleInitiatePaypalPayment} 
+                                        className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        disabled={isPaymentStart}
+                                    >
+                                        {isPaymentStart ? (
+                                            <div className="flex items-center justify-center gap-2">
+                                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                Processing Payment...
+                                            </div>
+                                        ) : (
+                                            'Checkout with PayPal'
+                                        )}
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
     

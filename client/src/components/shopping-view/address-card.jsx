@@ -10,43 +10,58 @@ function AddressCard({
   selectedId,
 }) {
   return (
-    <Card
+    <div
       onClick={
         setCurrentSelectedAddress
           ? () => setCurrentSelectedAddress(addressInfo)
           : null
       }
-      className={`cursor-pointer border-blue-400 ${
+      className={`cursor-pointer bg-white border-2 rounded-lg transition-all duration-300 hover:shadow-lg ${
         selectedId?._id === addressInfo?._id
-          ? "border-b-blue-600 border-x-blue-600 border-[2px]"
-          : "border-black"
+          ? "border-black shadow-lg"
+          : "border-gray-200 hover:border-gray-400"
       }`}
     >
-        <CardContent className="p-4">
-            <div className="space-y-3 max-w-md w-full overflow-x-hidden">
+        <div className="p-6">
+            <div className="space-y-3">
               {[
                 { label: "Address", value: addressInfo?.address },
                 { label: "City", value: addressInfo?.city },
-                { label: "Postal code", value: addressInfo?.pincode },
+                { label: "Postal Code", value: addressInfo?.pincode },
                 { label: "Phone", value: addressInfo?.phone },
                 { label: "Notes", value: addressInfo?.notes },
               ].map(({ label, value }) => (
                 <div key={label} className="flex flex-col sm:flex-row sm:items-start">
-                  <span className="w-full sm:w-28 font-medium flex-shrink-0 mb-1 sm:mb-0">
+                  <span className="w-full sm:w-28 font-semibold text-gray-700 flex-shrink-0 mb-1 sm:mb-0">
                     {label}:
                   </span>
-                  <span className="break-words flex-grow w-full">{value}</span>
+                  <span className="break-words flex-grow w-full text-black">{value || 'N/A'}</span>
                 </div>
               ))}
             </div>
+        </div>
 
-        </CardContent>
-
-      <CardFooter className="p-3 flex justify-between">
-        <Button onClick={() => handleEditAddress(addressInfo)}>Edit</Button>
-        <Button onClick={() => handleDeleteAddress(addressInfo)}>Delete</Button>
-      </CardFooter>
-    </Card>
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-between">
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditAddress(addressInfo);
+            }}
+            className="bg-white hover:bg-gray-100 text-black border border-gray-300 hover:border-gray-400"
+          >
+            Edit
+          </Button>
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteAddress(addressInfo);
+            }}
+            className="bg-white hover:bg-red-50 text-red-600 border border-red-200 hover:border-red-300"
+          >
+            Delete
+          </Button>
+        </div>
+    </div>
   );
 }
 
