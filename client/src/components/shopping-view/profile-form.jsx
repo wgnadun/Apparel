@@ -116,20 +116,21 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">
+    <div className="w-full">
+      <div className="mb-6">
+        <h3 className="text-xl font-bold text-gray-900 mb-2">
           Profile Information
           {hasFormChanged && (
             <span className="ml-2 text-sm text-blue-600 font-normal">(Changes made)</span>
           )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName" className={hasFieldError('firstName') ? "text-red-500" : ""}>
+        </h3>
+        <p className="text-sm text-gray-600">Update your personal details below</p>
+      </div>
+      <div className="space-y-6">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3">
+              <Label htmlFor="firstName" className={`text-sm font-semibold ${hasFieldError('firstName') ? "text-red-500" : "text-gray-700"}`}>
                 First Name <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -140,15 +141,15 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
                 onChange={(e) => handleInputChange('firstName', e.target.value)}
                 onBlur={() => handleFieldBlur('firstName')}
                 placeholder={fieldHints.firstName}
-                className={hasFieldError('firstName') ? "border-red-500 focus:border-red-500" : ""}
+                className={`h-12 rounded-xl border-2 transition-all duration-300 focus:ring-2 focus:ring-blue-500/20 ${hasFieldError('firstName') ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"}`}
                 required
               />
               {getFieldError('firstName') && (
-                <p className="text-sm text-red-500">{getFieldError('firstName')}</p>
+                <p className="text-sm text-red-500 font-medium">{getFieldError('firstName')}</p>
               )}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName" className={hasFieldError('lastName') ? "text-red-500" : ""}>
+            <div className="space-y-3">
+              <Label htmlFor="lastName" className={`text-sm font-semibold ${hasFieldError('lastName') ? "text-red-500" : "text-gray-700"}`}>
                 Last Name <span className="text-red-500">*</span>
               </Label>
               <Input
@@ -159,17 +160,17 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
                 onChange={(e) => handleInputChange('lastName', e.target.value)}
                 onBlur={() => handleFieldBlur('lastName')}
                 placeholder={fieldHints.lastName}
-                className={hasFieldError('lastName') ? "border-red-500 focus:border-red-500" : ""}
+                className={`h-12 rounded-xl border-2 transition-all duration-300 focus:ring-2 focus:ring-blue-500/20 ${hasFieldError('lastName') ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"}`}
                 required
               />
               {getFieldError('lastName') && (
-                <p className="text-sm text-red-500">{getFieldError('lastName')}</p>
+                <p className="text-sm text-red-500 font-medium">{getFieldError('lastName')}</p>
               )}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="userName" className={hasFieldError('userName') ? "text-red-500" : ""}>
+          <div className="space-y-3">
+            <Label htmlFor="userName" className={`text-sm font-semibold ${hasFieldError('userName') ? "text-red-500" : "text-gray-700"}`}>
               Username <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -180,16 +181,16 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
               onChange={(e) => handleInputChange('userName', e.target.value)}
               onBlur={() => handleFieldBlur('userName')}
               placeholder={fieldHints.userName}
-              className={hasFieldError('userName') ? "border-red-500 focus:border-red-500" : ""}
+              className={`h-12 rounded-xl border-2 transition-all duration-300 focus:ring-2 focus:ring-blue-500/20 ${hasFieldError('userName') ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"}`}
               required
             />
             {getFieldError('userName') && (
-              <p className="text-sm text-red-500">{getFieldError('userName')}</p>
+              <p className="text-sm text-red-500 font-medium">{getFieldError('userName')}</p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className={hasFieldError('email') ? "text-red-500" : ""}>
+          <div className="space-y-3">
+            <Label htmlFor="email" className={`text-sm font-semibold ${hasFieldError('email') ? "text-red-500" : "text-gray-700"}`}>
               Email <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -200,42 +201,42 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
               onChange={(e) => handleInputChange('email', e.target.value)}
               onBlur={() => handleFieldBlur('email')}
               placeholder={fieldHints.email}
-              className={hasFieldError('email') ? "border-red-500 focus:border-red-500" : ""}
+              className={`h-12 rounded-xl border-2 transition-all duration-300 focus:ring-2 focus:ring-blue-500/20 ${hasFieldError('email') ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"}`}
               required
             />
             {getFieldError('email') && (
-              <p className="text-sm text-red-500">{getFieldError('email')}</p>
+              <p className="text-sm text-red-500 font-medium">{getFieldError('email')}</p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="country" className={hasFieldError('country') ? "text-red-500" : ""}>
+          <div className="space-y-3">
+            <Label htmlFor="country" className={`text-sm font-semibold ${hasFieldError('country') ? "text-red-500" : "text-gray-700"}`}>
               Country <span className="text-red-500">*</span>
             </Label>
             <Select
               value={(findCountryByCodeOrName(formData.country)?.code) || ''}
               onValueChange={handleCountryChange}
             >
-              <SelectTrigger className={`w-full ${hasFieldError('country') ? "border-red-500 focus:border-red-500" : ""}`}>
+              <SelectTrigger className={`h-12 rounded-xl border-2 transition-all duration-300 focus:ring-2 focus:ring-blue-500/20 ${hasFieldError('country') ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"}`}>
                 <SelectValue placeholder={fieldHints.country} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl border-2 border-gray-200">
                 {COUNTRIES.map((c) => (
-                  <SelectItem key={c.code} value={c.code}>
+                  <SelectItem key={c.code} value={c.code} className="rounded-lg">
                     <ReactCountryFlag svg countryCode={c.code} style={{ width: '1.2em', height: '1.2em' }} />
-                    <span>{c.name}</span>
-                    <span className="text-muted-foreground">({c.dialCode})</span>
+                    <span className="ml-2">{c.name}</span>
+                    <span className="text-muted-foreground ml-1">({c.dialCode})</span>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             {getFieldError('country') && (
-              <p className="text-sm text-red-500">{getFieldError('country')}</p>
+              <p className="text-sm text-red-500 font-medium">{getFieldError('country')}</p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="phone" className={hasFieldError('phone') ? "text-red-500" : ""}>
+          <div className="space-y-3">
+            <Label htmlFor="phone" className={`text-sm font-semibold ${hasFieldError('phone') ? "text-red-500" : "text-gray-700"}`}>
               Phone Number
             </Label>
             <Input
@@ -246,55 +247,57 @@ const ProfileForm = ({ user, onProfileUpdate, onBackToProfile }) => {
               onChange={(e) => handleInputChange('phone', e.target.value)}
               onBlur={() => handleFieldBlur('phone')}
               placeholder={fieldHints.phone}
-              className={hasFieldError('phone') ? "border-red-500 focus:border-red-500" : ""}
+              className={`h-12 rounded-xl border-2 transition-all duration-300 focus:ring-2 focus:ring-blue-500/20 ${hasFieldError('phone') ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-500"}`}
             />
             {getFieldError('phone') && (
-              <p className="text-sm text-red-500">{getFieldError('phone')}</p>
+              <p className="text-sm text-red-500 font-medium">{getFieldError('phone')}</p>
             )}
           </div>
 
-          <Separator />
+          <div className="border-t border-gray-200 pt-6">
+            {/* Premium Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onBackToProfile}
+                className="flex-1 h-12 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 rounded-xl font-semibold transition-all duration-300"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Profile
+              </Button>
+              
+              <Button
+                type="submit"
+                disabled={isUpdating || !isFormValid}
+                className="flex-1 h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isUpdating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Update Profile
+                  </>
+                )}
+              </Button>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onBackToProfile}
-              className="flex-1"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Profile
-            </Button>
-            
-            <Button
-              type="submit"
-              disabled={isUpdating || !isFormValid}
-              className="flex-1"
-            >
-              {isUpdating ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Updating...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Update Profile
-                </>
-              )}
-            </Button>
+            {/* Validation Indicator */}
+            {!isFormValid && (
+              <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-sm text-gray-600 text-center font-medium">
+                  Please fill in all required fields correctly to enable the update button.
+                </p>
+              </div>
+            )}
           </div>
-
-          {/* Validation Indicator */}
-          {!isFormValid && (
-            <p className="text-sm text-slate-500 text-center">
-              Please fill in all required fields correctly to enable the update button.
-            </p>
-          )}
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 

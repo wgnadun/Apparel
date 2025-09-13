@@ -125,16 +125,18 @@ function UserProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Header Section */}
+        {/* Clean Header Section */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
-              <Separator orientation="vertical" className="h-6" />
+              <div className="w-1 h-12 bg-gray-800 rounded-full"></div>
               <div>
-                <h1 className="text-3xl font-bold text-slate-900">Profile</h1>
-                <p className="text-slate-600 mt-1">
+                <h1 className="text-4xl font-bold text-gray-900">
+                  Profile
+                </h1>
+                <p className="text-gray-600 mt-1 font-medium">
                   {showSettings ? 'Update your personal information' : 'View and manage your account'}
                 </p>
               </div>
@@ -144,7 +146,7 @@ function UserProfile() {
               {showSettings ? null : (
                 <Button 
                   onClick={() => setShowSettings(true)}
-                  className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
+                  className="flex items-center space-x-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                 >
                   <Settings className="w-4 h-4" />
                   <span>Edit Profile</span>
@@ -155,19 +157,21 @@ function UserProfile() {
         </div>
 
         {showSettings ? (
-          /* Edit Mode */
+          /* Clean Edit Mode */
           <div className="space-y-8">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
               {/* Profile Picture Section */}
               <div className="xl:col-span-1">
-                <Card className="shadow-sm border-slate-200">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center space-x-2 text-slate-800">
-                      <Edit3 className="w-5 h-5" />
+                <Card className="shadow-lg border border-gray-200 rounded-xl">
+                  <CardHeader className="pb-4 bg-gray-50">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800 font-semibold">
+                      <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
+                        <Edit3 className="w-4 h-4 text-white" />
+                      </div>
                       <span>Profile Picture</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6">
                     <ProfilePictureUpload 
                       user={user} 
                       onProfileUpdate={handleProfileUpdate}
@@ -178,59 +182,63 @@ function UserProfile() {
 
               {/* Profile Form Section */}
               <div className="xl:col-span-2">
-                <Card className="shadow-sm border-slate-200">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center space-x-2 text-slate-800">
-                      <User className="w-5 h-5" />
+                <Card className="shadow-lg border border-gray-200 rounded-xl">
+                  <CardHeader className="pb-4 bg-gray-50">
+                    <CardTitle className="flex items-center space-x-2 text-gray-800 font-semibold">
+                      <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
                       <span>Personal Information</span>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                                         <ProfileForm 
-                       user={user} 
-                       onProfileUpdate={handleProfileUpdate}
-                       onBackToProfile={() => setShowSettings(false)}
-                     />
+                  <CardContent className="p-6">
+                    <ProfileForm 
+                      user={user} 
+                      onProfileUpdate={handleProfileUpdate}
+                      onBackToProfile={() => setShowSettings(false)}
+                    />
                   </CardContent>
                 </Card>
               </div>
             </div>
           </div>
         ) : (
-          /* View Mode */
+          /* Clean View Mode */
           <div className="space-y-8">
             {/* Profile Header Card */}
-            <Card className="shadow-lg border-slate-200 bg-white">
-              <CardContent className="pt-8">
+            <Card className="shadow-lg border border-gray-200 rounded-xl">
+              <CardContent className="pt-8 pb-8 px-8">
                 <div className="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8">
-                  {/* Avatar */}
+                  {/* Clean Avatar */}
                   <div className="flex-shrink-0">
                     <div className="relative">
-                      <Avatar className="h-24 w-24 ring-4 ring-white shadow-lg">
-                        <AvatarImage src={user?.image} alt={user?.userName || 'Profile'} />
-                        <AvatarFallback className="text-2xl font-semibold bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                      <Avatar className="h-32 w-32 ring-4 ring-gray-100 shadow-lg">
+                        <AvatarImage src={user?.image} alt={user?.userName || 'Profile'} className="object-cover" />
+                        <AvatarFallback className="text-3xl font-bold bg-gray-800 text-white">
                           {user?.userName?.charAt(0)?.toUpperCase() || 'U'}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+                      <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white shadow-md"></div>
                     </div>
                   </div>
 
                   {/* User Info */}
                   <div className="flex-grow space-y-4">
-                                                               <div>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-1">
-                          {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.userName || 'Unnamed User'}
-                        </h2>
-                        <div className="flex items-center space-x-2">
-                          <User className="w-4 h-4 text-slate-500" />
-                          <span className="text-slate-600">{user.userName}</span>
+                    <div>
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                        {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.userName || 'Unnamed User'}
+                      </h2>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-5 h-5 bg-gray-800 rounded-full flex items-center justify-center">
+                          <User className="w-3 h-3 text-white" />
                         </div>
+                        <span className="text-gray-600 font-medium">{user.userName}</span>
                       </div>
+                    </div>
                     
                     <div className="flex flex-wrap items-center gap-4">
-                      <Badge variant="outline" className={`${getRoleColor(user.role)} font-medium`}>
-                        <Shield className="w-3 h-3 mr-1" />
+                      <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-4 py-2 rounded-full font-semibold">
+                        <div className="w-2 h-2 bg-gray-600 rounded-full mr-2"></div>
                         {user.role || 'User'}
                       </Badge>
                     </div>
@@ -242,126 +250,147 @@ function UserProfile() {
             {/* Details Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Contact Information */}
-              <Card className="shadow-sm border-slate-200">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center space-x-2 text-slate-800">
+              <Card className="shadow-lg border border-gray-200 rounded-xl">
+                <CardHeader className="pb-4 bg-gray-50">
+                  <CardTitle className="flex items-center space-x-2 text-gray-800 font-semibold">
+                    <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
+                      <Mail className="w-4 h-4 text-white" />
+                    </div>
                     <span>Contact Information</span>
                   </CardTitle>
                 </CardHeader>
-                                 <CardContent className="space-y-6">
-                   <div className="space-y-4">
-                     <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                       <User className="w-5 h-5 text-slate-500 mt-0.5" />
-                       <div>
-                         <p className="text-sm font-medium text-slate-700">Full Name</p>
-                         <p className="text-slate-900 font-medium">
-                           {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'Not provided'}
-                         </p>
-                       </div>
-                     </div>
-                     
-                     <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                       <User className="w-5 h-5 text-slate-500 mt-0.5" />
-                       <div>
-                         <p className="text-sm font-medium text-slate-700">Username</p>
-                         <p className="text-slate-900 font-medium">{user.userName || 'Not provided'}</p>
-                       </div>
-                     </div>
-                     
-                     <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                       <Mail className="w-5 h-5 text-slate-500 mt-0.5" />
-                       <div>
-                         <p className="text-sm font-medium text-slate-700">Email Address</p>
-                         <p className="text-slate-900 font-medium">{user.email}</p>
-                       </div>
-                     </div>
-                    
-                    <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                      <Phone className="w-5 h-5 text-slate-500 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-slate-700">Phone Number</p>
-                        <p className="text-slate-900 font-medium">{user.phone || 'Not provided'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                      <MapPin className="w-5 h-5 text-slate-500 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-slate-700">Country</p>
-                        <div className="flex items-center space-x-2 mt-1">
-                          {(() => {
-                            const country = findCountryByCodeOrName(user.country);
-                            return (
-                              <>
-                                {country?.code && (
-                                  <ReactCountryFlag 
-                                    svg 
-                                    countryCode={country.code} 
-                                    style={{ width: '1.25em', height: '1.25em' }} 
-                                    className="rounded-sm"
-                                  />
-                                )}
-                                <span className="text-slate-900 font-medium">
-                                  {country?.name || user.country || 'Not specified'}
-                                </span>
-                              </>
-                            );
-                          })()}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Account Details */}
-              <Card className="shadow-sm border-slate-200">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center space-x-2 text-slate-800">
-                    <Shield className="w-5 h-5" />
-                    <span>Account Details</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-6 p-6">
                   <div className="space-y-4">
-                    <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                      <User className="w-5 h-5 text-slate-500 mt-0.5" />
+                    <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                      <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">User ID</p>
-                        <p className="text-slate-900 font-mono text-sm break-all">{user._id}</p>
+                        <p className="text-sm font-semibold text-gray-700 mb-1">Full Name</p>
+                        <p className="text-gray-900 font-bold">
+                          {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'Not provided'}
+                        </p>
                       </div>
                     </div>
                     
-                    <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                      <Shield className="w-5 h-5 text-slate-500 mt-0.5" />
+                    <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                      <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">Account Type</p>
-                        <Badge variant="outline" className={`${getRoleColor(user.role)} mt-1`}>
-                          {user.role || 'User'}
-                        </Badge>
+                        <p className="text-sm font-semibold text-gray-700 mb-1">Username</p>
+                        <p className="text-gray-900 font-bold">{user.userName || 'Not provided'}</p>
                       </div>
                     </div>
                     
-                    <div className="flex items-start space-x-3 p-3 rounded-lg bg-slate-50">
-                      <Calendar className="w-5 h-5 text-slate-500 mt-0.5" />
+                    <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                      <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Mail className="w-5 h-5 text-white" />
+                      </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-700">Last Updated</p>
-                        <p className="text-slate-900 font-medium">{formatDate(user.updatedAt)}</p>
+                        <p className="text-sm font-semibold text-gray-700 mb-1">Email Address</p>
+                        <p className="text-gray-900 font-bold">{user.email}</p>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                   
+                   <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                     <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                       <Phone className="w-5 h-5 text-white" />
+                     </div>
+                     <div>
+                       <p className="text-sm font-semibold text-gray-700 mb-1">Phone Number</p>
+                       <p className="text-gray-900 font-bold">{user.phone || 'Not provided'}</p>
+                     </div>
+                   </div>
+                   
+                   <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                     <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                       <MapPin className="w-5 h-5 text-white" />
+                     </div>
+                     <div>
+                       <p className="text-sm font-semibold text-gray-700 mb-1">Country</p>
+                       <div className="flex items-center space-x-2 mt-1">
+                         {(() => {
+                           const country = findCountryByCodeOrName(user.country);
+                           return (
+                             <>
+                               {country?.code && (
+                                 <ReactCountryFlag 
+                                   svg 
+                                   countryCode={country.code} 
+                                   style={{ width: '1.25em', height: '1.25em' }} 
+                                   className="rounded-sm"
+                                 />
+                               )}
+                               <span className="text-gray-900 font-bold">
+                                 {country?.name || user.country || 'Not specified'}
+                               </span>
+                             </>
+                           );
+                         })()}
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </CardContent>
+             </Card>
+
+             {/* Account Details */}
+             <Card className="shadow-lg border border-gray-200 rounded-xl">
+               <CardHeader className="pb-4 bg-gray-50">
+                 <CardTitle className="flex items-center space-x-2 text-gray-800 font-semibold">
+                   <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
+                     <Shield className="w-4 h-4 text-white" />
+                   </div>
+                   <span>Account Details</span>
+                 </CardTitle>
+               </CardHeader>
+               <CardContent className="space-y-6 p-6">
+                 <div className="space-y-4">
+                   <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                     <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                       <User className="w-5 h-5 text-white" />
+                     </div>
+                     <div>
+                       <p className="text-sm font-semibold text-gray-700 mb-1">User ID</p>
+                       <p className="text-gray-900 font-mono text-sm break-all">{user._id}</p>
+                     </div>
+                   </div>
+                   
+                   <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                     <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                       <Shield className="w-5 h-5 text-white" />
+                     </div>
+                     <div>
+                       <p className="text-sm font-semibold text-gray-700 mb-1">Account Type</p>
+                       <Badge className="bg-gray-100 text-gray-800 border border-gray-200 px-3 py-1 rounded-full font-semibold mt-2">
+                         <div className="w-2 h-2 bg-gray-600 rounded-full mr-2"></div>
+                         {user.role || 'User'}
+                       </Badge>
+                     </div>
+                   </div>
+                   
+                   <div className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 border border-gray-200 hover:shadow-sm transition-all duration-200">
+                     <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0">
+                       <Calendar className="w-5 h-5 text-white" />
+                     </div>
+                     <div>
+                       <p className="text-sm font-semibold text-gray-700 mb-1">Last Updated</p>
+                       <p className="text-gray-900 font-bold">{formatDate(user.updatedAt)}</p>
+                     </div>
+                   </div>
+                 </div>
+               </CardContent>
+             </Card>
+           </div>
 
             {/* Action Bar */}
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center pt-6">
               <Button 
-                variant="outline" 
                 onClick={() => navigate('/')}
-                className="flex items-center space-x-2 px-8 py-2"
+                className="flex items-center space-x-2 px-8 py-3 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
               >
-                <Home className="w-4 h-4" />
+                <Home className="w-5 h-5" />
                 <span>Return to Home</span>
               </Button>
             </div>
