@@ -92,18 +92,18 @@ export const loginFormControls = [
 
 export const addProductFormElements = [
   {
-    label: "Title",
+    label: "Product Title",
     name: "title",
     componentType: "input",
     type: "text",
-    placeholder: "Enter product title",
+    placeholder: "e.g., Premium Cotton T-Shirt",
     required: true,
   },
   {
-    label: "Description",
+    label: "Product Description",
     name: "description",
     componentType: "textarea",
-    placeholder: "Enter product description",
+    placeholder: "Describe your product features, materials, and benefits...",
     required: true,
   },
   {
@@ -112,9 +112,9 @@ export const addProductFormElements = [
     componentType: "select",
     required: true,
     options: [
-      { id: "men", label: "Men" },
-      { id: "women", label: "Women" },
-      { id: "kids", label: "Kids" },
+      { id: "men", label: "Men's Clothing" },
+      { id: "women", label: "Women's Clothing" },
+      { id: "kids", label: "Kids' Clothing" },
       { id: "accessories", label: "Accessories" },
       { id: "footwear", label: "Footwear" },
     ],
@@ -136,11 +136,11 @@ export const addProductFormElements = [
     ],
   },
   {
-    label: "Price",
+    label: "Regular Price",
     name: "price",
     componentType: "input",
     type: "number",
-    placeholder: "Enter product price",
+    placeholder: "0.00",
     required: true,
   },
   {
@@ -148,15 +148,15 @@ export const addProductFormElements = [
     name: "salePrice",
     componentType: "input",
     type: "number",
-    placeholder: "Enter sale price (optional)",
+    placeholder: "0.00 (optional)",
     required: false,
   },
   {
-    label: "Total Stock",
+    label: "Stock Quantity",
     name: "totalStock",
     componentType: "input",
     type: "number",
-    placeholder: "Enter total stock",
+    placeholder: "0",
     required: true,
   },
 ];

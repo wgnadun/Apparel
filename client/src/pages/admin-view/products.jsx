@@ -168,34 +168,64 @@ function AdminProducts() {
             setFormData(initialFormData);
           }}
       >
-        <SheetContent side="right" className="overflow-auto m-5">
-          <SheetHeader>
+        <SheetContent side="right" className="overflow-auto w-full max-w-2xl">
+          <div className="h-full flex flex-col">
+            <SheetHeader className="pb-6 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
+                  <Package className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <SheetTitle className="text-2xl font-bold text-gray-900">
+                    {currentEditedId !== null ? "Edit Product" : "Add New Product"}
+                  </SheetTitle>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {currentEditedId !== null 
+                      ? "Update your product information" 
+                      : "Fill in the details to add a new product to your catalog"
+                    }
+                  </p>
+                </div>
+              </div>
+            </SheetHeader>
 
-            <SheetTitle>{
-              currentEditedId !== null ? "Edit Product" : "Add New Product"
-            }</SheetTitle>
-          </SheetHeader>
-          <ProductImageUpload 
-                imageFile={imageFile} 
-                setImageFile={setImageFile} 
-                uploadedImageUrl={uploadedImageUrl} 
-                setUploadedImageUrl={setUploadedImageUrl} 
-                setImageLoadingState ={setImageLoadingState}
-                imageLoadingState={imageLoadingState}
-                isEditMode={currentEditedId !==null}
-          />
+            <div className="flex-1 overflow-y-auto py-4 px-6">
+              <div className="space-y-6">
+                <ProductImageUpload 
+                  imageFile={imageFile} 
+                  setImageFile={setImageFile} 
+                  uploadedImageUrl={uploadedImageUrl} 
+                  setUploadedImageUrl={setUploadedImageUrl} 
+                  setImageLoadingState={setImageLoadingState}
+                  imageLoadingState={imageLoadingState}
+                  isEditMode={currentEditedId !== null}
+                />
 
-          <div className="py-6 m-5">
-          <ValidatedForm
-              schema={productSchema}
-              onSubmit={onSubmit}
-              initialData={formData}
-              buttonText={
-                currentEditedId !== null ? "Update Product" : "Add Product"
-              } 
-              formControls={addProductFormElements}
-          />
-
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm">
+                  <div className="p-4 border-b border-gray-200">
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <div className="w-2 h-2 bg-black rounded-full"></div>
+                        Product Information
+                      </h3>
+                      <p className="text-sm text-gray-600">Enter the essential details for your product listing</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4">
+                    <ValidatedForm
+                      schema={productSchema}
+                      onSubmit={onSubmit}
+                      initialData={formData}
+                      buttonText={
+                        currentEditedId !== null ? "Update Product" : "Add Product"
+                      } 
+                      formControls={addProductFormElements}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </SheetContent>
       </Sheet>
