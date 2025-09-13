@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { DialogContent, DialogTitle } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import CommonForm from "../common/form";
 import { Badge } from "../ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAllOrdersForAdmin,
@@ -11,6 +12,21 @@ import {
 } from "@/store/admin/order-slice";
 import { toast } from "sonner";
 import { useAuth0 } from '@auth0/auth0-react';
+import { 
+  Package, 
+  User, 
+  MapPin, 
+  CreditCard, 
+  Calendar, 
+  DollarSign, 
+  Truck,
+  ShoppingBag,
+  Receipt,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle
+} from 'lucide-react';
 
 function AdminOrderDetailsView({ orderDetails }) {
   const initialFormData = {
@@ -22,6 +38,73 @@ function AdminOrderDetailsView({ orderDetails }) {
   const { getAccessTokenSilently } = useAuth0();
 
   const dispatch = useDispatch();
+
+  // Memoize expensive calculations
+  const orderSummary = useMemo(() => {
+    if (!orderDetails) return null;
+    
+    return {
+      formattedDate: new Date(orderDetails.orderDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      totalAmount: orderDetails.totalAmount?.toFixed(2),
+      itemCount: orderDetails.cartItems?.length || 0,
+      orderId: orderDetails._id?.slice(-8)
+    };
+  }, [orderDetails]);
+
+  // Memoize cart items with totals
+  const cartItemsWithTotals = useMemo(() => {
+    if (!orderDetails?.cartItems) return [];
+    
+    return orderDetails.cartItems.map(item => ({
+      ...item,
+      total: (item.price * item.quantity).toFixed(2)
+    }));
+  }, [orderDetails?.cartItems]);
+
+  // Get status icon and color
+  const getStatusConfig = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'confirmed':
+      case 'delivered':
+        return { 
+          icon: CheckCircle, 
+          color: 'bg-emerald-500', 
+          bgColor: 'bg-emerald-50', 
+          textColor: 'text-emerald-700',
+          borderColor: 'border-emerald-200'
+        };
+      case 'rejected':
+        return { 
+          icon: XCircle, 
+          color: 'bg-red-500', 
+          bgColor: 'bg-red-50', 
+          textColor: 'text-red-700',
+          borderColor: 'border-red-200'
+        };
+      case 'pending':
+        return { 
+          icon: Clock, 
+          color: 'bg-amber-500', 
+          bgColor: 'bg-amber-50', 
+          textColor: 'text-amber-700',
+          borderColor: 'border-amber-200'
+        };
+      default:
+        return { 
+          icon: AlertCircle, 
+          color: 'bg-blue-500', 
+          bgColor: 'bg-blue-50', 
+          textColor: 'text-blue-700',
+          borderColor: 'border-blue-200'
+        };
+    }
+  };
 
   function handleUpdateStatus(event) {
     event.preventDefault();

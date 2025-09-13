@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import AdminProductTile from "@/components/admin-view/product-tile";
 import { productSchema } from "@/utils/validation";
 import { useAuth0 } from '@auth0/auth0-react';
+import { Plus, Package } from 'lucide-react';
 
 const initialFormData = {
   image: null,
@@ -108,10 +109,30 @@ function AdminProducts() {
 
   return ( 
     <Fragment>
-      <div className="mb-5 flex justify-end">
-        <Button onClick={() => setOpenCreateProductsDialog(true)}>Add new Product</Button>
+      {/* Premium Header */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="w-1 h-12 bg-black rounded-full"></div>
+            <div>
+              <h1 className="text-3xl font-bold text-black">Products Management</h1>
+              <p className="text-gray-600 mt-1 font-medium">
+                Manage your product catalog and inventory
+              </p>
+            </div>
+          </div>
+          <Button 
+            onClick={() => setOpenCreateProductsDialog(true)}
+            className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Add New Product
+          </Button>
+        </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4 ">
+
+      {/* Products Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {
           productList && productList.length > 0 ? 
           productList.map(productItem =>
@@ -123,7 +144,20 @@ function AdminProducts() {
                   product={productItem} 
                   handleDelete={handleDelete}
                   />
-                ) : null
+                ) : (
+                  <div className="col-span-full flex flex-col items-center justify-center py-16 bg-white rounded-2xl shadow-lg border border-gray-200">
+                    <Package className="w-16 h-16 text-gray-400 mb-4" />
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">No Products Yet</h3>
+                    <p className="text-gray-600 text-center mb-6">Start building your product catalog by adding your first product</p>
+                    <Button 
+                      onClick={() => setOpenCreateProductsDialog(true)}
+                      className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl font-semibold"
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      Add Your First Product
+                    </Button>
+                  </div>
+                )
         }
       </div>
       <Sheet 

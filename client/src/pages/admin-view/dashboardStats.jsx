@@ -15,7 +15,7 @@ import {
   ArcElement
 } from 'chart.js';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { BadgeDollarSignIcon, ChartCandlestick, CoinsIcon, ListOrderedIcon, Signal, SignalHigh, SparklesIcon } from 'lucide-react';
+import { DollarSign, ShoppingCart, TrendingUp, BarChart3, Calendar, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -46,10 +46,12 @@ function AdminDashboardStats() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg font-medium">Loading stats...</p>
+      <div className="p-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-800 border-t-transparent mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg font-medium">Loading analytics...</p>
+          </div>
         </div>
       </div>
     );
@@ -57,10 +59,14 @@ function AdminDashboardStats() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
-        <div className="bg-white p-8 rounded-2xl shadow-xl border border-red-200">
-          <div className="text-red-500 text-6xl mb-4 text-center">⚠️</div>
-          <p className="text-red-600 text-lg font-semibold">Error: {error}</p>
+      <div className="p-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-md">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+              <ArrowDownRight className="w-8 h-8 text-red-600" />
+            </div>
+            <p className="text-red-600 text-lg font-semibold text-center">Error: {error}</p>
+          </div>
         </div>
       </div>
     );
@@ -520,45 +526,55 @@ function AdminDashboardStats() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8">
+    <div className="p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 text-center lg:text-left">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 leading-tight">
-             Admin Analytics Hub
-          </h1>
-          <p className="text-gray-600 text-lg sm:text-xl max-w-2xl mx-auto lg:mx-0">
-            Comprehensive insights and performance metrics for the last <span className="font-semibold text-purple-600">{days} days</span>
-          </p>
+        <div className="mb-8">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="w-1 h-12 bg-gray-800 rounded-full"></div>
+            <div>
+              <h1 className="text-4xl font-bold text-gray-900">
+                Analytics Hub
+              </h1>
+              <p className="text-gray-600 mt-1 font-medium">
+                Performance insights and metrics
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Day filter buttons */}
-        <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-8">
-          <span className="text-gray-700 font-medium flex items-center mr-4">
-             Time Period:
-          </span>
-          {[7, 30, 90].map(num => (
-            <button
-              key={num}
-              onClick={() => setDays(num)}
-              className={`px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 hover:-translate-y-1
-                ${days === num
-                  ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl shadow-blue-500/30"
-                  : "bg-white text-gray-700 border-2 border-gray-200 hover:border-purple-300 hover:shadow-lg"
-                }`}
-            >
-              {num === 7 ? 'Last Week' : num === 30 ? 'Last Month' : 'Last Quarter'}
-            </button>
-          ))}
+        {/* Time Period Filter */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Calendar className="w-5 h-5 text-gray-600 mr-2" />
+              <span className="text-gray-700 font-medium">Time Period:</span>
+            </div>
+            <div className="flex gap-2">
+              {[7, 30, 90].map(num => (
+                <button
+                  key={num}
+                  onClick={() => setDays(num)}
+                  className={`px-6 py-2 rounded-lg font-medium transition-all duration-200
+                    ${days === num
+                      ? "bg-gray-900 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                >
+                  {num === 7 ? 'Last Week' : num === 30 ? 'Last Month' : 'Last Quarter'}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Charts Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Revenue Chart */}
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-shadow duration-300">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <div className="flex items-center mb-6">
-              <div className="w-3 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full mr-3"></div>
-              <h3 className="text-xl font-bold text-gray-800">Revenue Trend</h3>
+              <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
+              <h3 className="text-xl font-bold text-gray-900">Revenue Trend</h3>
             </div>
             <div className="h-64 sm:h-80">
               <Line data={revenueData} options={lineChartOptions} />
@@ -566,10 +582,10 @@ function AdminDashboardStats() {
           </div>
 
           {/* Orders Chart */}
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-shadow duration-300">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <div className="flex items-center mb-6">
-              <div className="w-3 h-8 bg-gradient-to-b from-emerald-400 to-emerald-600 rounded-full mr-3"></div>
-              <h3 className="text-xl font-bold text-gray-800">Orders Trend</h3>
+              <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
+              <h3 className="text-xl font-bold text-gray-900">Orders Trend</h3>
             </div>
             <div className="h-64 sm:h-80">
               <Line data={ordersData} options={lineChartOptions} />
@@ -577,10 +593,10 @@ function AdminDashboardStats() {
           </div>
 
           {/* Status Pie Chart */}
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-shadow duration-300">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <div className="flex items-center mb-6">
-              <div className="w-3 h-8 bg-gradient-to-b from-pink-400 to-purple-600 rounded-full mr-3"></div>
-              <h3 className="text-xl font-bold text-gray-800">Order Status</h3>
+              <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
+              <h3 className="text-xl font-bold text-gray-900">Order Status</h3>
             </div>
             <div className="h-64 sm:h-80">
               <Pie data={statusData} options={pieChartOptions} />
@@ -588,11 +604,11 @@ function AdminDashboardStats() {
           </div>
 
           {/* Top Products Chart */}
-          <div className="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-shadow duration-300">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
-                <div className="w-3 h-8 bg-gradient-to-b from-purple-400 to-pink-600 rounded-full mr-3"></div>
-                <h3 className="text-xl font-bold text-gray-800">Top Products</h3>
+                <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
+                <h3 className="text-xl font-bold text-gray-900">Top Products</h3>
               </div>
               <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                 {stats.topProducts.length} products
@@ -602,9 +618,9 @@ function AdminDashboardStats() {
               <Bar data={topProductsData} options={barChartOptions} />
             </div>
             {stats.topProducts.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 rounded-lg">
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50 rounded-lg">
                 <div className="text-center">
-                  <div className="text-4xl mb-2">📊</div>
+                  <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                   <p className="text-gray-500 font-medium">No product data available</p>
                 </div>
               </div>
@@ -613,35 +629,67 @@ function AdminDashboardStats() {
         </div>
 
         {/* Stats Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mt-8">
-          <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2"><CoinsIcon/></div>
-            <div className="text-sm opacity-90">Total Revenue</div>
-            <div className="text-2xl font-bold">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="flex items-center text-green-600">
+                <ArrowUpRight className="w-4 h-4 mr-1" />
+                <span className="text-sm font-medium">+12%</span>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600 mb-1">Total Revenue</div>
+            <div className="text-2xl font-bold text-gray-900">
               ${stats.ordersByDate.reduce((sum, d) => sum + d.revenue, 0).toLocaleString()}
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2"><ListOrderedIcon/></div>
-            <div className="text-sm opacity-90">Total Orders</div>
-            <div className="text-2xl font-bold">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                <ShoppingCart className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="flex items-center text-green-600">
+                <ArrowUpRight className="w-4 h-4 mr-1" />
+                <span className="text-sm font-medium">+8%</span>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600 mb-1">Total Orders</div>
+            <div className="text-2xl font-bold text-gray-900">
               {stats.ordersByDate.reduce((sum, d) => sum + d.orders, 0).toLocaleString()}
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2"><ChartCandlestick/></div>
-            <div className="text-sm opacity-90">Products Sold</div>
-            <div className="text-2xl font-bold">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="flex items-center text-green-600">
+                <ArrowUpRight className="w-4 h-4 mr-1" />
+                <span className="text-sm font-medium">+15%</span>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600 mb-1">Products Sold</div>
+            <div className="text-2xl font-bold text-gray-900">
               {stats.topProducts.reduce((sum, p) => sum + p.qtySold, 0).toLocaleString()}
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-pink-500 to-pink-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <div className="text-3xl mb-2"><SignalHigh/></div>
-            <div className="text-sm opacity-90">Avg Order Value</div>
-            <div className="text-2xl font-bold">
+          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                <BarChart3 className="w-6 h-6 text-orange-600" />
+              </div>
+              <div className="flex items-center text-red-600">
+                <ArrowDownRight className="w-4 h-4 mr-1" />
+                <span className="text-sm font-medium">-3%</span>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600 mb-1">Avg Order Value</div>
+            <div className="text-2xl font-bold text-gray-900">
               ${Math.round(stats.ordersByDate.reduce((sum, d) => sum + d.revenue, 0) / stats.ordersByDate.reduce((sum, d) => sum + d.orders, 0) || 0)}
             </div>
           </div>

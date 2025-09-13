@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAuth0 } from '@auth0/auth0-react';
+import { Plus, Image, Eye, Trash2, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 
 function AdminDashboardBanner() {
   const [imageFile, setImageFile] = useState(null);
@@ -72,24 +73,22 @@ function AdminDashboardBanner() {
 
   if (!featureImageList || total === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8">
+      <div className="p-8">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-              🎨 Banner Management
-            </h1>
-            <p className="text-gray-600 text-lg">
-              Upload and manage your website's featured banners
-            </p>
+          {/* Empty State */}
+          <div className="text-center mb-12">
+            <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
+              <Image className="w-12 h-12 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No banners yet</h2>
+            <p className="text-gray-600 mb-8">Upload your first banner to get started</p>
           </div>
 
           {/* Upload Section */}
-          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-white/20">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">📷</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No banners uploaded yet</h3>
-              <p className="text-gray-600">Start by uploading your first banner image</p>
+          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
+            <div className="flex items-center mb-6">
+              <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
+              <h3 className="text-xl font-bold text-gray-900">Upload New Banner</h3>
             </div>
 
             <ProductImageUpload
@@ -105,7 +104,7 @@ function AdminDashboardBanner() {
             <Button 
               onClick={handleUploadFeatureImage} 
               disabled={!uploadedImageUrl || imageLoadingState}
-              className="mt-6 w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="mt-6 w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {imageLoadingState ? (
                 <div className="flex items-center justify-center">
@@ -113,7 +112,10 @@ function AdminDashboardBanner() {
                   Uploading...
                 </div>
               ) : (
-                "🚀 Upload Banner"
+                <div className="flex items-center justify-center">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Upload Banner
+                </div>
               )}
             </Button>
           </div>
@@ -123,26 +125,16 @@ function AdminDashboardBanner() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center lg:text-left mb-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-          Banner Management Center
-          </h1>
-          <p className="text-gray-600 text-lg sm:text-xl">
-            Manage your website's featured banners and carousel images
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="p-8">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Upload Section - Left Column */}
           <div className="lg:col-span-1">
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-white/20 sticky top-6">
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 sticky top-6">
               <div className="flex items-center mb-6">
-                <div className="w-3 h-8 bg-gradient-to-b from-green-400 to-emerald-600 rounded-full mr-3"></div>
+                <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-800">Add New Banner</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Add New Banner</h3>
                 </div>
               </div>
 
@@ -159,7 +151,7 @@ function AdminDashboardBanner() {
               <Button 
                 onClick={handleUploadFeatureImage} 
                 disabled={!uploadedImageUrl || imageLoadingState}
-                className="mt-6 w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="mt-6 w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 rounded-lg shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {imageLoadingState ? (
                   <div className="flex items-center justify-center">
@@ -167,35 +159,36 @@ function AdminDashboardBanner() {
                     Uploading...
                   </div>
                 ) : (
-                  "Upload Banner"
+                  <div className="flex items-center justify-center">
+                    <Plus className="w-5 h-5 mr-2" />
+                    Upload Banner
+                  </div>
                 )}
               </Button>
 
               {/* Banner Stats */}
-              <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-800">{total}</div>
-                  <div className="text-sm text-gray-600">Total Uploaded Banners</div>
+                  <div className="text-2xl font-bold text-gray-900">{total}</div>
+                  <div className="text-sm text-gray-600">Total Banners</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Banner Display Section - Right 2/3 */}
+          {/* Banner Preview Section */}
           <div className="lg:col-span-2">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
               {/* Banner Header */}
-              <div className="p-6 border-b border-gray-100">
+              <div className="p-6 border-b border-gray-200 bg-gray-50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <div className="w-3 h-8 bg-gradient-to-b from-pink-400 to-purple-600 rounded-full mr-3"></div>
+                    <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-800"> Banner Preview</h3>
+                      <h3 className="text-xl font-bold text-gray-900">Banner Preview</h3>
                       <p className="text-sm text-gray-600">Banner {currentIndex + 1} of {total}</p>
                     </div>
                   </div>
-                  
-                  {/* Banner Counter */}
                 </div>
               </div>
 
@@ -215,20 +208,16 @@ function AdminDashboardBanner() {
                       <>
                         <button
                           onClick={handlePrev}
-                          className="bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all duration-300 transform hover:scale-110 shadow-lg"
+                          className="bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all duration-300 shadow-lg"
                         >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                          </svg>
+                          <ChevronLeft className="w-6 h-6" />
                         </button>
                         
                         <button
                           onClick={handleNext}
-                          className="bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all duration-300 transform hover:scale-110 shadow-lg"
+                          className="bg-white/90 backdrop-blur-sm text-gray-800 p-3 rounded-full hover:bg-white transition-all duration-300 shadow-lg"
                         >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
+                          <ChevronRight className="w-6 h-6" />
                         </button>
                       </>
                     )}
@@ -236,11 +225,9 @@ function AdminDashboardBanner() {
                     {/* Delete Button */}
                     <button
                       onClick={() => setShowDeleteConfirm(true)}
-                      className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-full hover:bg-red-600 transition-all duration-300 transform hover:scale-110 shadow-lg"
+                      className="bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-full hover:bg-red-600 transition-all duration-300 shadow-lg"
                     >
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
+                      <Trash2 className="w-6 h-6" />
                     </button>
                   </div>
                 </div>
@@ -253,9 +240,7 @@ function AdminDashboardBanner() {
                         onClick={handlePrev}
                         className="text-white p-2 hover:bg-white/20 rounded-full transition-all"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
+                        <ChevronLeft className="w-5 h-5" />
                       </button>
                       
                       <span className="text-white text-sm flex items-center px-2">
@@ -266,9 +251,7 @@ function AdminDashboardBanner() {
                         onClick={handleNext}
                         className="text-white p-2 hover:bg-white/20 rounded-full transition-all"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        <ChevronRight className="w-5 h-5" />
                       </button>
                     </div>
                   </div>
@@ -276,12 +259,12 @@ function AdminDashboardBanner() {
               </div>
 
               {/* Banner Info Footer */}
-              <div className="p-6 bg-gradient-to-r from-gray-50 to-blue-50">
+              <div className="p-6 bg-gray-50">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                   <div>
-                    <h4 className="font-semibold text-gray-800 text-lg">Banner {currentIndex + 1}</h4>
+                    <h4 className="font-semibold text-gray-900 text-lg">Banner {currentIndex + 1}</h4>
                     <p className="text-gray-600 text-sm">
-                      Active since: {new Date(currentImage.createdAt || Date.now()).toLocaleDateString('en-US', {
+                      Uploaded: {new Date(currentImage.createdAt || Date.now()).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
@@ -289,47 +272,49 @@ function AdminDashboardBanner() {
                     </p>
                   </div>
                   
-                  {/* Quick Actions */}
+                  {/* Status Badge */}
                   <div className="flex space-x-3 mt-4 sm:mt-0">
                     <div className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-medium">
                       Active
                     </div>
-                  
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Thumbnail Strip */}
+            {/* All Banners Thumbnail Section */}
             {total > 1 && (
-              <div className="mt-6 bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-white/20">
-                <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <span className="text-purple-600 mr-2"></span>
-                  All Banners
-                </h4>
+              <div className="mt-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <div className="flex items-center mb-4">
+                  <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
+                  <h4 className="text-lg font-bold text-gray-900">All Banners</h4>
+                  <div className="ml-auto text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                    {total} banners
+                  </div>
+                </div>
                 <div className="flex space-x-4 overflow-x-auto pb-2">
                   {featureImageList.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentIndex(index)}
                       className={`flex-shrink-0 relative group ${
-                        index === currentIndex ? 'ring-4 ring-purple-500' : ''
+                        index === currentIndex ? 'ring-2 ring-gray-800' : ''
                       }`}
                     >
                       <img
                         src={image.image}
                         alt={`Thumbnail ${index + 1}`}
-                        className="w-20 h-16 sm:w-24 sm:h-20 object-cover rounded-lg transition-all duration-300 group-hover:scale-110"
+                        className="w-20 h-16 sm:w-24 sm:h-20 object-cover rounded-lg transition-all duration-300 group-hover:scale-105"
                       />
                       <div className={`absolute inset-0 rounded-lg transition-all duration-300 ${
                         index === currentIndex 
-                          ? 'bg-purple-500/30' 
+                          ? 'bg-gray-800/30' 
                           : 'bg-transparent group-hover:bg-black/20'
                       }`}>
                         {index === currentIndex && (
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                              ✓
+                            <div className="bg-gray-800 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
+                              <Check className="w-4 h-4" />
                             </div>
                           </div>
                         )}
@@ -340,15 +325,62 @@ function AdminDashboardBanner() {
               </div>
             )}
           </div>
+
+          {/* Quick Actions Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+              <div className="flex items-center mb-6">
+                <div className="w-1 h-8 bg-gray-800 rounded-full mr-3"></div>
+                <h3 className="text-xl font-bold text-gray-900">Quick Actions</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center mb-2">
+                    <Eye className="w-5 h-5 text-gray-600 mr-2" />
+                    <span className="font-medium text-gray-900">Current Banner</span>
+                  </div>
+                  <p className="text-sm text-gray-600">Banner {currentIndex + 1} is currently selected</p>
+                </div>
+                
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center mb-2">
+                    <Image className="w-5 h-5 text-gray-600 mr-2" />
+                    <span className="font-medium text-gray-900">Total Banners</span>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900">{total}</p>
+                </div>
+                
+                {total > 0 && (
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex items-center mb-2">
+                      <Trash2 className="w-5 h-5 text-gray-600 mr-2" />
+                      <span className="font-medium text-gray-900">Delete Current</span>
+                    </div>
+                    <Button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      variant="outline"
+                      className="w-full border-red-200 text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Delete Banner
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform animate-pulse">
+            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
               <div className="text-center">
-                <div className="text-red-500 text-6xl mb-4">⚠️</div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">Delete Banner?</h3>
+                <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                  <Trash2 className="w-8 h-8 text-red-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Banner?</h3>
                 <p className="text-gray-600 mb-6">
                   Are you sure you want to delete banner #{currentIndex + 1}? This action cannot be undone.
                 </p>
@@ -356,15 +388,17 @@ function AdminDashboardBanner() {
                 <div className="flex space-x-4">
                   <Button
                     onClick={() => setShowDeleteConfirm(false)}
-                    className="flex-1 bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all duration-300"
+                    variant="outline"
+                    className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleDelete}
-                    className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white transition-all duration-300"
+                    className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                   >
-                    🗑️ Delete
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
                   </Button>
                 </div>
               </div>
