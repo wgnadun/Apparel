@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { addToCart, fetchCartItems, addToGuestCart } from "@/store/shop/cart-slice";
 import { setProductDetails } from "@/store/shop/products-slice";
 import { Label } from "../ui/label";
 import StarRatingComponent from "../common/star-rating";
@@ -17,8 +17,8 @@ import { reviewSchema, fieldHints } from "../../utils/validation";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const { cartItems } = useSelector((state) => state.shopCart);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { cartItems, guestCartItems } = useSelector((state) => state.shopCart);
   const { reviews } = useSelector((state) => state.shopReview);
 
   // Use validation hook for review form
@@ -40,45 +40,59 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   }
 
   function handleAddToCart(getCurrentProductId, getTotalStock) {
-    let getCartItems = cartItems.items || [];
+    let getItems = isAuthenticated ? (cartItems?.items || []) : guestCartItems;
 
-    if (getCartItems.length) {
-      const indexOfCurrentItem = getCartItems.findIndex(
+    if (getItems.length) {
+      const indexOfCurrentItem = getItems.findIndex(
         (item) => item.productId === getCurrentProductId
       );
       if (indexOfCurrentItem > -1) {
-        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        const getQuantity = getItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
-         
-          toast( `Only ${getQuantity} quantity can be added for this item`,{
-            style : {
-              background : 'white',
-              color : "red"
-            }
+          toast(`Only ${getQuantity} quantity can be added for this item`, {
+            style: {
+              background: "white",
+              color: "red",
+            },
           });
 
           return;
         }
       }
     }
-    dispatch(
-      addToCart({
-        userId: user?.id,
-        productId: getCurrentProductId,
-        quantity: 1,
-      })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(fetchCartItems(user?.id));
-       toast(`Product is added to cart`, {
-            style: {
-              background: 'white',
-              color: 'green'
-            }
-          });
 
-      }
-    });
+    if (isAuthenticated) {
+      dispatch(
+        addToCart({
+          userId: user?.id,
+          productId: getCurrentProductId,
+          quantity: 1,
+        })
+      ).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchCartItems(user?.id));
+          toast(`Product is added to cart`, {
+            style: {
+              background: "white",
+              color: "green",
+            },
+          });
+        }
+      });
+    } else {
+      dispatch(
+        addToGuestCart({
+          productId: getCurrentProductId,
+          quantity: 1,
+        })
+      );
+      toast(`Product added to guest cart`, {
+        style: {
+          background: "white",
+          color: "green",
+        },
+      });
+    }
   }
 
   function handleDialogClose() {

@@ -93,6 +93,7 @@ mongoose
              '/api/auth0', 
              '/api/csrf-token', 
              '/api/auth/check-auth',
+             '/api/shop/cart/sync',
              '/api/admin',  // Skip CSRF for all admin routes (they use Auth0 JWT)
              '/api/common/feature/add',  // Skip CSRF for feature add (Auth0 JWT)
              '/api/common/feature/delete',  // Skip CSRF for feature delete (Auth0 JWT)

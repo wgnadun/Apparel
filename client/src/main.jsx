@@ -8,6 +8,7 @@ import { Toaster } from 'sonner';
 import { Auth0Provider as Auth0ProviderBase } from '@auth0/auth0-react';
 import Auth0Provider from './components/auth0/Auth0Provider';
 import { auth0Config } from './config/auth0';
+import { Server } from 'lucide-react';
 
 createRoot(document.getElementById('root')).render(
     <Auth0ProviderBase

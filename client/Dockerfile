@@ -1,6 +1,6 @@
 #Dockerfile for the node server service
 #define base image
-FROM node:22
+FROM node:22 
 
 #Create working directory
 WORKDIR /app

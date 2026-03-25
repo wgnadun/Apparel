@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { addToCart, fetchCartItems, addToGuestCart } from "@/store/shop/cart-slice";
 import {
   fetchAllFilteredProducts,
   fetchProductDetails,
@@ -95,46 +95,58 @@ function ShoppingListing() {
   }
 
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
-    console.log(cartItems);
-    let getCartItems = cartItems.items || [];
+    let getItems = isAuthenticated ? (cartItems?.items || []) : guestCartItems;
 
-    if (getCartItems.length) {
-      const indexOfCurrentItem = getCartItems.findIndex(
+    if (getItems.length) {
+      const indexOfCurrentItem = getItems.findIndex(
         (item) => item.productId === getCurrentProductId
       );
       if (indexOfCurrentItem > -1) {
-        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        const getQuantity = getItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
-         toast.error(`Only ${getQuantity} quantity can be added for this item`, {
+          toast.error(`Only ${getQuantity} quantity can be added for this item`, {
             style: {
-                backgroundColor: "#f87171", // red-400 for destructive/error
-                color: "white",
+              backgroundColor: "#f87171",
+              color: "white",
             },
-            });
-
+          });
           return;
         }
       }
     }
 
-    dispatch(
-      addToCart({
-        userId: user?.id,
-        productId: getCurrentProductId,
-        quantity: 1,
-      })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(fetchCartItems(user?.id));
-       toast.success("Product is added to cart", {
+    if (isAuthenticated) {
+      dispatch(
+        addToCart({
+          userId: user?.id,
+          productId: getCurrentProductId,
+          quantity: 1,
+        })
+      ).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchCartItems(user?.id));
+          toast.success("Product is added to cart", {
             style: {
-                backgroundColor: "#4ade80", // green-400 for success
-                color: "white",
+              backgroundColor: "#4ade80",
+              color: "white",
             },
-            });
-
-      }
-    });
+          });
+        }
+      });
+    } else {
+      dispatch(
+        addToGuestCart({
+          productId: getCurrentProductId,
+          quantity: 1,
+        })
+      );
+      toast.success("Product added to guest cart", {
+        style: {
+          backgroundColor: "#4ade80",
+          color: "white",
+        },
+      });
+    }
   }
 
   useEffect(() => {
@@ -220,32 +232,40 @@ function ShoppingListing() {
   console.log(productList, "productListproductListproductList");
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
-      <ProductFilter filters={filters} handleFilter={handleFilter} />
-      <div className="bg-background w-full rounded-lg shadow-sm">
-        <div className="p-4 border-b flex items-center justify-between">
-          <h2 className="text-lg font-extrabold">All Products</h2>
-          <div className="flex items-center gap-3">
-            <span className="text-muted-foreground">
-              {productList?.length} Products
-            </span>
+    <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-12 p-4 md:p-12 bg-white min-h-screen">
+      <div className="hidden md:block sticky top-28 h-fit">
+        <ProductFilter filters={filters} handleFilter={handleFilter} />
+      </div>
+      <div className="w-full">
+        <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-gray-100 pb-10">
+          <div className="space-y-2">
+            <h2 className="text-5xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+              The <span className="text-yellow-500 italic font-serif normal-case">Signature</span> <br />
+              Collection
+            </h2>
+            <p className="text-xs text-gray-400 font-black tracking-[0.3em] uppercase">
+              {productList?.length || 0} Curated Masterpieces
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-1"
+                  variant="ghost"
+                  className="flex items-center gap-3 bg-gray-50 hover:bg-black hover:text-white rounded-2xl px-8 py-8 transition-all duration-500 font-black tracking-widest text-xs uppercase shadow-sm active:scale-95"
                 >
                   <ArrowUpDownIcon className="h-4 w-4" />
-                  <span>Sort by</span>
+                  Sort Style
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuContent align="end" className="w-[240px] rounded-3xl p-3 border-white/20 shadow-2xl backdrop-blur-2xl bg-white/80 animate-in fade-in slide-in-from-top-4 duration-300">
                 <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
                   {sortOptions.map((sortItem) => (
                     <DropdownMenuRadioItem
                       value={sortItem.id}
                       key={sortItem.id}
+                      className="rounded-2xl py-4 px-5 focus:bg-yellow-400 focus:text-black font-bold text-sm cursor-pointer transition-colors"
                     >
                       {sortItem.label}
                     </DropdownMenuRadioItem>
@@ -255,16 +275,23 @@ function ShoppingListing() {
             </DropdownMenu>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 px-2">
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
           {productList && productList.length > 0
             ? productList.map((productItem) => (
-                <ShoppingProductTile
-                  handleGetProductDetails={handleGetProductDetails}
-                  product={productItem}
-                  handleAddtoCart={handleAddtoCart}
-                />
+                <div key={productItem._id} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                    <ShoppingProductTile
+                      handleGetProductDetails={handleGetProductDetails}
+                      product={productItem}
+                      handleAddtoCart={handleAddtoCart}
+                    />
+                </div>
               ))
-            : null}
+            : (
+                <div className="col-span-full py-40 text-center bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
+                    <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-sm">No items found for your selection</p>
+                </div>
+            )}
         </div>
       </div>
       <ProductDetailsDialog

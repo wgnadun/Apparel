@@ -92,8 +92,8 @@ function AdminOrdersView() {
     
     return orderList.filter(order => {
       const matchesSearch = order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           order.orderStatus.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === "all" || order.orderStatus === statusFilter;
+                           (order.orderStatus && order.orderStatus.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesStatus = statusFilter === "all" || (order.orderStatus && order.orderStatus === statusFilter);
       return matchesSearch && matchesStatus;
     });
   }, [orderList, searchTerm, statusFilter]);
@@ -101,7 +101,7 @@ function AdminOrdersView() {
   // Memoized unique statuses
   const uniqueStatuses = useMemo(() => {
     if (!orderList) return [];
-    return [...new Set(orderList.map(order => order.orderStatus))];
+    return [...new Set(orderList.map(order => order.orderStatus).filter(status => status))];
   }, [orderList]);
 
   // Memoized stats calculations
@@ -264,7 +264,7 @@ function AdminOrdersView() {
                               : "bg-yellow-100 text-yellow-800 border-yellow-200"
                           }`}
                         >
-                          {orderItem?.orderStatus.charAt(0).toUpperCase() + orderItem?.orderStatus.slice(1)}
+                          {orderItem?.orderStatus ? orderItem.orderStatus.charAt(0).toUpperCase() + orderItem.orderStatus.slice(1) : 'Unknown'}
                         </Badge>
                       </TableCell>
                       <TableCell className="font-semibold text-gray-900 text-center">

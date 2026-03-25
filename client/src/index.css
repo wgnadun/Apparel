@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -113,9 +114,112 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    font-family: 'Inter', sans-serif;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Custom Professional Utilities */
+@layer utilities {
+  .glass-modern {
+    @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl;
+  }
+  
+  .glass-premium::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  .text-reveal {
+    animation: textReveal 1.2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .premium-serif {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .text-shadow-premium {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slow-zoom {
+    animation: slowZoom 20s linear infinite alternate;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-100 to-gray-300;
+  }
+  
+  .gradient-border {
+    position: relative;
+    border-radius: var(--radius-lg);
+  }
+  
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(to right, oklch(0.8 0.1 80 / 0.3), oklch(0.5 0.2 30 / 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+}
+
+@keyframes textReveal {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slowZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.15);
   }
 }
 

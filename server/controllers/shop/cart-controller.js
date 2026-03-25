@@ -241,9 +241,97 @@ const DeleteCartItem = async (req, res) => {
   }
 };
 
+const syncCart = async (req, res) => {
+  try {
+    const { userId, items } = req.body;
+    console.log("Server: syncCart called for user:", userId, "with items:", items);
+
+    if (!userId || !Array.isArray(items)) {
+      console.log("Server: syncCart invalid data", { userId, isArray: Array.isArray(items) });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid data provided!",
+      });
+    }
+
+    let cart = await Cart.findOne({ userId });
+
+    if (!cart) {
+      console.log("Server: Creating new cart for user:", userId);
+      cart = new Cart({ userId, items: [] });
+    }
+
+    console.log("Server: Current cart items:", cart.items);
+
+    // Use a Map for O(1) lookups and reliable merging
+    const mergedItemsMap = new Map();
+
+    // 1. Add existing items to Map
+    cart.items.forEach(item => {
+      const pid = item.productId ? item.productId.toString() : "";
+      if (pid) {
+        mergedItemsMap.set(pid, item.quantity);
+      }
+    });
+
+    // 2. Merge guest items into Map
+    for (const guestItem of items) {
+      const { productId, quantity } = guestItem;
+      if (!productId || typeof quantity !== 'number') {
+        console.log("Server: Skipping invalid guest item", guestItem);
+        continue;
+      }
+
+      const pid = productId.toString();
+      const existingQty = mergedItemsMap.get(pid) || 0;
+      mergedItemsMap.set(pid, existingQty + quantity);
+    }
+
+    // 3. Reconstruct cart.items array
+    cart.items = Array.from(mergedItemsMap.entries()).map(([productId, quantity]) => ({
+      productId,
+      quantity
+    }));
+
+    await cart.save();
+
+    console.log("Server: Cart merged and saved successfully. Final count:", cart.items.length);
+
+    await cart.populate({
+      path: "items.productId",
+      select: "image title price salePrice",
+    });
+
+    const populateCartItems = cart.items.map((item) => ({
+      productId: item.productId ? item.productId._id : null,
+      image: item.productId ? item.productId.image : null,
+      title: item.productId ? item.productId.title : "Product not found!",
+      price: item.productId ? item.productId.price : null,
+      salePrice: item.productId ? item.productId.salePrice : null,
+      quantity: item.quantity,
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...cart._doc,
+        items: populateCartItems,
+      },
+    });
+  } catch (error) {
+    console.error("Server: syncCart error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error syncing cart",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   addToCart,
   UpdateCartItemQty,
   DeleteCartItem,
   fetchCartItems,
+  syncCart,
 };
